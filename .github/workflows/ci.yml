@@ -25,7 +25,7 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
 
-    - uses: actions/setup-node@v3
+    - uses: actions/setup-node@v4
 
     - uses: browser-actions/setup-chrome@latest
     - uses: nanasess/setup-chromedriver@master
@@ -35,7 +35,7 @@ jobs:
       timeout-minutes: 5
 
     - name: Upload test artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-artifacts
