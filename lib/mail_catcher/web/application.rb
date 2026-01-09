@@ -68,6 +68,16 @@ module MailCatcher
         erb :index
       end
 
+      get "/websocket-test" do
+        content_type :html
+        test_file = File.expand_path("../../../WEBSOCKET_TEST.html", __FILE__)
+        if File.exist?(test_file)
+          File.read(test_file)
+        else
+          "Test file not found at: #{test_file}"
+        end
+      end
+
       delete "/" do
         if MailCatcher.quittable?
           MailCatcher.quit!
@@ -85,8 +95,10 @@ module MailCatcher
           ws.on(:open) do |_|
             bus_subscription = MailCatcher::Bus.subscribe do |message|
               begin
+                $stderr.puts "[WebSocket] Sending message: #{message.inspect}"
                 ws.send(JSON.generate(message))
               rescue => exception
+                $stderr.puts "[WebSocket] Error sending message: #{exception.message}"
                 MailCatcher.log_exception("Error sending message through websocket", message, exception)
               end
             end
