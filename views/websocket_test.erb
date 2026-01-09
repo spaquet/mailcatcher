@@ -159,7 +159,8 @@
         function getWebSocketURL() {
             const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const host = window.location.host;
-            return `${protocol}//${host}/messages`;
+            const basePath = '<%= settings.prefix.chomp("/") %>';
+            return `${protocol}//${host}${basePath}/messages`;
         }
 
         function updateStatus(connected, message) {

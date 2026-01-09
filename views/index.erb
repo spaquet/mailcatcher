@@ -680,6 +680,14 @@
         </div>
         <div class="email-count" id="emailCount">0 emails</div>
         <div class="action-buttons">
+          <button class="btn" id="serverInfoBtn" title="View server information">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="2" y1="17" x2="22" y2="17"></line>
+              <polyline points="15 21 12 17 9 21"></polyline>
+            </svg>
+            Server
+          </button>
           <button class="btn" id="clearBtn" title="Clear all messages">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"></polyline>
@@ -826,6 +834,11 @@
       }
 
       // Setup button handlers
+      document.getElementById('serverInfoBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = new URL('server-info', document.baseURI).toString();
+      });
+
       document.getElementById('clearBtn').addEventListener('click', function(e) {
         e.preventDefault();
         if (window.MailCatcher && document.querySelectorAll('#messages tbody tr').length > 0) {

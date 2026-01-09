@@ -70,13 +70,34 @@ module MailCatcher
       end
 
       get "/websocket-test" do
-        content_type :html
-        test_file = File.expand_path("../../../WEBSOCKET_TEST.html", __FILE__)
-        if File.exist?(test_file)
-          File.read(test_file)
+        erb :websocket_test
+      end
+
+      get "/server-info" do
+        @version = MailCatcher::VERSION
+        @smtp_ip = MailCatcher.options[:smtp_ip]
+        @smtp_port = MailCatcher.options[:smtp_port]
+        @http_ip = MailCatcher.options[:http_ip]
+        @http_port = MailCatcher.options[:http_port]
+        @http_path = MailCatcher.options[:http_path]
+
+        require "socket"
+        if @http_ip == "127.0.0.1"
+          @hostname = "localhost"
+          @fqdn = "localhost"
         else
-          "Test file not found at: #{test_file}"
+          begin
+            hostname = Socket.gethostname
+            fqdn = Socket.getfqdn(Socket.gethostname)
+          rescue
+            hostname = "unknown"
+            fqdn = "unknown"
+          end
+          @hostname = hostname
+          @fqdn = fqdn
         end
+
+        erb :server_info
       end
 
       delete "/" do

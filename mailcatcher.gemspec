@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
     'lib/**/*.rb',
     'public/**/*',
     'views/**/*'
-  ] - Dir['lib/mail_catcher/web/assets.rb']
+  ] - Dir['lib/mail_catcher/web/assets.rb'] - Dir['public/assets/logo*.png']
   s.require_paths = ['lib']
   s.executables = %w[mailcatcher catchmail]
   s.extra_rdoc_files = ['README.md', 'LICENSE']

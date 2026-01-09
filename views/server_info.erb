@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="mailcatcher">
+<head>
+  <title>Server Information - MailCatcher</title>
+  <base href="<%= settings.prefix.chomp("/") %>/">
+  <link href="favicon.ico" rel="icon">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      max-width: 700px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: #1a1a1a;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 32px;
+      margin-top: 4px;
+    }
+
+    .info-section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #5f5f5f;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .info-item {
+      padding: 12px 14px;
+      background: #f9f9f9;
+      border-left: 3px solid #2196F3;
+      border-radius: 4px;
+    }
+
+    .info-item.full {
+      grid-column: 1 / -1;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Courier New', monospace;
+      font-size: 14px;
+      color: #1a1a1a;
+      word-break: break-all;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #2196F3;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #1976D2;
+      box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #1a1a1a;
+      border: 1px solid #e0e0e0;
+    }
+
+    .btn-secondary:hover {
+      background: #e8e8e8;
+      border-color: #d0d0d0;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .version-info {
+      font-size: 12px;
+      color: #999;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #e8eaed;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Server Information</h1>
+    <div class="page-subtitle">Configuration and connection details</div>
+
+    <div class="info-section">
+      <div class="section-title">Network Configuration</div>
+
+      <div class="info-item full">
+        <span class="info-label">Hostname</span>
+        <div class="info-value"><%= @hostname %></div>
+      </div>
+
+      <div class="info-item full">
+        <span class="info-label">FQDN (Fully Qualified Domain Name)</span>
+        <div class="info-value"><%= @fqdn %></div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="section-title">SMTP Server</div>
+
+      <div class="info-item">
+        <span class="info-label">IP Address</span>
+        <div class="info-value"><%= @smtp_ip %></div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Port</span>
+        <div class="info-value"><%= @smtp_port %></div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="section-title">HTTP Server</div>
+
+      <div class="info-item">
+        <span class="info-label">IP Address</span>
+        <div class="info-value"><%= @http_ip %></div>
+      </div>
+
+      <div class="info-item">
+        <span class="info-label">Port</span>
+        <div class="info-value"><%= @http_port %></div>
+      </div>
+
+      <div class="info-item full">
+        <span class="info-label">Base Path</span>
+        <div class="info-value"><%= @http_path %></div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <a href="<%= settings.prefix.chomp("/") %>/" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Back to Inbox
+      </a>
+      <a href="<%= File.join(settings.prefix.chomp("/"), "websocket-test") %>" class="btn btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="1"></circle>
+          <path d="M12 1v6m0 6v4"></path>
+          <path d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24"></path>
+          <path d="M1 12h6m6 0h4"></path>
+          <path d="M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
+        </svg>
+        Diagnostics
+      </a>
+    </div>
+
+    <div class="version-info">
+      MailCatcher v<%= @version %>
+    </div>
+  </div>
+</body>
+</html>
