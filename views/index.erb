@@ -15,76 +15,79 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      background: #f8f9fa;
-      color: #333;
+      background: #ffffff;
+      color: #1a1a1a;
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
     header {
-      background: white;
-      border-bottom: 1px solid #e0e0e0;
-      padding: 16px 24px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+      border-bottom: 1px solid #e8eaed;
+      padding: 20px 28px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 12px;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
     }
 
     header h1 a {
-      color: #1976d2;
+      color: #5f35f5;
       text-decoration: none;
+      transition: color 0.2s;
     }
 
     header h1 a:hover {
-      color: #1565c0;
+      color: #4a2ad9;
     }
 
     .header-controls {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       align-items: center;
       flex-wrap: wrap;
     }
 
     .search-box {
       flex: 1;
-      min-width: 250px;
+      min-width: 280px;
     }
 
     .search-box input {
       width: 100%;
-      padding: 8px 12px;
+      padding: 9px 14px;
       border: 1px solid #e0e0e0;
-      border-radius: 4px;
-      font-size: 13px;
-      transition: border-color 0.2s;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #ffffff;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .search-box input:focus {
       outline: none;
-      border-color: #1976d2;
-      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+      border-color: #5f35f5;
+      box-shadow: 0 0 0 3px rgba(95, 53, 245, 0.1);
     }
 
     .header-info {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       align-items: center;
     }
 
     .status-badge {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
+      gap: 8px;
+      padding: 8px 14px;
       background: #f0f0f0;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
     }
 
@@ -92,7 +95,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #4caf50;
+      background: #34a853;
       animation: pulse 2s infinite;
     }
 
@@ -102,41 +105,30 @@
     }
 
     .status-badge.disconnected .indicator {
-      background: #f44336;
+      background: #ea4335;
       animation: none;
     }
 
     .action-buttons {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
 
     .btn {
       padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
+      background: #ffffff;
+      color: #1a1a1a;
       transition: all 0.2s;
     }
 
-    .btn-primary {
-      background: #1976d2;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #1565c0;
-    }
-
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
-    }
-
-    .btn-secondary:hover {
-      background: #e0e0e0;
+    .btn:hover {
+      background: #f8f8f8;
+      border-color: #d0d0d0;
     }
 
     .btn:active {
@@ -145,22 +137,25 @@
 
     .email-count {
       font-size: 13px;
-      color: #666;
-      padding: 6px 12px;
+      color: #5f5f5f;
+      padding: 8px 12px;
+      background: #f9f9f9;
+      border-radius: 6px;
     }
 
     main {
       display: flex;
+      flex-direction: column;
       flex: 1;
       overflow: hidden;
     }
 
     #messages {
-      flex: 0 0 40%;
+      flex: 0 0 42%;
       display: flex;
       flex-direction: column;
-      background: white;
-      border-right: 1px solid #e0e0e0;
+      background: #ffffff;
+      border-bottom: 1px solid #e8eaed;
       overflow: hidden;
     }
 
@@ -171,23 +166,21 @@
     }
 
     #messages thead {
-      background: #f8f9fa;
-      border-bottom: 1px solid #e0e0e0;
+      background: #f9f9f9;
+      border-bottom: 1px solid #e8eaed;
       position: sticky;
       top: 0;
       z-index: 10;
     }
 
     #messages th {
-      padding: 12px;
+      padding: 12px 16px;
       text-align: left;
       font-weight: 600;
-      color: #666;
-      border-right: 1px solid #f0f0f0;
-    }
-
-    #messages th:last-child {
-      border-right: none;
+      color: #5f5f5f;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     #messages tbody {
@@ -198,31 +191,26 @@
     #messages tr {
       border-bottom: 1px solid #f0f0f0;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: background-color 0.15s;
     }
 
     #messages tr:hover {
-      background-color: #f8f9fa;
+      background-color: #f9f9f9;
     }
 
     #messages tr.selected {
-      background-color: #e3f2fd;
+      background-color: #f0f4ff;
     }
 
     #messages tr.selected:hover {
-      background-color: #bbdefb;
+      background-color: #e6ecff;
     }
 
     #messages td {
-      padding: 12px;
-      border-right: 1px solid #f0f0f0;
+      padding: 12px 16px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-    }
-
-    #messages td:last-child {
-      border-right: none;
     }
 
     #messages td.blank {
@@ -230,57 +218,56 @@
       font-style: italic;
     }
 
-    #resizer {
-      width: 4px;
-      background: #e0e0e0;
-      cursor: col-resize;
-      flex-shrink: 0;
-      transition: background 0.2s;
-    }
-
-    #resizer:hover {
-      background: #1976d2;
-    }
-
     #message {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: white;
+      background: #ffffff;
       overflow: hidden;
     }
 
     #message > header {
-      border-bottom: 1px solid #e0e0e0;
-      padding: 16px;
-      background: #fafafa;
+      border-bottom: 1px solid #e8eaed;
+      padding: 20px 28px;
+      background: #f9f9f9;
       overflow-y: auto;
-      max-height: 30%;
+      max-height: 35%;
     }
 
     .metadata {
       display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 12px 16px;
-      margin-bottom: 16px;
+      grid-template-columns: 90px 1fr;
+      gap: 8px 20px;
+      margin-bottom: 20px;
     }
 
     .metadata dt {
       font-weight: 600;
-      color: #666;
-      font-size: 13px;
+      color: #5f5f5f;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .metadata dd {
-      color: #333;
+      color: #1a1a1a;
       font-size: 13px;
       word-break: break-word;
     }
 
-    .views {
+    .views-container {
       margin-top: 16px;
       padding-top: 16px;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid #e8eaed;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .views {
+      display: flex;
+      gap: 8px;
+      flex: 1;
     }
 
     .views ul {
@@ -289,32 +276,59 @@
       gap: 8px;
     }
 
-    .views .format.tab a,
-    .views .action.download a {
-      padding: 8px 12px;
-      border-radius: 4px;
+    .views .format.tab a {
+      padding: 8px 14px;
+      border-radius: 6px;
       background: #f0f0f0;
-      color: #333;
+      color: #1a1a1a;
       text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 600;
       transition: all 0.2s;
       display: inline-block;
+      border: 1px solid transparent;
     }
 
     .views .format.tab a:hover {
-      background: #e0e0e0;
+      background: #e8e8e8;
     }
 
     .views .format.tab.selected a {
-      background: #1976d2;
+      background: #5f35f5;
       color: white;
+    }
+
+    .download-btn {
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .download-btn:hover {
+      background: #f8f8f8;
+      border-color: #d0d0d0;
+    }
+
+    .download-icon {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
     }
 
     #message iframe.body {
       flex: 1;
       border: none;
-      background: white;
+      background: #ffffff;
     }
 
     #noscript-overlay {
@@ -334,6 +348,23 @@
       text-align: center;
       font-size: 18px;
       color: #333;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f0f0f0;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #d0d0d0;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b0b0b0;
     }
   </style>
 </head>
@@ -359,10 +390,9 @@
         </div>
         <div class="email-count" id="emailCount">0 emails</div>
         <div class="action-buttons">
-          <button class="btn btn-secondary" id="clearBtn" title="Clear all messages">Clear</button>
-          <button class="btn btn-secondary" id="wsTestBtn" title="WebSocket Diagnostics">Test</button>
+          <button class="btn" id="clearBtn" title="Clear all messages">Clear</button>
           <% if MailCatcher.quittable? %>
-            <button class="btn btn-secondary" id="quitBtn" title="Quit MailCatcher">Quit</button>
+            <button class="btn" id="quitBtn" title="Quit MailCatcher">Quit</button>
           <% end %>
         </div>
       </div>
@@ -384,7 +414,7 @@
         <tbody></tbody>
       </table>
     </nav>
-    <div id="resizer"><div class="ruler"></div></div>
+
     <article id="message">
       <header>
         <dl class="metadata">
@@ -399,14 +429,23 @@
           <dt class="attachments">Attachments</dt>
           <dd class="attachments"></dd>
         </dl>
-        <nav class="views">
-          <ul>
-            <li class="format tab html selected" data-message-format="html"><a href="#">HTML</a></li>
-            <li class="format tab plain" data-message-format="plain"><a href="#">Plain Text</a></li>
-            <li class="format tab source" data-message-format="source"><a href="#">Source</a></li>
-            <li class="action download" data-message-format="html"><a href="#" class="button"><span>Download</span></a></li>
-          </ul>
-        </nav>
+        <div class="views-container">
+          <nav class="views">
+            <ul>
+              <li class="format tab html selected" data-message-format="html"><a href="#">HTML</a></li>
+              <li class="format tab plain" data-message-format="plain"><a href="#">Plain Text</a></li>
+              <li class="format tab source" data-message-format="source"><a href="#">Source</a></li>
+            </ul>
+          </nav>
+          <a href="#" class="download-btn" data-message-format="html">
+            <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download
+          </a>
+        </div>
       </header>
       <iframe class="body"></iframe>
     </article>
@@ -468,11 +507,6 @@
         }
       });
 
-      document.getElementById('wsTestBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.location.href = '/websocket-test';
-      });
-
       const quitBtn = document.getElementById('quitBtn');
       if (quitBtn) {
         quitBtn.addEventListener('click', function(e) {
@@ -491,6 +525,15 @@
       if (tbody) {
         observer.observe(tbody, { childList: true });
       }
+
+      // Handle download button
+      document.querySelector('.download-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        const link = document.querySelector('a[title="Download"]');
+        if (link) {
+          link.click();
+        }
+      });
     });
   </script>
 </body>
