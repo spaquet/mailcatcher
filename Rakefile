@@ -31,6 +31,16 @@ task "assets" do
       asset.write_to target
     end
   end
+
+  # Copy image assets referenced by stylesheets
+  assets_dir = File.expand_path("../assets/images", __FILE__)
+  if Dir.exist?(assets_dir)
+    Dir.glob("#{assets_dir}/*.png").each do |image_path|
+      filename = File.basename(image_path)
+      target = File.join(compiled_path, filename)
+      FileUtils.cp(image_path, target)
+    end
+  end
 end
 
 desc "Package as Gem"

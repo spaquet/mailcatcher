@@ -92,7 +92,9 @@ module MailCatcher
           bus_subscription = nil
 
           ws = Faye::WebSocket.new(request.env)
+
           ws.on(:open) do |_|
+            $stderr.puts "[WebSocket] Connection opened"
             bus_subscription = MailCatcher::Bus.subscribe do |message|
               begin
                 $stderr.puts "[WebSocket] Sending message: #{message.inspect}"
@@ -105,7 +107,12 @@ module MailCatcher
           end
 
           ws.on(:close) do |_|
+            $stderr.puts "[WebSocket] Connection closed"
             MailCatcher::Bus.unsubscribe(bus_subscription) if bus_subscription
+          end
+
+          ws.on(:error) do |event|
+            $stderr.puts "[WebSocket] WebSocket error: #{event}"
           end
 
           ws.rack_response
