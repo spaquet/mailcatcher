@@ -234,10 +234,16 @@ class MailCatcher
       attachmentMatches = true
       messageId = $row.attr("data-message-id")
       if messageId and attachmentFilter != "all"
-        # Get message data from DOM if available, or make a request
-        # For now, we'll check if the row contains attachment info in the data attribute
-        # We need to track attachment info when messages are loaded
-        hasAttachments = $row.data("has-attachments") || false
+        hasAttachments = $row.data("has-attachments")
+
+        # If we don't have attachment data yet, fetch it from the server
+        if hasAttachments == undefined
+          $.getJSON "messages/#{messageId}.json", (message) =>
+            $row.data("has-attachments", message.attachments && message.attachments.length > 0)
+            # Reapply filters after loading the data
+            @applyFilters()
+          return
+
         if attachmentFilter == "with"
           attachmentMatches = hasAttachments
         else if attachmentFilter == "without"
@@ -313,6 +319,10 @@ class MailCatcher
       @scrollToRow(messageRow)
 
       $.getJSON "messages/#{id}.json", (message) =>
+        # Update the row's attachment data
+        messageRow = $("#messages tbody tr[data-message-id='#{id}']")
+        messageRow.data("has-attachments", message.attachments && message.attachments.length > 0)
+
         $("#message .metadata dd.created_at").text(@formatDate message.created_at)
         $("#message .metadata dd.from").text(@cleanEmailAddress(message.sender))
         $("#message .metadata dd.to").text((message.recipients || []).map((email) => @cleanEmailAddress(email)).join(", "))
