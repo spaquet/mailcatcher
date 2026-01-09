@@ -1,9 +1,5 @@
-#= require modernizr
 #= require jquery
-#= require date
 #= require favcount
-#= require keymaster
-#= require url
 
 # Add a new jQuery selector expression which does a case-insensitive :contains
 jQuery.expr.pseudos.icontains = (a, i, m) ->
@@ -67,68 +63,82 @@ class MailCatcher
 
     @favcount = new Favcount($("""link[rel="icon"]""").attr("href"))
 
-    key "up", =>
-      if @selectedMessage()
-        @loadMessage $("#messages tr.selected").prevAll(":visible").first().data("message-id")
-      else
-        @loadMessage $("#messages tbody tr[data-message-id]").first().data("message-id")
-      false
+    # Keyboard shortcuts using native keyboard events
+    document.addEventListener "keydown", (e) =>
+      # Don't trigger shortcuts when typing in search box
+      return if e.target.type == "search"
 
-    key "down", =>
-      if @selectedMessage()
-        @loadMessage $("#messages tr.selected").nextAll(":visible").data("message-id")
-      else
-        @loadMessage $("#messages tbody tr[data-message-id]:first").data("message-id")
-      false
+      switch e.code
+        when "ArrowUp"
+          e.preventDefault()
+          if @selectedMessage()
+            @loadMessage $("#messages tr.selected").prevAll(":visible").first().data("message-id")
+          else
+            @loadMessage $("#messages tbody tr[data-message-id]").first().data("message-id")
 
-    key "⌘+up, ctrl+up", =>
-      @loadMessage $("#messages tbody tr[data-message-id]:visible").first().data("message-id")
-      false
+        when "ArrowDown"
+          e.preventDefault()
+          if @selectedMessage()
+            @loadMessage $("#messages tr.selected").nextAll(":visible").data("message-id")
+          else
+            @loadMessage $("#messages tbody tr[data-message-id]:first").data("message-id")
 
-    key "⌘+down, ctrl+down", =>
-      @loadMessage $("#messages tbody tr[data-message-id]:visible").first().data("message-id")
-      false
+        when "ArrowLeft"
+          e.preventDefault()
+          @openTab @previousTab()
 
-    key "left", =>
-      @openTab @previousTab()
-      false
+        when "ArrowRight"
+          e.preventDefault()
+          @openTab @nextTab()
 
-    key "right", =>
-      @openTab @nextTab()
-      false
+        when "Backspace", "Delete"
+          e.preventDefault()
+          id = @selectedMessage()
+          if id?
+            $.ajax
+              url: new URL("messages/#{id}", document.baseURI).toString()
+              type: "DELETE"
+              success: =>
+                @removeMessage(id)
+              error: ->
+                alert "Error while removing message."
 
-    key "backspace, delete", =>
-      id = @selectedMessage()
-      if id?
-        $.ajax
-          url: new URL("messages/#{id}", document.baseURI).toString()
-          type: "DELETE"
-          success: =>
-            @removeMessage(id)
-
-          error: ->
-            alert "Error while removing message."
-      false
+      # Handle Ctrl+Up / Cmd+Up and Ctrl+Down / Cmd+Down
+      if (e.ctrlKey or e.metaKey)
+        switch e.code
+          when "ArrowUp"
+            e.preventDefault()
+            @loadMessage $("#messages tbody tr[data-message-id]:visible").first().data("message-id")
+          when "ArrowDown"
+            e.preventDefault()
+            @loadMessage $("#messages tbody tr[data-message-id]:visible").last().data("message-id")
 
     @refresh()
     @subscribe()
 
-  # Only here because Safari's Date parsing *sucks*
-  # We throw away the timezone, but you could use it for something...
-  parseDateRegexp: /^(\d{4})[-\/\\](\d{2})[-\/\\](\d{2})(?:\s+|T)(\d{2})[:-](\d{2})[:-](\d{2})(?:([ +-]\d{2}:\d{2}|\s*\S+|Z?))?$/
-  parseDate: (date) ->
-    if match = @parseDateRegexp.exec(date)
-      new Date match[1], match[2] - 1, match[3], match[4], match[5], match[6], 0
-
-  offsetTimeZone: (date) ->
-    offset = Date.now().getTimezoneOffset() * 60000 #convert timezone difference to milliseconds
-    date.setTime(date.getTime() - offset)
-    date
+  parseDate: (dateString) ->
+    if typeof dateString == "string"
+      new Date(dateString)
+    else
+      dateString
 
   formatDate: (date) ->
-    date &&= @parseDate(date) if typeof(date) == "string"
-    date &&= @offsetTimeZone(date)
-    date &&= date.toString("dddd, d MMM yyyy h:mm:ss tt")
+    date = @parseDate(date) if typeof(date) == "string"
+    return null unless date
+
+    # Format: "Day, DD MMM YYYY HH:MM:SS"
+    days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    dayName = days[date.getDay()]
+    day = String(date.getDate()).padStart(2, '0')
+    month = months[date.getMonth()]
+    year = date.getFullYear()
+    hours = String(date.getHours()).padStart(2, '0')
+    minutes = String(date.getMinutes()).padStart(2, '0')
+    seconds = String(date.getSeconds()).padStart(2, '0')
+
+    "#{dayName}, #{day} #{month} #{year} #{hours}:#{minutes}:#{seconds}"
 
   formatSize: (bytes) ->
     unless bytes
