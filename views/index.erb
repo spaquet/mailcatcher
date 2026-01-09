@@ -6,6 +6,336 @@
   <link href="favicon.ico" rel="icon">
   <script src="<%= asset_path("mailcatcher.js") %>"></script>
   <link rel="stylesheet" href="<%= asset_path("mailcatcher.css") %>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    header h1 a {
+      color: #1976d2;
+      text-decoration: none;
+    }
+
+    header h1 a:hover {
+      color: #1565c0;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+
+    .header-info {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #f0f0f0;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4caf50;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .status-badge.disconnected .indicator {
+      background: #f44336;
+      animation: none;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #1976d2;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1565c0;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .email-count {
+      font-size: 13px;
+      color: #666;
+      padding: 6px 12px;
+    }
+
+    main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    #messages {
+      flex: 0 0 40%;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border-right: 1px solid #e0e0e0;
+      overflow: hidden;
+    }
+
+    #messages table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    #messages thead {
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    #messages th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #666;
+      border-right: 1px solid #f0f0f0;
+    }
+
+    #messages th:last-child {
+      border-right: none;
+    }
+
+    #messages tbody {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    #messages tr {
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #messages tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    #messages tr.selected {
+      background-color: #e3f2fd;
+    }
+
+    #messages tr.selected:hover {
+      background-color: #bbdefb;
+    }
+
+    #messages td {
+      padding: 12px;
+      border-right: 1px solid #f0f0f0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #messages td:last-child {
+      border-right: none;
+    }
+
+    #messages td.blank {
+      color: #999;
+      font-style: italic;
+    }
+
+    #resizer {
+      width: 4px;
+      background: #e0e0e0;
+      cursor: col-resize;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    #resizer:hover {
+      background: #1976d2;
+    }
+
+    #message {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      overflow: hidden;
+    }
+
+    #message > header {
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px;
+      background: #fafafa;
+      overflow-y: auto;
+      max-height: 30%;
+    }
+
+    .metadata {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .metadata dt {
+      font-weight: 600;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .metadata dd {
+      color: #333;
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    .views {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .views ul {
+      list-style: none;
+      display: flex;
+      gap: 8px;
+    }
+
+    .views .format.tab a,
+    .views .action.download a {
+      padding: 8px 12px;
+      border-radius: 4px;
+      background: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+
+    .views .format.tab a:hover {
+      background: #e0e0e0;
+    }
+
+    .views .format.tab.selected a {
+      background: #1976d2;
+      color: white;
+    }
+
+    #message iframe.body {
+      flex: 1;
+      border: none;
+      background: white;
+    }
+
+    #noscript-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #noscript {
+      text-align: center;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
   <noscript>
@@ -15,57 +345,153 @@
       </div>
     </div>
   </noscript>
+
   <header>
     <h1><a href="https://mailcatcher.me" target="_blank">MailCatcher</a></h1>
-    <nav class="app">
-      <ul>
-        <li class="search"><input type="search" name="search" placeholder="Search messages..." incremental="true" /></li>
-        <li class="clear"><a href="#" title="Clear all messages">Clear</a></li>
-        <% if MailCatcher.quittable? %>
-          <li class="quit"><a href="#" title="Quit MailCatcher">Quit</a></li>
-        <% end %>
-      </ul>
-    </nav>
+    <div class="header-controls">
+      <div class="search-box">
+        <input type="search" name="search" placeholder="Search messages..." incremental="true" />
+      </div>
+      <div class="header-info">
+        <div class="status-badge" id="websocketStatus">
+          <div class="indicator"></div>
+          <span id="statusText">Connected</span>
+        </div>
+        <div class="email-count" id="emailCount">0 emails</div>
+        <div class="action-buttons">
+          <button class="btn btn-secondary" id="clearBtn" title="Clear all messages">Clear</button>
+          <button class="btn btn-secondary" id="wsTestBtn" title="WebSocket Diagnostics">Test</button>
+          <% if MailCatcher.quittable? %>
+            <button class="btn btn-secondary" id="quitBtn" title="Quit MailCatcher">Quit</button>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </header>
-  <nav id="messages">
-    <table>
-      <thead>
-        <tr>
-          <th>From</th>
-          <th>To</th>
-          <th>Subject</th>
-          <th>Received</th>
-          <th>Size</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </nav>
-  <div id="resizer"><div class="ruler"></div></div>
-  <article id="message">
-    <header>
-      <dl class="metadata">
-        <dt class="created_at">Received</dt>
-        <dd class="created_at"></dd>
-        <dt class="from">From</dt>
-        <dd class="from"></dd>
-        <dt class="to">To</dt>
-        <dd class="to"></dd>
-        <dt class="subject">Subject</dt>
-        <dd class="subject"></dd>
-        <dt class="attachments">Attachments</dt>
-        <dd class="attachments"></dd>
-      </dl>
-      <nav class="views">
-        <ul>
-          <li class="format tab html selected" data-message-format="html"><a href="#">HTML</a></li>
-          <li class="format tab plain" data-message-format="plain"><a href="#">Plain Text</a></li>
-          <li class="format tab source" data-message-format="source"><a href="#">Source</a></li>
-          <li class="action download" data-message-format="html"><a href="#" class="button"><span>Download</span></a></li>
-        </ul>
-      </nav>
-    </header>
-    <iframe class="body"></iframe>
-  </article>
+
+  <main>
+    <nav id="messages">
+      <table>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Subject</th>
+            <th>Received</th>
+            <th>Size</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </nav>
+    <div id="resizer"><div class="ruler"></div></div>
+    <article id="message">
+      <header>
+        <dl class="metadata">
+          <dt class="created_at">Received</dt>
+          <dd class="created_at"></dd>
+          <dt class="from">From</dt>
+          <dd class="from"></dd>
+          <dt class="to">To</dt>
+          <dd class="to"></dd>
+          <dt class="subject">Subject</dt>
+          <dd class="subject"></dd>
+          <dt class="attachments">Attachments</dt>
+          <dd class="attachments"></dd>
+        </dl>
+        <nav class="views">
+          <ul>
+            <li class="format tab html selected" data-message-format="html"><a href="#">HTML</a></li>
+            <li class="format tab plain" data-message-format="plain"><a href="#">Plain Text</a></li>
+            <li class="format tab source" data-message-format="source"><a href="#">Source</a></li>
+            <li class="action download" data-message-format="html"><a href="#" class="button"><span>Download</span></a></li>
+          </ul>
+        </nav>
+      </header>
+      <iframe class="body"></iframe>
+    </article>
+  </main>
+
+  <script>
+    // WebSocket status indicator
+    function updateWebSocketStatus(connected) {
+      const badge = document.getElementById('websocketStatus');
+      const statusText = document.getElementById('statusText');
+      if (connected) {
+        badge.classList.remove('disconnected');
+        statusText.textContent = 'Connected';
+      } else {
+        badge.classList.add('disconnected');
+        statusText.textContent = 'Disconnected';
+      }
+    }
+
+    // Update email count display
+    function updateEmailCount() {
+      const count = document.querySelectorAll('#messages tbody tr').length;
+      document.getElementById('emailCount').textContent = count === 1 ? '1 email' : count + ' emails';
+    }
+
+    // Hook into the MailCatcher object to monitor WebSocket status
+    document.addEventListener('DOMContentLoaded', function() {
+      // Patch the original refresh to update email count
+      const originalRefresh = window.MailCatcher?.refresh;
+      if (originalRefresh) {
+        window.MailCatcher.refresh = function() {
+          originalRefresh.call(this);
+          updateEmailCount();
+        };
+      }
+
+      // Patch subscribeWebSocket to track status
+      const originalSubscribeWebSocket = window.MailCatcher?.subscribeWebSocket;
+      if (originalSubscribeWebSocket) {
+        window.MailCatcher.subscribeWebSocket = function() {
+          originalSubscribeWebSocket.call(this);
+          const checkStatus = setInterval(() => {
+            if (this.websocket) {
+              updateWebSocketStatus(this.websocket.readyState === 1);
+            }
+          }, 500);
+        };
+      }
+
+      // Setup button handlers
+      document.getElementById('clearBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        if (window.MailCatcher && document.querySelectorAll('#messages tbody tr').length > 0) {
+          const confirmText = 'You will lose all your received messages.\n\nAre you sure you want to clear all messages?';
+          if (confirm(confirmText)) {
+            const clearLink = document.querySelector('a[title="Clear all messages"]');
+            if (clearLink) clearLink.click();
+          }
+        }
+      });
+
+      document.getElementById('wsTestBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/websocket-test';
+      });
+
+      const quitBtn = document.getElementById('quitBtn');
+      if (quitBtn) {
+        quitBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const confirmText = 'You will lose all your received messages.\n\nAre you sure you want to quit?';
+          if (confirm(confirmText)) {
+            const quitLink = document.querySelector('a[title="Quit MailCatcher"]');
+            if (quitLink) quitLink.click();
+          }
+        });
+      }
+
+      // Monitor updates for email count
+      const observer = new MutationObserver(() => updateEmailCount());
+      const tbody = document.querySelector('#messages tbody');
+      if (tbody) {
+        observer.observe(tbody, { childList: true });
+      }
+    });
+  </script>
 </body>
 </html>

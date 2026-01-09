@@ -1,6 +1,118 @@
+<!DOCTYPE html>
 <html>
+<head>
+  <title>Not Found - MailCatcher</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 60px 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+    }
+
+    .icon {
+      font-size: 64px;
+      margin-bottom: 24px;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #1976d2;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1565c0;
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .error-code {
+      font-size: 14px;
+      color: #999;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid #e0e0e0;
+      font-family: monospace;
+    }
+  </style>
+</head>
 <body>
-  <h1>No Dice</h1>
-  <p>The message you were looking for does not exist, or doesn't have content of this type.</p>
+  <div class="container">
+    <div class="icon">📬</div>
+    <h1>Not Found</h1>
+    <p class="subtitle">
+      The message you were looking for does not exist, or doesn't have content of this type.
+    </p>
+    <div class="actions">
+      <a href="/" class="btn btn-primary">Back to Inbox</a>
+      <a href="/websocket-test" class="btn btn-secondary">Diagnostics</a>
+    </div>
+    <div class="error-code">Error 404</div>
+  </div>
 </body>
 </html>
