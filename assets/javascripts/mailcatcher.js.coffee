@@ -330,6 +330,7 @@ class MailCatcher
 
     @websocket.onopen = =>
       console.log "[MailCatcher] WebSocket connection established"
+      @updateWebSocketStatus(true)
 
     @websocket.onmessage = (event) =>
       try
@@ -348,9 +349,11 @@ class MailCatcher
 
     @websocket.onerror = (event) =>
       console.error "[MailCatcher] WebSocket error:", event
+      @updateWebSocketStatus(false)
 
     @websocket.onclose = =>
       console.log "[MailCatcher] WebSocket connection closed, falling back to polling"
+      @updateWebSocketStatus(false)
       @subscribePoll()
 
   subscribePoll: ->
@@ -368,6 +371,17 @@ class MailCatcher
     height = parseInt(window.localStorage?.getItem(@resizeToSavedKey))
     unless isNaN height
       @resizeTo height
+
+  updateWebSocketStatus: (connected) ->
+    badge = document.getElementById("websocketStatus")
+    statusText = document.getElementById("statusText")
+    if badge and statusText
+      if connected
+        badge.classList.remove("disconnected")
+        statusText.textContent = "Connected"
+      else
+        badge.classList.add("disconnected")
+        statusText.textContent = "Disconnected"
 
   hasQuit: ->
 

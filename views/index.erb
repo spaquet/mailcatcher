@@ -551,26 +551,13 @@
   </main>
 
   <script>
-    // WebSocket status indicator
-    function updateWebSocketStatus(connected) {
-      const badge = document.getElementById('websocketStatus');
-      const statusText = document.getElementById('statusText');
-      if (connected) {
-        badge.classList.remove('disconnected');
-        statusText.textContent = 'Connected';
-      } else {
-        badge.classList.add('disconnected');
-        statusText.textContent = 'Disconnected';
-      }
-    }
-
     // Update email count display
     function updateEmailCount() {
       const count = document.querySelectorAll('#messages tbody tr').length;
       document.getElementById('emailCount').textContent = count === 1 ? '1 email' : count + ' emails';
     }
 
-    // Hook into the MailCatcher object to monitor WebSocket status
+    // Setup additional UI handlers
     document.addEventListener('DOMContentLoaded', function() {
       // Patch the original refresh to update email count
       const originalRefresh = window.MailCatcher?.refresh;
@@ -578,33 +565,6 @@
         window.MailCatcher.refresh = function() {
           originalRefresh.call(this);
           updateEmailCount();
-        };
-      }
-
-      // Patch subscribeWebSocket to track status
-      const originalSubscribeWebSocket = window.MailCatcher?.subscribeWebSocket;
-      if (originalSubscribeWebSocket) {
-        window.MailCatcher.subscribeWebSocket = function() {
-          originalSubscribeWebSocket.call(this);
-          if (this.websocket) {
-            // Wrap existing handlers to also update status indicator
-            const originalOnopen = this.websocket.onopen;
-            const originalOnclose = this.websocket.onclose;
-            const originalOnerror = this.websocket.onerror;
-
-            this.websocket.onopen = (event) => {
-              updateWebSocketStatus(true);
-              if (originalOnopen) originalOnopen.call(this.websocket, event);
-            };
-            this.websocket.onclose = (event) => {
-              updateWebSocketStatus(false);
-              if (originalOnclose) originalOnclose.call(this.websocket, event);
-            };
-            this.websocket.onerror = (event) => {
-              updateWebSocketStatus(false);
-              if (originalOnerror) originalOnerror.call(this.websocket, event);
-            };
-          }
         };
       }
 
