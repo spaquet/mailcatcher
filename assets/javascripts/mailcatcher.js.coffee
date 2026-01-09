@@ -130,6 +130,17 @@ class MailCatcher
     date &&= @offsetTimeZone(date)
     date &&= date.toString("dddd, d MMM yyyy h:mm:ss tt")
 
+  formatSize: (bytes) ->
+    unless bytes
+      return "-"
+    bytes = parseInt(bytes)
+    if bytes == 0
+      return "0 B"
+    k = 1024
+    sizes = ["B", "KB", "MB", "GB"]
+    i = Math.floor(Math.log(bytes) / Math.log(k))
+    (bytes / Math.pow(k, i)).toFixed(2).replace(/\.?0+$/, "") + " " + sizes[i]
+
   messagesCount: ->
     $("#messages tr").length - 1
 
@@ -187,6 +198,7 @@ class MailCatcher
       .append($("<td/>").text((message.recipients || []).join(", ") or "No recipients").toggleClass("blank", !message.recipients.length))
       .append($("<td/>").text(message.subject or "No subject").toggleClass("blank", !message.subject))
       .append($("<td/>").text(@formatDate(message.created_at)))
+      .append($("<td/>").text(@formatSize(message.size)))
       .prependTo($("#messages tbody"))
     @updateMessagesCount()
 
