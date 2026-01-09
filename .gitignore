@@ -14,3 +14,24 @@
 
 # Temp area, used for testing artifacts
 /tmp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# Ruby
+.ruby-version
+.ruby-gemset
+*.rbc
+*.lock

@@ -26,7 +26,23 @@ jobs:
     - uses: actions/setup-node@v4
 
     - name: Build gem
-      run: bundle exec rake package
+      run: |
+        echo "Building assets and gem..."
+        bundle exec rake package
+
+    - name: Verify assets in gem
+      run: |
+        echo "Checking compiled assets..."
+        ls -lh public/assets/
+        echo ""
+        echo "Verifying gem contains assets..."
+        ASSET_COUNT=$(tar -tzf mailcatcher-*.gem | grep -E "(public/assets|favicon)" | wc -l)
+        echo "Found $ASSET_COUNT assets in gem"
+        if [ "$ASSET_COUNT" -lt 3 ]; then
+          echo "ERROR: Assets missing from gem!"
+          exit 1
+        fi
+        tar -tzf mailcatcher-*.gem | grep -E "(public/assets|favicon)" | sort
 
     - name: Upload gem artifacts
       uses: actions/upload-artifact@v4
