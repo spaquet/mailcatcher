@@ -192,26 +192,23 @@ if DEBUG:
 
 ### Docker
 
-There is a Docker image available [on Docker Hub](https://hub.docker.com/r/sj26/mailcatcher):
+The official MailCatcher Docker image is available [on Docker Hub](https://hub.docker.com/r/stpaquet/alpinemailcatcher):
 
 ```
-$ docker run -p 1080 -p 1025 sj26/mailcatcher
-Unable to find image 'sj26/mailcatcher:latest' locally
-latest: Pulling from sj26/mailcatcher
-8c6d1654570f: Already exists
-f5649d186f41: Already exists
-b850834ea1df: Already exists
-d6ac1a07fd46: Pull complete
-b609298bc3c9: Pull complete
-ab05825ece51: Pull complete
-Digest: sha256:b17c45de08a0a82b012d90d4bd048620952c475f5655c61eef373318de6c0855
-Status: Downloaded newer image for sj26/mailcatcher:latest
-Starting MailCatcher v0.11.2
+$ docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher
+Unable to find image 'stpaquet/alpinemailcatcher:latest' locally
+latest: Pulling from stpaquet/alpinemailcatcher
+4abcf2090661: Pull complete
+9f403268fa96: Pull complete
+6c9f5f5b4c6d: Pull complete
+Digest: sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0
+Status: Downloaded newer image for stpaquet/alpinemailcatcher:latest
+Starting MailCatcher v0.12.0
 ==> smtp://0.0.0.0:1025
 ==> http://0.0.0.0:1080
 ```
 
-How those ports appear and can be accessed may vary based on your Docker configuration. For example, your may need to use `http://127.0.0.1:1080` etc instead of the listed address. But MailCatcher will run and listen to those ports on all IPs it can from within the Docker container.
+How those ports appear and can be accessed may vary based on your Docker configuration. For example, you may need to use `http://127.0.0.1:1080` or `smtp://127.0.0.1:1025` instead of the listed address. The image is Alpine Linux based for minimal size and quick startup.
 
 ### API
 

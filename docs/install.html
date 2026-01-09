@@ -101,9 +101,10 @@ MAIL_ENCRYPTION=null</code></pre>
                 <!-- Docker -->
                 <div class="install-section">
                     <h2>Docker</h2>
-                    <p>Run MailCatcher in Docker:</p>
-                    <pre><code>docker run -p 1080:1080 -p 1025:1025 sj26/mailcatcher</code></pre>
-                    <p>Then access the web interface at <code>http://127.0.0.1:1080</code></p>
+                    <p>Run MailCatcher with the official Alpine Linux image:</p>
+                    <pre><code>docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher</code></pre>
+                    <p>Then access the web interface at <code>http://127.0.0.1:1080</code> and send mail to <code>smtp://127.0.0.1:1025</code></p>
+                    <p>View the image on <a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher" target="_blank">Docker Hub</a></p>
                 </div>
 
                 <!-- Command Line Options -->
