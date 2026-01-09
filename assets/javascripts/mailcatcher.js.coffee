@@ -184,10 +184,17 @@ class MailCatcher
     $("#messages tr.selected").data "message-id"
 
   searchMessages: (query) ->
-    selector = (":icontains('#{token}')" for token in query.split /\s+/).join("")
     $rows = $("#messages tbody tr")
-    $rows.not(selector).hide()
-    $rows.filter(selector).show()
+    tokens = query.split /\s+/
+
+    $rows.each (i, row) ->
+      $row = $(row)
+      text = $row.text().toUpperCase()
+      matches = tokens.every (token) -> text.indexOf(token.toUpperCase()) >= 0
+      if matches
+        $row.show()
+      else
+        $row.hide()
 
   clearSearch: ->
     $("#messages tbody tr").show()
