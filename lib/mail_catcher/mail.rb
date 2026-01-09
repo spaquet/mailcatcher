@@ -75,7 +75,7 @@ module MailCatcher::Mail extend self
   def messages
     @messages_query ||= db.prepare "SELECT id, sender, recipients, subject, size, created_at FROM message ORDER BY created_at, id ASC"
     @messages_query.execute.map do |row|
-      Hash[row.fields.zip(row)].tap do |message|
+      Hash[@messages_query.columns.zip(row)].tap do |message|
         message["recipients"] &&= JSON.parse(message["recipients"])
       end
     end
@@ -84,7 +84,7 @@ module MailCatcher::Mail extend self
   def message(id)
     @message_query ||= db.prepare "SELECT id, sender, recipients, subject, size, type, created_at FROM message WHERE id = ? LIMIT 1"
     row = @message_query.execute(id).next
-    row && Hash[row.fields.zip(row)].tap do |message|
+    row && Hash[@message_query.columns.zip(row)].tap do |message|
       message["recipients"] &&= JSON.parse(message["recipients"])
     end
   end
@@ -108,27 +108,27 @@ module MailCatcher::Mail extend self
   def message_parts(id)
     @message_parts_query ||= db.prepare "SELECT cid, type, filename, size FROM message_part WHERE message_id = ? ORDER BY filename ASC"
     @message_parts_query.execute(id).map do |row|
-      Hash[row.fields.zip(row)]
+      Hash[@message_parts_query.columns.zip(row)]
     end
   end
 
   def message_attachments(id)
-    @message_parts_query ||= db.prepare "SELECT cid, type, filename, size FROM message_part WHERE message_id = ? AND is_attachment = 1 ORDER BY filename ASC"
-    @message_parts_query.execute(id).map do |row|
-      Hash[row.fields.zip(row)]
+    @message_attachments_query ||= db.prepare "SELECT cid, type, filename, size FROM message_part WHERE message_id = ? AND is_attachment = 1 ORDER BY filename ASC"
+    @message_attachments_query.execute(id).map do |row|
+      Hash[@message_attachments_query.columns.zip(row)]
     end
   end
 
   def message_part(message_id, part_id)
     @message_part_query ||= db.prepare "SELECT * FROM message_part WHERE message_id = ? AND id = ? LIMIT 1"
     row = @message_part_query.execute(message_id, part_id).next
-    row && Hash[row.fields.zip(row)]
+    row && Hash[@message_part_query.columns.zip(row)]
   end
 
   def message_part_type(message_id, part_type)
     @message_part_type_query ||= db.prepare "SELECT * FROM message_part WHERE message_id = ? AND type = ? AND is_attachment = 0 LIMIT 1"
     row = @message_part_type_query.execute(message_id, part_type).next
-    row && Hash[row.fields.zip(row)]
+    row && Hash[@message_part_type_query.columns.zip(row)]
   end
 
   def message_part_html(message_id)
@@ -147,7 +147,7 @@ module MailCatcher::Mail extend self
   def message_part_cid(message_id, cid)
     @message_part_cid_query ||= db.prepare "SELECT * FROM message_part WHERE message_id = ?"
     @message_part_cid_query.execute(message_id).map do |row|
-      Hash[row.fields.zip(row)]
+      Hash[@message_part_cid_query.columns.zip(row)]
     end.find do |part|
       part["cid"] == cid
     end
@@ -175,7 +175,7 @@ module MailCatcher::Mail extend self
     return if count.nil?
     @older_messages_query ||= db.prepare "SELECT id FROM message WHERE id NOT IN (SELECT id FROM message ORDER BY created_at DESC LIMIT ?)"
     @older_messages_query.execute(count).map do |row|
-      Hash[row.fields.zip(row)]
+      Hash[@older_messages_query.columns.zip(row)]
     end.each do |message|
       delete_message!(message["id"])
     end
