@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MailCatcher - Catches all mail and serves it through a dream. A super simple SMTP server with beautiful web interface for development. Fork with enhanced features and improved UI.">
+    <meta name="keywords" content="mailcatcher, SMTP, email testing, development, web interface, email debugging, mail server">
+    <meta name="author" content="Samuel Paquet">
+    <meta name="theme-color" content="#0f172a">
+    <meta property="og:title" content="MailCatcher - Email Testing Made Beautiful">
+    <meta property="og:description" content="Catch and visualize email in development with MailCatcher's elegant web interface. Real-time updates, WebSocket support, and instant mail capture.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/spaquet/mailcatcher/main/screenshots/inbox.webp">
+    <meta property="og:url" content="https://spaquet.github.io/mailcatcher/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MailCatcher - Email Testing Made Beautiful">
+    <meta name="twitter:description" content="Catch and visualize email in development with MailCatcher's elegant web interface.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/spaquet/mailcatcher/main/screenshots/inbox.webp">
+
+    <title>MailCatcher - Email Testing Made Beautiful</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230f172a' width='100' height='100'/><path fill='%23ec4899' d='M50 20 L70 40 L70 70 Q70 80 60 80 L40 80 Q30 80 30 70 L30 40 Z M35 35 L50 50 L65 35'/></svg>">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">📧</span>
+                MailCatcher
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="install.html" class="nav-link">Install</a></li>
+                <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
+                <li><a href="https://github.com/sj26/mailcatcher" class="nav-link original" target="_blank">Original</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="gradient-text">Catch Email</span>
+                <span class="block">Like a Dream</span>
+            </h1>
+            <p class="hero-subtitle">
+                A beautiful SMTP server that catches all mail and displays it in an elegant web interface.
+                Perfect for development. Real-time updates. Zero configuration.
+            </p>
+            <div class="hero-cta">
+                <a href="install.html" class="btn btn-primary">Get Started</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-card">
+                <div class="card-header">📧 Inbox</div>
+                <div class="card-body">
+                    <div class="mail-item">
+                        <div class="mail-from">Welcome Email</div>
+                        <div class="mail-preview">Thank you for signing up...</div>
+                    </div>
+                    <div class="mail-item">
+                        <div class="mail-from">Password Reset</div>
+                        <div class="mail-preview">Click here to reset your password</div>
+                    </div>
+                    <div class="mail-item active">
+                        <div class="mail-from">Notification</div>
+                        <div class="mail-preview">Your order has been confirmed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-Time Updates</h3>
+                    <p>WebSocket support for instant mail delivery with automatic reconnection and exponential backoff.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Beautiful Interface</h3>
+                    <p>Elegant, intuitive web UI with HTML, plain text, and source views for every message.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📎</div>
+                    <h3>Attachment Handling</h3>
+                    <p>List attachments, download individual parts, and view complete original messages.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⌨️</div>
+                    <h3>Keyboard Navigation</h3>
+                    <p>Navigate through messages with keyboard shortcuts for power users and developers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Zero Configuration</h3>
+                    <p>Works out of the box with sensible defaults. Customize ports and settings as needed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Framework Agnostic</h3>
+                    <p>Works with Rails, Django, PHP, Laravel, or any framework that can send SMTP mail.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshot Section -->
+    <section class="screenshot">
+        <div class="container">
+            <h2 class="section-title">See It In Action</h2>
+            <div class="screenshot-wrapper">
+                <img src="https://raw.githubusercontent.com/spaquet/mailcatcher/main/screenshots/inbox.webp"
+                     alt="MailCatcher inbox interface showing email messages"
+                     class="screenshot-image"
+                     loading="lazy">
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section class="quick-start">
+        <div class="container">
+            <h2 class="section-title">Quick Start</h2>
+            <div class="quick-start-content">
+                <div class="code-example">
+                    <div class="code-header">Installation</div>
+                    <pre><code>gem install mailcatcher</code></pre>
+                </div>
+                <div class="code-example">
+                    <div class="code-header">Start Server</div>
+                    <pre><code>mailcatcher
+# View mail at http://127.0.0.1:1080
+# Send mail to smtp://127.0.0.1:1025</code></pre>
+                </div>
+                <div class="code-example">
+                    <div class="code-header">Rails Configuration</div>
+                    <pre><code>config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  address: '127.0.0.1',
+  port: 1025
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About This Fork Section -->
+    <section class="about-fork">
+        <div class="container">
+            <h2 class="section-title">About This Fork</h2>
+            <div class="fork-info">
+                <div class="fork-text">
+                    <p>
+                        This is an enhanced fork of the original MailCatcher by Samuel Cochran.
+                        We've improved the UI, added new features, and optimized the codebase for modern development workflows.
+                    </p>
+                    <p>
+                        The original MailCatcher remains the gold standard for email testing in development.
+                        This fork builds on that solid foundation with additional polish and features.
+                    </p>
+                    <a href="https://github.com/sj26/mailcatcher" class="link-to-original" target="_blank">
+                        → Visit Original Project on GitHub
+                    </a>
+                </div>
+                <div class="comparison">
+                    <h3>What's New in This Fork</h3>
+                    <ul class="feature-list">
+                        <li>✨ Enhanced UI with improved design</li>
+                        <li>⚡ Performance optimizations</li>
+                        <li>🎯 Better error handling</li>
+                        <li>📱 Improved mobile responsiveness</li>
+                        <li>🔍 Search and filter improvements</li>
+                        <li>🚀 Modern dependency updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>MailCatcher</h4>
+                    <p>Email testing made beautiful for developers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/spaquet/mailcatcher">This Fork</a></li>
+                        <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
+                        <li><a href="https://rubygems.org/gems/mailcatcher">RubyGems</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="https://github.com/spaquet/mailcatcher#command-line-options">CLI Options</a></li>
+                        <li><a href="https://github.com/spaquet/mailcatcher#api">API Reference</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Samuel Paquet. MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

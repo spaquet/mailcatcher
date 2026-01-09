@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MailCatcher installation guide. Easy setup instructions for macOS, Linux, Docker, and various frameworks.">
+    <meta name="keywords" content="mailcatcher installation, setup guide, docker, rails, django, php">
+    <meta name="og:title" content="Installation - MailCatcher">
+    <meta name="og:description" content="Get MailCatcher running in minutes with our comprehensive installation guide.">
+    <title>Installation Guide - MailCatcher</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">📧</span>
+                MailCatcher
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="install.html" class="nav-link active">Install</a></li>
+                <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
+                <li><a href="https://github.com/sj26/mailcatcher" class="nav-link original" target="_blank">Original</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Installation & Setup</h1>
+            <p>Get MailCatcher up and running in minutes</p>
+        </div>
+    </section>
+
+    <!-- Installation Content -->
+    <section class="install-content">
+        <div class="container">
+            <div class="install-sections">
+                <!-- Basic Installation -->
+                <div class="install-section">
+                    <h2>Basic Installation</h2>
+                    <p>MailCatcher requires Ruby 3.2 or higher. Ensure you have Ruby installed:</p>
+                    <pre><code>ruby -v</code></pre>
+                    <p>Then install via RubyGems:</p>
+                    <pre><code>gem install mailcatcher</code></pre>
+                    <p>Start the server:</p>
+                    <pre><code>mailcatcher
+# View mail at http://127.0.0.1:1080
+# Send mail to smtp://127.0.0.1:1025</code></pre>
+                </div>
+
+                <!-- Development Mode -->
+                <div class="install-section">
+                    <h2>Development Mode</h2>
+                    <p>Run in foreground with custom ports:</p>
+                    <pre><code>MAILCATCHER_ENV=development bundle exec mailcatcher \
+  --foreground \
+  --smtp-port 1025 \
+  --http-port 1080</code></pre>
+                </div>
+
+                <!-- Framework Integration -->
+                <div class="install-section">
+                    <h2>Framework Integration</h2>
+
+                    <h3>Rails</h3>
+                    <p>Add to <code>config/environments/development.rb</code>:</p>
+                    <pre><code>config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  address: '127.0.0.1',
+  port: 1025
+}
+config.action_mailer.raise_delivery_errors = false</code></pre>
+
+                    <h3>Django</h3>
+                    <p>Add to <code>settings.py</code>:</p>
+                    <pre><code>if DEBUG:
+    EMAIL_HOST = '127.0.0.1'
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+    EMAIL_PORT = 1025
+    EMAIL_USE_TLS = False</code></pre>
+
+                    <h3>PHP / Laravel</h3>
+                    <p>Update <code>.env</code>:</p>
+                    <pre><code>MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null</code></pre>
+
+                    <h3>PHP Mail Function</h3>
+                    <p>Update <code>php.ini</code> sendmail path:</p>
+                    <pre><code>sendmail_path = /usr/bin/env catchmail -f from@example.com</code></pre>
+                </div>
+
+                <!-- Docker -->
+                <div class="install-section">
+                    <h2>Docker</h2>
+                    <p>Run MailCatcher in Docker:</p>
+                    <pre><code>docker run -p 1080:1080 -p 1025:1025 sj26/mailcatcher</code></pre>
+                    <p>Then access the web interface at <code>http://127.0.0.1:1080</code></p>
+                </div>
+
+                <!-- Command Line Options -->
+                <div class="install-section">
+                    <h2>Command Line Options</h2>
+                    <pre><code>mailcatcher --help
+
+Options:
+  --ip IP                    Set IP address for both servers
+  --smtp-ip IP              Set SMTP server IP
+  --smtp-port PORT          Set SMTP port (default: 1025)
+  --http-ip IP              Set HTTP server IP
+  --http-port PORT          Set HTTP port (default: 1080)
+  --messages-limit COUNT    Keep only N most recent messages
+  --http-path PATH          Add prefix to all HTTP paths
+  --no-quit                 Disable quit functionality
+  -f, --foreground          Run in foreground
+  -b, --browse              Open web browser on start
+  -v, --verbose             Be more verbose
+  -h, --help                Show this help
+  --version                 Show version</code></pre>
+                </div>
+
+                <!-- Troubleshooting -->
+                <div class="install-section">
+                    <h2>Troubleshooting</h2>
+
+                    <h3>Port Already in Use</h3>
+                    <p>Use different ports:</p>
+                    <pre><code>mailcatcher --smtp-port 2025 --http-port 2080</code></pre>
+
+                    <h3>Ruby Not Found</h3>
+                    <p>Ensure Ruby 3.2+ is installed:</p>
+                    <pre><code>brew install ruby  # macOS
+apt install ruby   # Ubuntu/Debian</code></pre>
+
+                    <h3>Build Tools Missing</h3>
+                    <p>Install build tools for gem compilation:</p>
+                    <pre><code>apt install build-essential  # Ubuntu/Debian
+xcode-select --install      # macOS</code></pre>
+
+                    <h3>RVM Users</h3>
+                    <p>MailCatcher may only be available in the Ruby version it was installed in:</p>
+                    <pre><code>rvm default@mailcatcher --create do gem install mailcatcher
+ln -s "$(rvm default@mailcatcher do rvm wrapper show mailcatcher)" "$rvm_bin_path/"</code></pre>
+                </div>
+
+                <!-- GitHub Packages -->
+                <div class="install-section">
+                    <h2>Install from GitHub Packages</h2>
+                    <p>This fork is available on GitHub Packages:</p>
+                    <pre><code>gem install mailcatcher \
+  --version "0.12.0" \
+  --source "https://rubygems.pkg.github.com/spaquet"</code></pre>
+                    <p>Or add to your Gemfile:</p>
+                    <pre><code>source "https://rubygems.pkg.github.com/spaquet" do
+  gem "mailcatcher", "~> 0.12.0"
+end</code></pre>
+                </div>
+
+                <!-- From Source -->
+                <div class="install-section">
+                    <h2>Build from Source</h2>
+                    <pre><code>git clone https://github.com/spaquet/mailcatcher.git
+cd mailcatcher
+bundle install
+bundle exec rake package
+gem install mailcatcher-VERSION.gem</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>MailCatcher</h4>
+                    <p>Email testing made beautiful for developers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/spaquet/mailcatcher">This Fork</a></li>
+                        <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
+                        <li><a href="https://rubygems.org/gems/mailcatcher">RubyGems</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="https://github.com/spaquet/mailcatcher#command-line-options">CLI Options</a></li>
+                        <li><a href="https://github.com/spaquet/mailcatcher#api">API Reference</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Samuel Paquet. MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

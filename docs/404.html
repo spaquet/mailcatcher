@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Page not found - MailCatcher documentation">
+    <title>404 - Page Not Found</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .not-found-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .not-found-number {
+            font-size: 8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ec4899 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .not-found-title {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: #f1f5f9;
+        }
+
+        .not-found-text {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 1rem 0 2rem;
+        }
+
+        .not-found-nav {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-icon">📧</span>
+                MailCatcher
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="install.html" class="nav-link">Install</a></li>
+                <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
+                <li><a href="https://github.com/sj26/mailcatcher" class="nav-link original" target="_blank">Original</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 404 Content -->
+    <section class="not-found-section">
+        <h1 class="not-found-number">404</h1>
+        <h2 class="not-found-title">Page Not Found</h2>
+        <p class="not-found-text">
+            The page you're looking for seems to have been caught by the spam filter.
+            Let's get you back on track.
+        </p>
+        <div class="not-found-nav">
+            <a href="index.html" class="btn btn-primary">Back to Home</a>
+            <a href="install.html" class="btn btn-secondary">Installation Guide</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>MailCatcher</h4>
+                    <p>Email testing made beautiful for developers.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/spaquet/mailcatcher">This Fork</a></li>
+                        <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
+                        <li><a href="https://rubygems.org/gems/mailcatcher">RubyGems</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="install.html">Installation</a></li>
+                        <li><a href="https://github.com/spaquet/mailcatcher#api">API Reference</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Samuel Paquet. MIT License.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
