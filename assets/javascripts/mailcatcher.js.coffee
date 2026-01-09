@@ -342,7 +342,6 @@ class MailCatcher
         else if data.type == "clear"
           @clearMessages()
         else if data.type == "quit" and not @quitting
-          alert "MailCatcher has been quit"
           @hasQuit()
       catch e
         console.error "[MailCatcher] Error processing WebSocket message:", e
@@ -371,7 +370,5 @@ class MailCatcher
       @resizeTo height
 
   hasQuit: ->
-    # Server has quit - show a message instead of redirecting
-    alert "MailCatcher server has been shut down."
 
 $ -> window.MailCatcher = new MailCatcher

@@ -20,11 +20,11 @@ task "assets" do
 
   # Sprockets 4.x compatibility: access the internal environment
   environment = sprockets.instance_variable_get(:@environment)
-  environment.css_compressor = :sass
   environment.js_compressor = :uglifier
 
   # Compile specific assets
-  asset_names = ["mailcatcher.js", "mailcatcher.css"]
+  # Note: CSS is now inline in views/index.erb, so we only compile JavaScript
+  asset_names = ["mailcatcher.js"]
   asset_names.each do |asset_name|
     if asset = environment.find_asset(asset_name)
       target = File.join(compiled_path, asset_name)
