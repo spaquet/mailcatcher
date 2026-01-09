@@ -36,8 +36,10 @@ jobs:
         ls -lh public/assets/
         echo ""
         echo "Verifying gem contains assets..."
+        GEM_FILE=$(ls -1 mailcatcher-*.gem | head -1)
+        echo "Gem file: $GEM_FILE"
         cd /tmp && rm -rf gem-check && mkdir gem-check && cd gem-check
-        tar -xf $OLDPWD/mailcatcher-*.gem
+        tar -xf "$GITHUB_WORKSPACE/$GEM_FILE"
         tar -xzf data.tar.gz
         echo "Assets found in gem:"
         find . -type f \( -path "*/public/assets/*" -o -name "favicon.ico" \) | sort
