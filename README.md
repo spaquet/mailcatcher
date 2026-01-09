@@ -26,6 +26,22 @@ MailCatcher runs a super simple SMTP server which catches any message sent to it
 3. Go to http://127.0.0.1:1080/
 4. Send mail through smtp://127.0.0.1:1025
 
+### Installation from GitHub Packages
+
+This fork is published to GitHub Packages. To install from GitHub Packages instead of RubyGems:
+
+```bash
+gem install mailcatcher --version "0.11.2" --source "https://rubygems.pkg.github.com/spaquet"
+```
+
+Or add to your Gemfile:
+
+```ruby
+source "https://rubygems.pkg.github.com/spaquet" do
+  gem "mailcatcher", "~> 0.11.2"
+end
+```
+
 ### Command Line Options
 
 Use `mailcatcher --help` to see the command line options.

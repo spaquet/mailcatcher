@@ -40,10 +40,33 @@ jobs:
     timeout-minutes: 10
 
     steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.4'
+
     - name: Download gem
       uses: actions/download-artifact@v4
       with:
         name: gem-artifacts
+
+    - name: Configure gem credentials for GitHub Packages
+      run: |
+        mkdir -p ~/.gem
+        cat > ~/.gem/credentials << EOF
+        ---
+        :github: Bearer ${{ secrets.GITHUB_TOKEN }}
+        EOF
+        chmod 600 ~/.gem/credentials
+      if: github.event_name == 'release' && github.event.action == 'published'
+
+    - name: Publish to GitHub Packages
+      run: |
+        gem push --key github \
+          --host https://rubygems.pkg.github.com/${{ github.repository_owner }} \
+          mailcatcher-*.gem
+      if: github.event_name == 'release' && github.event.action == 'published'
 
     - name: Publish to GitHub Releases
       uses: softprops/action-gh-release@v1
