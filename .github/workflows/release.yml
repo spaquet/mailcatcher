@@ -36,13 +36,18 @@ jobs:
         ls -lh public/assets/
         echo ""
         echo "Verifying gem contains assets..."
-        ASSET_COUNT=$(tar -tzf mailcatcher-*.gem | grep -E "(public/assets|favicon)" | wc -l)
-        echo "Found $ASSET_COUNT assets in gem"
+        cd /tmp && rm -rf gem-check && mkdir gem-check && cd gem-check
+        tar -xf $OLDPWD/mailcatcher-*.gem
+        tar -xzf data.tar.gz
+        echo "Assets found in gem:"
+        find . -type f \( -path "*/public/assets/*" -o -name "favicon.ico" \) | sort
+        ASSET_COUNT=$(find . -type f \( -path "*/public/assets/*" -o -name "favicon.ico" \) | wc -l)
+        echo ""
+        echo "Total: $ASSET_COUNT assets"
         if [ "$ASSET_COUNT" -lt 3 ]; then
           echo "ERROR: Assets missing from gem!"
           exit 1
         fi
-        tar -tzf mailcatcher-*.gem | grep -E "(public/assets|favicon)" | sort
 
     - name: Upload gem artifacts
       uses: actions/upload-artifact@v4
