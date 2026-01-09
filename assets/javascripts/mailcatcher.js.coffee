@@ -339,6 +339,10 @@ class MailCatcher
     else
       @subscribePoll()
 
+  reconnectWebSocketAttempts: 0
+  maxReconnectAttempts: 10
+  reconnectBaseDelay: 1000  # 1 second
+
   subscribeWebSocket: ->
     secure = window.location.protocol is "https:"
     url = new URL("messages", document.baseURI)
@@ -347,6 +351,7 @@ class MailCatcher
 
     @websocket.onopen = =>
       console.log "[MailCatcher] WebSocket connection established"
+      @reconnectWebSocketAttempts = 0
       @updateWebSocketStatus(true)
 
     @websocket.onmessage = (event) =>
@@ -369,13 +374,23 @@ class MailCatcher
       @updateWebSocketStatus(false)
 
     @websocket.onclose = =>
-      console.log "[MailCatcher] WebSocket connection closed, falling back to polling"
+      console.log "[MailCatcher] WebSocket connection closed"
       @updateWebSocketStatus(false)
-      @subscribePoll()
+      @attemptWebSocketReconnect()
 
   subscribePoll: ->
     unless @refreshInterval?
       @refreshInterval = setInterval (=> @refresh()), 1000
+
+  attemptWebSocketReconnect: ->
+    if @reconnectWebSocketAttempts < @maxReconnectAttempts
+      delay = @reconnectBaseDelay * Math.pow(2, @reconnectWebSocketAttempts)
+      @reconnectWebSocketAttempts++
+      console.log "[MailCatcher] Attempting WebSocket reconnection in #{delay}ms (attempt #{@reconnectWebSocketAttempts}/#{@maxReconnectAttempts})"
+      setTimeout (=> @subscribeWebSocket()), delay
+    else
+      console.log "[MailCatcher] Max WebSocket reconnection attempts reached, staying in polling mode"
+      @subscribePoll()
 
   resizeToSavedKey: "mailcatcherSeparatorHeight"
 
