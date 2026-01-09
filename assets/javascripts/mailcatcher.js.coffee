@@ -371,6 +371,7 @@ class MailCatcher
       @resizeTo height
 
   hasQuit: ->
-    location.assign $("body > header h1 a").attr("href")
+    # Server has quit - show a message instead of redirecting
+    alert "MailCatcher server has been shut down."
 
 $ -> window.MailCatcher = new MailCatcher
