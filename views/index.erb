@@ -586,11 +586,25 @@
       if (originalSubscribeWebSocket) {
         window.MailCatcher.subscribeWebSocket = function() {
           originalSubscribeWebSocket.call(this);
-          const checkStatus = setInterval(() => {
-            if (this.websocket) {
-              updateWebSocketStatus(this.websocket.readyState === 1);
-            }
-          }, 500);
+          if (this.websocket) {
+            // Wrap existing handlers to also update status indicator
+            const originalOnopen = this.websocket.onopen;
+            const originalOnclose = this.websocket.onclose;
+            const originalOnerror = this.websocket.onerror;
+
+            this.websocket.onopen = (event) => {
+              updateWebSocketStatus(true);
+              if (originalOnopen) originalOnopen.call(this.websocket, event);
+            };
+            this.websocket.onclose = (event) => {
+              updateWebSocketStatus(false);
+              if (originalOnclose) originalOnclose.call(this.websocket, event);
+            };
+            this.websocket.onerror = (event) => {
+              updateWebSocketStatus(false);
+              if (originalOnerror) originalOnerror.call(this.websocket, event);
+            };
+          }
         };
       }
 
