@@ -520,6 +520,65 @@ code {
 }
 
 /* ============================================
+   Docker Section
+   ============================================ */
+
+.docker-section {
+    padding: 6rem 20px;
+    background: linear-gradient(180deg, var(--color-bg-darker) 0%, var(--color-bg-dark) 100%);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.docker-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.docker-info {
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+.docker-info p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+}
+
+.docker-features {
+    animation: fadeInRight 0.6s ease-out;
+}
+
+.docker-features h3 {
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+}
+
+.docker-features .feature-list {
+    list-style: none;
+}
+
+.docker-features .feature-list li {
+    padding: 0.75rem 0;
+    color: var(--color-text-secondary);
+    font-size: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    transition: color var(--transition-fast);
+}
+
+.docker-features .feature-list li:last-child {
+    border-bottom: none;
+}
+
+.docker-features .feature-list li:hover {
+    color: var(--color-primary);
+}
+
+/* ============================================
    About Fork Section
    ============================================ */
 
@@ -751,6 +810,11 @@ code {
 
     .fork-info {
         grid-template-columns: 1fr;
+    }
+
+    .docker-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
     .features {

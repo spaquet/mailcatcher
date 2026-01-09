@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="MailCatcher - Catches all mail and serves it through a dream. A super simple SMTP server with beautiful web interface for development. Fork with enhanced features and improved UI.">
     <meta name="keywords" content="mailcatcher, SMTP, email testing, development, web interface, email debugging, mail server">
-    <meta name="author" content="Samuel Paquet">
+    <meta name="author" content="Stéphane Paquet">
     <meta name="theme-color" content="#0f172a">
     <meta property="og:title" content="MailCatcher - Email Testing Made Beautiful">
     <meta property="og:description" content="Catch and visualize email in development with MailCatcher's elegant web interface. Real-time updates, WebSocket support, and instant mail capture.">
@@ -133,7 +133,7 @@
             <h2 class="section-title">Quick Start</h2>
             <div class="quick-start-content">
                 <div class="code-example">
-                    <div class="code-header">Installation</div>
+                    <div class="code-header">Gem Installation</div>
                     <pre><code>gem install mailcatcher</code></pre>
                 </div>
                 <div class="code-example">
@@ -143,12 +143,41 @@
 # Send mail to smtp://127.0.0.1:1025</code></pre>
                 </div>
                 <div class="code-example">
+                    <div class="code-header">Docker Installation</div>
+                    <pre><code>docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher</code></pre>
+                </div>
+                <div class="code-example">
                     <div class="code-header">Rails Configuration</div>
                     <pre><code>config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
   address: '127.0.0.1',
   port: 1025
 }</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Docker Section -->
+    <section class="docker-section">
+        <div class="container">
+            <h2 class="section-title">Get Started with Docker</h2>
+            <div class="docker-content">
+                <div class="docker-info">
+                    <p>The fastest way to get MailCatcher running is with Docker. Our official Alpine Linux image provides a lightweight, reliable environment for email testing.</p>
+                    <a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher" class="btn btn-primary" target="_blank">
+                        🐳 View on Docker Hub
+                    </a>
+                </div>
+                <div class="docker-features">
+                    <h3>Docker Image Benefits</h3>
+                    <ul class="feature-list">
+                        <li>✅ Alpine Linux based - minimal image size</li>
+                        <li>✅ Pre-configured for immediate use</li>
+                        <li>✅ Works with Docker Compose</li>
+                        <li>✅ Perfect for development environments</li>
+                        <li>✅ Container isolation and easy cleanup</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -201,6 +230,7 @@ config.action_mailer.smtp_settings = {
                         <li><a href="https://github.com/spaquet/mailcatcher">This Fork</a></li>
                         <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
                         <li><a href="https://rubygems.org/gems/mailcatcher">RubyGems</a></li>
+                        <li><a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher">Docker Hub</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -213,7 +243,7 @@ config.action_mailer.smtp_settings = {
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Samuel Paquet. MIT License.</p>
+                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Stéphane Paquet. MIT License.</p>
             </div>
         </div>
     </footer>
