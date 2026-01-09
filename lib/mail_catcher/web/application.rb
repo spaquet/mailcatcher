@@ -65,6 +65,7 @@ module MailCatcher
       end
 
       get "/" do
+        @version = MailCatcher::VERSION
         erb :index
       end
 

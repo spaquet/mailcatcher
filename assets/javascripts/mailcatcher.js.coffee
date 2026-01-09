@@ -17,6 +17,16 @@ class MailCatcher
         @searchMessages query
       else
         @clearSearch()
+      @applyFilters()
+
+    $("#searchClear").on "click", (e) =>
+      e.preventDefault()
+      $("input[name=search]").val("").focus()
+      @clearSearch()
+      @applyFilters()
+
+    $("#attachmentFilter").on "change", (e) =>
+      @applyFilters()
 
     $("#message").on "click", ".views .format.tab a", (e) =>
       e.preventDefault()
@@ -193,30 +203,62 @@ class MailCatcher
   selectedMessage: ->
     $("#messages tr.selected").data "message-id"
 
-  searchMessages: (query) ->
-    $rows = $("#messages tbody tr")
-    tokens = query.split /\s+/
+  currentSearchQuery: ""
+  currentAttachmentFilter: "all"
 
-    $rows.each (i, row) ->
+  searchMessages: (query) ->
+    @currentSearchQuery = query
+    @applyFilters()
+
+  clearSearch: ->
+    @currentSearchQuery = ""
+    @applyFilters()
+
+  applyFilters: ->
+    $rows = $("#messages tbody tr")
+    query = @currentSearchQuery
+    attachmentFilter = $("#attachmentFilter").val()
+    @currentAttachmentFilter = attachmentFilter
+
+    $rows.each (i, row) =>
       $row = $(row)
-      text = $row.text().toUpperCase()
-      matches = tokens.every (token) -> text.indexOf(token.toUpperCase()) >= 0
-      if matches
+
+      # Apply search filter
+      searchMatches = true
+      if query
+        tokens = query.split /\s+/
+        text = $row.text().toUpperCase()
+        searchMatches = tokens.every (token) -> text.indexOf(token.toUpperCase()) >= 0
+
+      # Apply attachment filter
+      attachmentMatches = true
+      messageId = $row.attr("data-message-id")
+      if messageId and attachmentFilter != "all"
+        # Get message data from DOM if available, or make a request
+        # For now, we'll check if the row contains attachment info in the data attribute
+        # We need to track attachment info when messages are loaded
+        hasAttachments = $row.data("has-attachments") || false
+        if attachmentFilter == "with"
+          attachmentMatches = hasAttachments
+        else if attachmentFilter == "without"
+          attachmentMatches = !hasAttachments
+
+      # Show/hide based on both filters
+      if searchMatches and attachmentMatches
         $row.show()
       else
         $row.hide()
 
-  clearSearch: ->
-    $("#messages tbody tr").show()
-
   addMessage: (message) ->
-    $("<tr />").attr("data-message-id", message.id.toString())
+    $tr = $("<tr />").attr("data-message-id", message.id.toString())
       .append($("<td/>").text(message.sender or "No sender").toggleClass("blank", !message.sender))
       .append($("<td/>").text((message.recipients || []).join(", ") or "No recipients").toggleClass("blank", !message.recipients.length))
       .append($("<td/>").text(message.subject or "No subject").toggleClass("blank", !message.subject))
       .append($("<td/>").text(@formatDate(message.created_at)))
       .append($("<td/>").text(@formatSize(message.size)))
-      .prependTo($("#messages tbody"))
+    # Store attachment information for filtering
+    $tr.data("has-attachments", message.attachments && message.attachments.length > 0)
+    $tr.prependTo($("#messages tbody"))
     @updateMessagesCount()
 
   removeMessage: (id) ->
@@ -248,9 +290,17 @@ class MailCatcher
 
   unselectMessage: ->
     $("#messages tbody, #message .metadata dd").empty()
-    $("#message .metadata .attachments").hide()
+    $(".attachments-list").empty()
+    $(".attachments-column").hide()
     $("#message iframe").attr("src", "about:blank")
     null
+
+  cleanEmailAddress: (email) ->
+    # Remove angle brackets if present
+    if email
+      email.replace(/^<(.+)>$/, "$1")
+    else
+      email
 
   loadMessage: (id) ->
     id = id.id if id?.id?
@@ -264,8 +314,8 @@ class MailCatcher
 
       $.getJSON "messages/#{id}.json", (message) =>
         $("#message .metadata dd.created_at").text(@formatDate message.created_at)
-        $("#message .metadata dd.from").text(message.sender)
-        $("#message .metadata dd.to").text((message.recipients || []).join(", "))
+        $("#message .metadata dd.from").text(@cleanEmailAddress(message.sender))
+        $("#message .metadata dd.to").text((message.recipients || []).map((email) => @cleanEmailAddress(email)).join(", "))
         $("#message .metadata dd.subject").text(message.subject)
         $("#message .views .tab.format").each (i, el) ->
           $el = $(el)
@@ -281,13 +331,20 @@ class MailCatcher
           $("#message .views .tab:visible:first").addClass("selected")
 
         if message.attachments.length
-          $ul = $("<ul/>").appendTo($("#message .metadata dd.attachments").empty())
+          $ul = $(".attachments-list").empty()
+          self = @
 
           $.each message.attachments, (i, attachment) ->
-            $ul.append($("<li>").append($("<a>").attr("href", "messages/#{id}/parts/#{attachment["cid"]}").addClass(attachment["type"].split("/", 1)[0]).addClass(attachment["type"].replace("/", "-")).text(attachment["filename"])))
-          $("#message .metadata .attachments").show()
+            $li = $("<li/>")
+            $a = $("<a/>").attr("href", "messages/#{id}/parts/#{attachment["cid"]}").addClass(attachment["type"].split("/", 1)[0]).addClass(attachment["type"].replace("/", "-")).text(attachment["filename"])
+            $meta = $("<div/>").addClass("attachment-meta")
+            $meta.append($("<div/>").addClass("attachment-size").text(self.formatSize(attachment["size"])))
+            $meta.append($("<div/>").addClass("attachment-type").text(attachment["type"]))
+            $li.append($a).append($meta)
+            $ul.append($li)
+          $(".attachments-column").show()
         else
-          $("#message .metadata .attachments").hide()
+          $(".attachments-column").hide()
 
         $("#message .views .download a").attr("href", "messages/#{id}.eml")
 
@@ -313,18 +370,27 @@ class MailCatcher
         $("a", body).attr("target", "_blank")
       when "plain"
         message_iframe = $("#message iframe").contents()
-        text = message_iframe.text()
+        body = message_iframe.find("body")
 
-        # Escape special characters
-        text = text.replace(/&/g, "&amp;")
-        text = text.replace(/</g, "&lt;")
-        text = text.replace(/>/g, "&gt;")
-        text = text.replace(/"/g, "&quot;")
+        # If body already exists and has content, preserve it as-is with proper styling
+        if body.length
+          body.css("font-family", "sans-serif")
+          body.css("white-space", "pre-wrap")
+          body.css("word-wrap", "break-word")
+        else
+          # Fallback: get the text content
+          text = message_iframe.text()
 
-        # Autolink text
-        text = text.replace(/((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?)/g, """<a href="$1" target="_blank">$1</a>""")
+          # Escape special characters
+          text = text.replace(/&/g, "&amp;")
+          text = text.replace(/</g, "&lt;")
+          text = text.replace(/>/g, "&gt;")
+          text = text.replace(/"/g, "&quot;")
 
-        message_iframe.find("html").html("""<body style="font-family: sans-serif; white-space: pre-wrap">#{text}</body>""")
+          # Autolink text
+          text = text.replace(/((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?)/g, """<a href="$1" target="_blank">$1</a>""")
+
+          message_iframe.find("html").html("""<body style="font-family: sans-serif; white-space: pre-wrap; word-wrap: break-word">#{text}</body>""")
 
   refresh: ->
     $.getJSON "messages", (messages) =>
@@ -416,6 +482,7 @@ class MailCatcher
         statusText.textContent = "Disconnected"
 
   hasQuit: ->
-    window.location.href = "https://mailcatcher.me"
+    # Server has quit, stay on current page
+    console.log "[MailCatcher] Server has quit"
 
 $ -> window.MailCatcher = new MailCatcher

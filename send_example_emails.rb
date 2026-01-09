@@ -14,7 +14,7 @@ DELAY = (ENV['DELAY'] || 1).to_i
 
 # Get list of email files to send (exclude 'attachment' which is a binary file)
 email_files = Dir.glob(File.join(EXAMPLES_DIR, '*')).select do |file|
-  File.file?(file) && File.basename(file) != 'attachment' && File.basename(file) != 'attachmail'
+  File.file?(file) && File.basename(file) != 'attachment'
 end
 
 if email_files.empty?

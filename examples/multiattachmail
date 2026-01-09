@@ -1,0 +1,55 @@
+From: sender@example.com
+To: recipient@example.com
+Subject: Multipart Email with Multiple Attachments
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="----==_mimepart_1767980559_multiattach"
+Content-Transfer-Encoding: 7bit
+
+------==_mimepart_1767980559_multiattach
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<html>
+  <body>
+    <h1>Hello!</h1>
+    <p>This is a responsive HTML email with two attachments:</p>
+    <ol>
+      <li>An image file</li>
+      <li>A PDF document</li>
+    </ol>
+    <p>Best regards,<br>The MailCatcher Team</p>
+  </body>
+</html>
+
+------==_mimepart_1767980559_multiattach
+Content-Type: image/png; name="test-image.png"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="test-image.png"
+Content-ID: <test-image-001@example.com>
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVQImQEB
+AAD+/wAAAAIAAS20sTYAAAAASUVORK5CYII=
+
+------==_mimepart_1767980559_multiattach
+Content-Type: application/pdf; name="document.pdf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="document.pdf"
+Content-ID: <document-001@example.com>
+
+JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAw
+IFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFsz
+IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1Bh
+Z2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCA2MTIgNzkyXSAvQ29u
+dGVudHMgNCAwIFIgL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgNSAwIFIg
+Pj4gPj4gPj4KZW5kb2JqCjQgMCBvYmoKPDwgL0xlbmd0aCA0NCA+PgpzdHJl
+YW0KQlQKL0YxIDEyIFRmCjUwIDcwMCBUZAooVGVzdCBQREYgRG9jdW1lbnQp
+IFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PCAvVHlwZSAvRm9u
+dCAvU3VidHlwZSAvVHlwZTEgL0Jhc2VGb250IC9IZWx2ZXRpY2EgPj4KZW5k
+b2JqCnhyZWYKMCA2CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAw
+MDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAg
+biAKMDAwMDAwMDI0NCAwMDAwMCBuIAowMDAwMDAwMzM4IDAwMDAwIG4gCnRy
+YWlsZXIKPDwgL1NpemUgNiAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKNDI3
+CiUlRU9GCg==
+
+------==_mimepart_1767980559_multiattach--
+

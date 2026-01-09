@@ -27,6 +27,22 @@ MailCatcher runs a super simple SMTP server which catches any message sent to it
 3. Go to http://127.0.0.1:1080/
 4. Send mail through smtp://127.0.0.1:1025
 
+### Development Mode
+
+To run MailCatcher in development mode with custom ports:
+
+```bash
+MAILCATCHER_ENV=development bundle exec mailcatcher --foreground --smtp-port 1025 --http-port 1080
+```
+
+Then access the web interface at [http://127.0.0.1:1080](http://127.0.0.1:1080) and send mail to `smtp://127.0.0.1:1025`.
+
+Or use the provided test script to send example emails:
+
+```bash
+SMTP_HOST=127.0.0.1 SMTP_PORT=20025 ruby send_example_emails.rb
+```
+
 ### WebSocket Testing
 
 To monitor WebSocket connectivity and test the connection status, visit [http://127.0.0.1:1080/websocket-test](http://127.0.0.1:1080/websocket-test). This page provides real-time feedback on WebSocket connection state and helps verify that automatic reconnection with exponential backoff is functioning correctly.
