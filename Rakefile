@@ -17,11 +17,17 @@ task "assets" do
 
   require "mail_catcher/web/assets"
   sprockets = MailCatcher::Web::Assets
-  sprockets.css_compressor = :sass
-  sprockets.js_compressor = :uglifier
-  sprockets.each_logical_path(/(\Amailcatcher\.(js|css)|\.(xsl|png)\Z)/) do |logical_path|
-    if asset = sprockets.find_asset(logical_path)
-      target = File.join(compiled_path, logical_path)
+
+  # Sprockets 4.x compatibility: access the internal environment
+  environment = sprockets.instance_variable_get(:@environment)
+  environment.css_compressor = :sass
+  environment.js_compressor = :uglifier
+
+  # Compile specific assets
+  asset_names = ["mailcatcher.js", "mailcatcher.css"]
+  asset_names.each do |asset_name|
+    if asset = environment.find_asset(asset_name)
+      target = File.join(compiled_path, asset_name)
       asset.write_to target
     end
   end
