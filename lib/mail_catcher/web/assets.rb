@@ -22,6 +22,23 @@ module MailCatcher
 
         @environment.call(env)
       end
+
+      # Delegate methods to the environment for Rakefile asset compilation
+      def css_compressor=(compressor)
+        @environment.css_compressor = compressor
+      end
+
+      def js_compressor=(compressor)
+        @environment.js_compressor = compressor
+      end
+
+      def each_logical_path(pattern, &block)
+        @environment.each_logical_path(pattern, &block)
+      end
+
+      def find_asset(logical_path)
+        @environment.find_asset(logical_path)
+      end
     end
 
     Assets = AssetsApp.new
