@@ -14,7 +14,7 @@ MailCatcher runs a super simple SMTP server which catches any message sent to it
 * Lists attachments and allows separate downloading of parts.
 * Download original email to view in your native mail client(s).
 * Command line options to override the default SMTP/HTTP IP and port settings.
-* Mail appears instantly if your browser supports [WebSockets][websockets], otherwise updates every thirty seconds.
+* Mail appears instantly if your browser supports [WebSockets][websockets] with automatic reconnection and exponential backoff, otherwise updates every thirty seconds.
 * Runs as a daemon in the background, optionally in foreground.
 * Sendmail-analogue command, `catchmail`, makes using mailcatcher from PHP a lot easier.
 * Keyboard navigation between messages
@@ -25,6 +25,10 @@ MailCatcher runs a super simple SMTP server which catches any message sent to it
 2. `mailcatcher`
 3. Go to http://127.0.0.1:1080/
 4. Send mail through smtp://127.0.0.1:1025
+
+### WebSocket Testing
+
+To monitor WebSocket connectivity and test the connection status, visit [http://127.0.0.1:1080/websocket-test](http://127.0.0.1:1080/websocket-test). This page provides real-time feedback on WebSocket connection state and helps verify that automatic reconnection with exponential backoff is functioning correctly.
 
 ### Installation from GitHub Packages
 
