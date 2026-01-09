@@ -209,6 +209,9 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
     }
 
     #messages thead {
@@ -218,6 +221,13 @@
       top: 0;
       z-index: 10;
       flex-shrink: 0;
+      display: flex;
+      width: 100%;
+    }
+
+    #messages thead tr {
+      display: flex;
+      width: 100%;
     }
 
     #messages th {
@@ -228,19 +238,24 @@
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #messages tbody {
       overflow-y: auto;
       flex: 1;
-      display: block;
+      display: flex;
+      flex-direction: column;
       width: 100%;
     }
 
     #messages tbody tr {
-      display: table;
+      display: flex;
       width: 100%;
-      table-layout: fixed;
+      flex-shrink: 0;
     }
 
     #messages tr {
@@ -266,6 +281,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      flex: 1;
     }
 
     #messages td.blank {
