@@ -5,8 +5,12 @@
   <base href="<%= settings.prefix.chomp("/") %>/">
   <link href="favicon.ico" rel="icon">
   <script src="<%= asset_path("mailcatcher.js") %>"></script>
-  <link rel="stylesheet" href="<%= asset_path("mailcatcher.css") %>">
   <style>
+    /* MailCatcher UI Styles - Complete inline stylesheet
+       This is the single source of truth for all MailCatcher UI styling.
+       No external CSS files are loaded (old Sass assets are deprecated).
+       All changes should be made here for modern, responsive design.
+    */
     * {
       margin: 0;
       padding: 0;
@@ -56,11 +60,12 @@
     .search-box {
       flex: 1;
       min-width: 280px;
+      position: relative;
     }
 
     .search-box input {
       width: 100%;
-      padding: 9px 14px;
+      padding: 9px 14px 9px 36px;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
       font-size: 14px;
@@ -72,6 +77,17 @@
       outline: none;
       border-color: #5f35f5;
       box-shadow: 0 0 0 3px rgba(95, 53, 245, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: #999;
+      pointer-events: none;
     }
 
     .header-info {
@@ -115,24 +131,32 @@
     }
 
     .btn {
-      padding: 8px 16px;
-      border: 1px solid #e0e0e0;
+      padding: 8px 14px;
+      border: none;
       border-radius: 6px;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
-      background: #ffffff;
-      color: #1a1a1a;
+      background: #5f35f5;
+      color: #ffffff;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn:hover {
-      background: #f8f8f8;
-      border-color: #d0d0d0;
+      background: #4a2ad9;
+      box-shadow: 0 2px 8px rgba(95, 53, 245, 0.2);
     }
 
     .btn:active {
       transform: scale(0.98);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
     }
 
     .email-count {
@@ -148,15 +172,36 @@
       flex-direction: column;
       flex: 1;
       overflow: hidden;
+      position: relative;
     }
 
     #messages {
-      flex: 0 0 42%;
+      flex: 0 0 350px;
       display: flex;
       flex-direction: column;
       background: #ffffff;
       border-bottom: 1px solid #e8eaed;
       overflow: hidden;
+      transition: flex 0.1s;
+    }
+
+    #resizer {
+      width: 100%;
+      height: 6px;
+      background: #e8eaed;
+      cursor: row-resize;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      position: relative;
+      z-index: 5;
+    }
+
+    #resizer:hover {
+      background: #5f35f5;
+    }
+
+    #resizer .ruler {
+      display: none;
     }
 
     #messages table {
@@ -228,36 +273,38 @@
 
     #message > header {
       border-bottom: 1px solid #e8eaed;
-      padding: 20px 28px;
+      padding: 12px 28px;
       background: #f9f9f9;
       overflow-y: auto;
-      max-height: 35%;
+      max-height: none;
     }
 
     .metadata {
       display: grid;
       grid-template-columns: 90px 1fr;
-      gap: 8px 20px;
-      margin-bottom: 20px;
+      gap: 2px 20px;
+      margin-bottom: 12px;
     }
 
     .metadata dt {
       font-weight: 600;
       color: #5f5f5f;
-      font-size: 12px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      line-height: 1.2;
     }
 
     .metadata dd {
       color: #1a1a1a;
-      font-size: 13px;
+      font-size: 11px;
       word-break: break-word;
+      line-height: 1.2;
     }
 
     .views-container {
-      margin-top: 16px;
-      padding-top: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
       border-top: 1px solid #e8eaed;
       display: flex;
       align-items: center;
@@ -276,26 +323,46 @@
       gap: 8px;
     }
 
+    .views .format.tab {
+      display: inline-block;
+    }
+
     .views .format.tab a {
-      padding: 8px 14px;
-      border-radius: 6px;
-      background: #f0f0f0;
-      color: #1a1a1a;
+      padding: 8px 0 6px 0;
+      border-radius: 0;
+      background: transparent;
+      color: #666;
       text-decoration: none;
       font-size: 12px;
       font-weight: 600;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       display: inline-block;
-      border: 1px solid transparent;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      margin-right: 16px;
+      outline: none;
     }
 
     .views .format.tab a:hover {
-      background: #e8e8e8;
+      color: #1a1a1a;
+      text-decoration: none;
     }
 
-    .views .format.tab.selected a {
-      background: #5f35f5;
-      color: white;
+    .views .format.tab a:focus {
+      outline: none;
+    }
+
+    .views .format.tab.selected a,
+    .views .format.tab a.selected {
+      color: #5f35f5 !important;
+      border-bottom: 3px solid #5f35f5;
+      text-decoration: none !important;
+    }
+
+    .views .format.tab.selected a:hover,
+    .views .format.tab a.selected:hover {
+      color: #4a2ad9;
+      border-bottom-color: #4a2ad9;
     }
 
     .download-btn {
@@ -381,6 +448,10 @@
     <h1><a href="https://mailcatcher.me" target="_blank">MailCatcher</a></h1>
     <div class="header-controls">
       <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
         <input type="search" name="search" placeholder="Search messages..." incremental="true" />
       </div>
       <div class="header-info">
@@ -390,9 +461,24 @@
         </div>
         <div class="email-count" id="emailCount">0 emails</div>
         <div class="action-buttons">
-          <button class="btn" id="clearBtn" title="Clear all messages">Clear</button>
+          <button class="btn" id="clearBtn" title="Clear all messages">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+            Clear
+          </button>
           <% if MailCatcher.quittable? %>
-            <button class="btn" id="quitBtn" title="Quit MailCatcher">Quit</button>
+            <button class="btn" id="quitBtn" title="Quit MailCatcher">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 6 13.46 15.89"></polyline>
+                <polyline points="23 6 6.21 23"></polyline>
+                <polyline points="1 1 21 21"></polyline>
+              </svg>
+              Quit
+            </button>
           <% end %>
         </div>
       </div>
@@ -495,14 +581,52 @@
         };
       }
 
+      // Setup resizer drag functionality
+      const resizer = document.getElementById('resizer');
+      const messagesSection = document.getElementById('messages');
+      let isResizing = false;
+
+      if (resizer && messagesSection) {
+        resizer.addEventListener('mousedown', function(e) {
+          e.preventDefault();
+          isResizing = true;
+          const startY = e.clientY;
+          const startHeight = messagesSection.offsetHeight;
+
+          const handleMouseMove = (e) => {
+            if (!isResizing) return;
+            const delta = e.clientY - startY;
+            const newHeight = Math.max(150, startHeight + delta);
+            messagesSection.style.flex = `0 0 ${newHeight}px`;
+            localStorage.setItem('mailcatcherSeparatorHeight', newHeight);
+          };
+
+          const handleMouseUp = () => {
+            isResizing = false;
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+          };
+
+          document.addEventListener('mousemove', handleMouseMove);
+          document.addEventListener('mouseup', handleMouseUp);
+        });
+      }
+
+      // Restore saved resizer position
+      const savedHeight = localStorage.getItem('mailcatcherSeparatorHeight');
+      if (savedHeight && messagesSection) {
+        messagesSection.style.flex = `0 0 ${savedHeight}px`;
+      }
+
       // Setup button handlers
       document.getElementById('clearBtn').addEventListener('click', function(e) {
         e.preventDefault();
         if (window.MailCatcher && document.querySelectorAll('#messages tbody tr').length > 0) {
           const confirmText = 'You will lose all your received messages.\n\nAre you sure you want to clear all messages?';
           if (confirm(confirmText)) {
-            const clearLink = document.querySelector('a[title="Clear all messages"]');
-            if (clearLink) clearLink.click();
+            window.MailCatcher.clearMessages();
+            // Also send DELETE request
+            fetch(new URL('messages', document.baseURI).toString(), { method: 'DELETE' });
           }
         }
       });
@@ -513,8 +637,7 @@
           e.preventDefault();
           const confirmText = 'You will lose all your received messages.\n\nAre you sure you want to quit?';
           if (confirm(confirmText)) {
-            const quitLink = document.querySelector('a[title="Quit MailCatcher"]');
-            if (quitLink) quitLink.click();
+            fetch(new URL('', document.baseURI).toString(), { method: 'DELETE' });
           }
         });
       }
@@ -529,9 +652,11 @@
       // Handle download button
       document.querySelector('.download-btn').addEventListener('click', function(e) {
         e.preventDefault();
-        const link = document.querySelector('a[title="Download"]');
-        if (link) {
-          link.click();
+        if (window.MailCatcher) {
+          const id = window.MailCatcher.selectedMessage();
+          if (id) {
+            window.location.href = `messages/${id}.eml`;
+          }
         }
       });
     });
