@@ -416,5 +416,6 @@ class MailCatcher
         statusText.textContent = "Disconnected"
 
   hasQuit: ->
+    window.location.href = "https://mailcatcher.me"
 
 $ -> window.MailCatcher = new MailCatcher

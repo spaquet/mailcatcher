@@ -90,6 +90,40 @@ gem environment
 
 You might need to install build tools for some of the gem dependencies. On Debian or Ubuntu, `apt install build-essential`. On macOS, `xcode-select --install`.
 
+### How to Compile the Gem
+
+To compile MailCatcher as a gem from source:
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/spaquet/mailcatcher.git
+cd mailcatcher
+```
+
+1. Install dependencies:
+
+```bash
+bundle install
+```
+
+1. Compile assets and build the gem:
+
+```bash
+bundle exec rake package
+```
+
+This will create a `.gem` file in the project directory. The build process:
+
+* Compiles JavaScript assets using Sprockets and Uglifier
+* Creates a gem package with all required files
+
+You can then install the compiled gem locally:
+
+```bash
+gem install mailcatcher-VERSION.gem
+```
+
 ### Bundler
 
 Please don't put mailcatcher into your Gemfile. It will conflict with your application's gems at some point.
