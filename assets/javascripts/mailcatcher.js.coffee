@@ -315,17 +315,32 @@ class MailCatcher
     url = new URL("messages", document.baseURI)
     url.protocol = if secure then "wss" else "ws"
     @websocket = new WebSocket(url.toString())
+
+    @websocket.onopen = =>
+      console.log "[MailCatcher] WebSocket connection established"
+
     @websocket.onmessage = (event) =>
-      data = JSON.parse(event.data)
-      if data.type == "add"
-        @addMessage(data.message)
-      else if data.type == "remove"
-        @removeMessage(data.id)
-      else if data.type == "clear"
-        @clearMessages()
-      else if data.type == "quit" and not @quitting
-        alert "MailCatcher has been quit"
-        @hasQuit()
+      try
+        data = JSON.parse(event.data)
+        console.log "[MailCatcher] WebSocket message received:", data
+        if data.type == "add"
+          @addMessage(data.message)
+        else if data.type == "remove"
+          @removeMessage(data.id)
+        else if data.type == "clear"
+          @clearMessages()
+        else if data.type == "quit" and not @quitting
+          alert "MailCatcher has been quit"
+          @hasQuit()
+      catch e
+        console.error "[MailCatcher] Error processing WebSocket message:", e
+
+    @websocket.onerror = (event) =>
+      console.error "[MailCatcher] WebSocket error:", event
+
+    @websocket.onclose = =>
+      console.log "[MailCatcher] WebSocket connection closed, falling back to polling"
+      @subscribePoll()
 
   subscribePoll: ->
     unless @refreshInterval?
