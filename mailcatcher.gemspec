@@ -30,16 +30,16 @@ Gem::Specification.new do |s|
   s.executables = ["mailcatcher", "catchmail"]
   s.extra_rdoc_files = ["README.md", "LICENSE"]
 
-  s.required_ruby_version = ">= 3.1"
+  s.required_ruby_version = ">= 3.4"
 
-  s.add_dependency "eventmachine", "~> 1.0"
-  s.add_dependency "faye-websocket", "~> 0.11.1"
-  s.add_dependency "mail", "~> 2.3"
+  s.add_dependency "eventmachine", "~> 1.2.7"
+  s.add_dependency "faye-websocket", "~> 0.12.0"
+  s.add_dependency "mail", "~> 2.9"
   s.add_dependency "net-smtp"
-  s.add_dependency "rack", "~> 2.2"
-  s.add_dependency "sinatra", "~> 3.2"
-  s.add_dependency "sqlite3", "~> 1.3"
-  s.add_dependency "thin", "~> 1.8"
+  s.add_dependency "rack", "~> 3.2.4"
+  s.add_dependency "sinatra", "~> 4.2.1"
+  s.add_dependency "sqlite3", "~> 2.9"
+  s.add_dependency "thin", "~> 2.0"
 
   s.add_development_dependency "capybara"
   s.add_development_dependency "capybara-screenshot"
@@ -48,10 +48,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
   s.add_development_dependency "rake"
   s.add_development_dependency "rdoc"
-  s.add_development_dependency "sass"
+  s.add_development_dependency "sass-embedded", "~> 1.0"
   s.add_development_dependency "selenium-webdriver"
   s.add_development_dependency "sprockets"
-  s.add_development_dependency "sprockets-sass"
+  s.add_development_dependency "sprockets-sass_embedded"
   s.add_development_dependency "sprockets-helpers"
   s.add_development_dependency "uglifier"
 end
