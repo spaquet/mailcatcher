@@ -33,7 +33,7 @@ Use `mailcatcher --help` to see the command line options.
 ```
 Usage: mailcatcher [options]
 
-MailCatcher v0.8.0
+MailCatcher v0.11.2
 
         --ip IP                      Set the ip address of both servers
         --smtp-ip IP                 Set the ip address of the smtp server
@@ -68,12 +68,6 @@ gem environment
 ```
 
 You might need to install build tools for some of the gem dependencies. On Debian or Ubuntu, `apt install build-essential`. On macOS, `xcode-select --install`.
-
-If you encounter issues installing [thin](https://rubygems.org/gems/thin), try:
-
-```
-gem install thin -v 1.5.1 -- --with-cflags="-Wno-error=implicit-function-declaration"
-```
 
 ### Bundler
 
@@ -141,7 +135,7 @@ b609298bc3c9: Pull complete
 ab05825ece51: Pull complete
 Digest: sha256:b17c45de08a0a82b012d90d4bd048620952c475f5655c61eef373318de6c0855
 Status: Downloaded newer image for sj26/mailcatcher:latest
-Starting MailCatcher v0.9.0
+Starting MailCatcher v0.11.2
 ==> smtp://0.0.0.0:1025
 ==> http://0.0.0.0:1080
 ```
