@@ -3,24 +3,24 @@
 require File.expand_path('lib/mail_catcher/version', __dir__)
 
 Gem::Specification.new do |s|
-  s.name = 'mailcatcher'
+  s.name = 'mailcatcher-ng'
   s.version = MailCatcher::VERSION
   s.license = 'MIT'
   s.summary = 'Runs an SMTP server, catches and displays email in a web interface.'
   s.description = <<-DESCRIPTION
-    MailCatcher runs a super simple SMTP server which catches any
+    MailCatcher NG runs a super simple SMTP server which catches any
     message sent to it to display in a web interface. Run
-    mailcatcher, set your favourite app to deliver to
+    mailcatcher NG, set your favourite app to deliver to
     smtp://127.0.0.1:1025 instead of your default SMTP server,
     then check out http://127.0.0.1:1080 to see the mail.
   DESCRIPTION
 
-  s.author = 'Samuel Cochran'
-  s.email = 'sj26@sj26.com'
-  s.homepage = 'https://mailcatcher.me'
+  s.author = 'Stephane Paquet'
+  s.email = 'contact@thepew.io'
+  s.homepage = 'https://github.com/spaquet/mailcatcher'
 
   s.files = Dir[
-    'README.md', 'LICENSE', 'VERSION',
+    'README.md', 'LICENSE',
     'bin/*',
     'lib/**/*.rb',
     'public/**/*',

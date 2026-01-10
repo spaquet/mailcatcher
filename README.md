@@ -1,8 +1,12 @@
-# MailCatcher
+# MailCatcher NG (Next Generation)
+
+[![Gem Version](https://img.shields.io/gem/v/mailcatcher-ng)](https://rubygems.org/gems/mailcatcher-ng)
+[![CI](https://github.com/spaquet/mailcatcher-ng/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spaquet/mailcatcher-ng/actions/workflows/ci.yml)
+[![GitHub License](https://img.shields.io/github/license/spaquet/mailcatcher-ng)](LICENSE)
 
 Catches mail and serves it through a dream.
 
-MailCatcher runs a super simple SMTP server which catches any message sent to it to display in a web interface. Run mailcatcher, set your favourite app to deliver to smtp://127.0.0.1:1025 instead of your default SMTP server, then check out http://127.0.0.1:1080 to see the mail that's arrived so far.
+MailCatcher NG runs a super simple SMTP server which catches any message sent to it to display in a web interface. Run mailcatcher, set your favourite app to deliver to smtp://127.0.0.1:1025 instead of your default SMTP server, then check out http://127.0.0.1:1080 to see the mail that's arrived so far.
 
 ![MailCatcher screenshot](screenshots/inbox.webp)
 
@@ -19,10 +23,16 @@ MailCatcher runs a super simple SMTP server which catches any message sent to it
 * Runs as a daemon in the background, optionally in foreground.
 * Sendmail-analogue command, `catchmail`, makes using mailcatcher from PHP a lot easier.
 * Keyboard navigation between messages
+* Email authentication verification (DMARC, DKIM, SPF)
+* Email encryption and signature support (S/MIME and OpenPGP)
+* BIMI (Brand Indicators for Message Identification) display
+* Advanced preview text extraction with intelligent fallback
+
+For a comprehensive list of all features, see [FEATURES.md](FEATURES.md).
 
 ## How
 
-1. `gem install mailcatcher`
+1. `gem install mailcatcher-ng`
 2. `mailcatcher`
 3. Go to http://127.0.0.1:1080/
 4. Send mail through smtp://127.0.0.1:1025
@@ -46,22 +56,6 @@ SMTP_HOST=127.0.0.1 SMTP_PORT=20025 ruby send_example_emails.rb
 ### WebSocket Testing
 
 To monitor WebSocket connectivity and test the connection status, visit [http://127.0.0.1:1080/websocket-test](http://127.0.0.1:1080/websocket-test). This page provides real-time feedback on WebSocket connection state and helps verify that automatic reconnection with exponential backoff is functioning correctly.
-
-### Installation from GitHub Packages
-
-This fork is published to GitHub Packages. To install from GitHub Packages instead of RubyGems:
-
-```bash
-gem install mailcatcher --version "0.11.2" --source "https://rubygems.pkg.github.com/spaquet"
-```
-
-Or add to your Gemfile:
-
-```ruby
-source "https://rubygems.pkg.github.com/spaquet" do
-  gem "mailcatcher", "~> 0.11.2"
-end
-```
 
 ### Command Line Options
 
@@ -216,23 +210,26 @@ A fairly RESTful URL schema means you can download a list of messages in JSON fr
 
 ## Caveats
 
-* Mail processing is fairly basic but easily modified. If something doesn't work for you, fork and fix it or [file an issue][mailcatcher-issues] and let me know. Include the whole message you're having problems with.
-* Encodings are difficult. MailCatcher does not completely support utf-8 straight over the wire, you must use a mail library which encodes things properly based on SMTP server capabilities.
-
-## Thanks
-
-MailCatcher is just a mishmash of other people's hard work. Thank you so much to the people who have built the wonderful guts on which this project relies.
-
-## Donations
-
-I work on MailCatcher mostly in my own spare time. If you've found Mailcatcher useful and would like to help feed me and fund continued development and new features, please [donate via PayPal][donate]. If you'd like a specific feature added to MailCatcher and are willing to pay for it, please [email me](mailto:sj26@sj26.com).
+* Mail processing is fairly basic but easily modified. If something doesn't work for you, fork and fix it or [file an issue](https://github.com/spaquet/mailcatcher-ng/issues). Include the whole message you're having problems with.
+* Encodings are difficult. MailCatcher NG does not completely support utf-8 straight over the wire, you must use a mail library which encodes things properly based on SMTP server capabilities.
 
 ## License
 
-Copyright © 2010-2019 Samuel Cochran (sj26@sj26.com). Released under the MIT License, see [LICENSE][license] for details.
+MailCatcher NG is released under the MIT License, see [LICENSE](LICENSE) for details.
 
-  [donate]: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=522WUPLRWUSKE
-  [license]: https://github.com/sj26/mailcatcher/blob/master/LICENSE
-  [mailcatcher-github]: https://github.com/sj26/mailcatcher
-  [mailcatcher-issues]: https://github.com/sj26/mailcatcher/issues
+## Credits
+
+MailCatcher NG is a significantly improved fork of the original MailCatcher project. We've added many advanced features including:
+
+* Email authentication verification (DMARC, DKIM, SPF)
+* Email encryption and signature display (S/MIME and OpenPGP)
+* BIMI (Brand Indicators for Message Identification) support
+* Advanced preview text extraction with 3-tier fallback system
+* Enhanced sender/recipient name parsing and display
+* Improved UI/UX with keyboard navigation and better filtering
+* WebSocket real-time updates with automatic reconnection
+* And many more improvements to the original codebase
+
+The original MailCatcher project was created by Samuel Cochran and released under the MIT License. We're grateful for this solid foundation and have built upon it to create MailCatcher NG.
+
   [websockets]: https://tools.ietf.org/html/rfc6455
