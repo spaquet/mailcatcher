@@ -12,19 +12,19 @@ RSpec.describe MailCatcher, type: :feature do
   end
 
   def message_from_element
-    message_row_element.find(:xpath, ".//td[1]")
-  end
-
-  def message_to_element
-    message_row_element.find(:xpath, ".//td[2]")
-  end
-
-  def message_subject_element
     message_row_element.find(:xpath, ".//td[3]")
   end
 
-  def message_received_element
+  def message_to_element
     message_row_element.find(:xpath, ".//td[4]")
+  end
+
+  def message_subject_element
+    message_row_element.find(:xpath, ".//td[5]")
+  end
+
+  def message_received_element
+    message_row_element.find(:xpath, ".//td[6]")
   end
 
   def html_tab_element
@@ -40,11 +40,11 @@ RSpec.describe MailCatcher, type: :feature do
   end
 
   def attachment_header_element
-    page.find("#message header .metadata dt.attachments")
+    page.find("#message header .attachments-column .attachments-header")
   end
 
   def attachment_contents_element
-    page.find("#message header .metadata dd.attachments")
+    page.find("#message header .attachments-column")
   end
 
   def first_attachment_element

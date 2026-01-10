@@ -1,6 +1,7 @@
 To: Customer <customer@example.com>
 From: Support Team <support@techco.com>
 Subject: Important Product Updates and Security Improvements
+Preview-Text: Important product updates and security improvements for all users.
 Content-Type: text/html; charset=utf-8
 
 <html>
@@ -14,6 +15,7 @@ Content-Type: text/html; charset=utf-8
   </style>
 </head>
 <body>
+<span style="display:none; font-size:0; line-height:0; max-height:0; overflow:hidden;">Important product updates and security improvements for all users.</span>
 <div class="container">
   <div class="header">
     <h1>Important Updates for Our Users</h1>

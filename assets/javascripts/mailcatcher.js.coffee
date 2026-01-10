@@ -273,9 +273,29 @@ class MailCatcher
     # Return clean email (angle brackets already removed above)
     return sender
 
+  parseSender: (sender) ->
+    # Parse sender into name and email parts
+    # Returns {name: string, email: string}
+    unless sender
+      return {name: "", email: ""}
+
+    # Remove angle brackets if present
+    cleanSender = sender.replace(/^<(.+?)>$/, "$1")
+
+    # Handle "Name <email>" format
+    match = cleanSender.match(/^(.+?)\s+<(.+?)>$/)
+    if match
+      return {name: match[1].trim(), email: match[2].trim()}
+
+    # Just an email address
+    return {name: "", email: cleanSender}
+
   getEmailPreview: (message, callback) ->
-    # Extract a brief preview from the email body
+    # Extract email preview using tiers 2-3 of the preview text fallback system:
+    # Tier 2: Extract preheader text from HTML body (hidden text at start of HTML email)
+    # Tier 3: Extract first 100 characters of email content (fallback)
     # This is async so we pass a callback
+    # Note: Tier 1 (Preview-Text header) is handled in addMessage() before calling this method
     self = @
     if message.formats && (message.formats.includes("plain") || message.formats.includes("html"))
       # Fetch the plain text or HTML version to extract preview
@@ -308,22 +328,32 @@ class MailCatcher
     $preview = $("<div/>").addClass("preview-text").text("")
     $subjectCell.append($subject).append($preview)
 
-    # Create from cell with sender and optional BIMI/attachment icons
+    # Create from cell with two-tier format (name bold + email preview)
     $fromCell = $("<td/>").addClass("from-cell")
-    $fromCellText = $("<div/>").addClass("from-content")
+    senderParts = @parseSender(message.sender or "")
 
-    # Placeholder for attachment and BIMI icons (will be updated after fetching full data)
-    $iconContainer = $("<span/>").addClass("icon-container")
-    $fromCellText.append($iconContainer)
-
-    # Add sender name
-    $senderText = $("<span/>").addClass("sender-text").text(formattedSender)
-    $fromCellText.append($senderText)
+    $fromCellText = $("<div/>").addClass("sender-text-container")
+    if senderParts.name
+      # Show name in bold and email below
+      $senderName = $("<div/>").addClass("sender-name").html("<strong>#{@escapeHtml(senderParts.name)}</strong>")
+      $senderEmail = $("<div/>").addClass("sender-email").text(senderParts.email)
+      $fromCellText.append($senderName).append($senderEmail)
+    else
+      # Just email address
+      $senderEmail = $("<div/>").addClass("sender-email").text(senderParts.email)
+      $fromCellText.append($senderEmail)
 
     $fromCell.append($fromCellText).toggleClass("blank", !message.sender)
 
-    # Format recipients - remove angle brackets
-    formattedRecipients = (message.recipients || []).map((email) => @formatSender(email)).join(", ")
+    # Format recipients with two-tier format (name bold + email preview)
+    recipientElements = (message.recipients || []).map((email) =>
+      parts = @parseSender(email)
+      if parts.name
+        "<strong>#{@escapeHtml(parts.name)}</strong><br/>#{@escapeHtml(parts.email)}"
+      else
+        @escapeHtml(parts.email)
+    )
+    formattedRecipients = recipientElements.join(", ")
 
     # Create attachment indicator cell
     $attachmentCell = $("<td/>").addClass("col-attachments")
@@ -342,11 +372,14 @@ class MailCatcher
     $bimiIcon.append($("<text/>").attr("x", "12").attr("y", "13").attr("text-anchor", "middle").attr("font-size", "10").attr("font-weight", "bold").text("B"))
     $bimiCell.append($bimiIcon)
 
+    # Create recipients cell with HTML content
+    $toCell = $("<td/>").addClass("to-cell").html(formattedRecipients or "No recipients").toggleClass("blank", !message.recipients.length)
+
     $tr = $("<tr />").attr("data-message-id", message.id.toString())
       .append($attachmentCell)
       .append($bimiCell)
       .append($fromCell)
-      .append($("<td/>").text(formattedRecipients or "No recipients").toggleClass("blank", !message.recipients.length))
+      .append($toCell)
       .append($subjectCell)
       .append($("<td/>").text(@formatDate(message.created_at)))
       .append($("<td/>").text(@formatSize(message.size)))
@@ -363,10 +396,18 @@ class MailCatcher
         $tr.data("has-attachments", true)
         $attachmentCell.text("📎")
 
-      # Fetch and display email preview
-      self.getEmailPreview(fullMessage, (previewText) ->
-        $preview.text(previewText)
-      )
+      # Extract and display email preview using 3-tier fallback system:
+      # Tier 1: Use Preview-Text header if present (de facto standard email header)
+      # Tier 2: Extract from HTML body preheader (hidden text at start of HTML email)
+      # Tier 3: Use first lines of email content
+      if fullMessage.preview_text
+        # Tier 1: Preview-Text header from email metadata
+        $preview.text(fullMessage.preview_text)
+      else
+        # Tiers 2-3: Extract from email body (HTML preheader or first content lines)
+        self.getEmailPreview(fullMessage, (previewText) ->
+          $preview.text(previewText)
+        )
 
       # Add BIMI image if available in message headers
       if fullMessage.bimi_location
@@ -411,7 +452,7 @@ class MailCatcher
   unselectMessage: ->
     $("#messages tbody, #message .metadata dd").empty()
     $(".attachments-list").empty()
-    $(".attachments-column").hide()
+    $(".attachments-column").removeClass("visible")
     $("#message iframe").attr("src", "about:blank")
     null
 
@@ -466,9 +507,9 @@ class MailCatcher
             $meta.append($("<div/>").addClass("attachment-type").text(attachment["type"]))
             $li.append($a).append($meta)
             $ul.append($li)
-          $(".attachments-column").show()
+          $(".attachments-column").addClass("visible")
         else
-          $(".attachments-column").hide()
+          $(".attachments-column").removeClass("visible")
 
         $("#message .views .download a").attr("href", "messages/#{id}.eml")
 
@@ -515,6 +556,40 @@ class MailCatcher
           text = text.replace(/((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?)/g, """<a href="$1" target="_blank">$1</a>""")
 
           message_iframe.find("html").html("""<body style="font-family: sans-serif; white-space: pre-wrap; word-wrap: break-word">#{text}</body>""")
+      when "source"
+        message_iframe = $("#message iframe").contents()
+        body = message_iframe.find("body")
+
+        # Get the raw source content
+        if body.length
+          content = body.text()
+          if content
+            # Escape HTML entities for display
+            escapedContent = content
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+
+            # Create syntax-highlighted code block
+            highlightedHtml = "<pre><code class=\"language-xml\">#{escapedContent}</code></pre>"
+
+            # Build the page with proper styling
+            sourceHtml = """
+              <body style="background: #f5f5f5; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; padding: 0; margin: 0; line-height: 1.6;">
+                <div style="padding: 20px 28px;">
+                  #{highlightedHtml}
+                </div>
+              </body>
+            """
+
+            message_iframe.find("html").html(sourceHtml)
+
+            # Apply syntax highlighting after content is rendered
+            setTimeout =>
+              message_iframe.find("code").each (i, block) ->
+                hljs.highlightElement(block)
+            , 0
 
   refresh: ->
     $.getJSON "messages", (messages) =>

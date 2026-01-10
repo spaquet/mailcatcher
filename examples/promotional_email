@@ -1,6 +1,7 @@
 To: Subscriber <subscriber@email.com>
 From: Deals <deals@retailer.com>
 Subject: Exclusive 50% Off Sale - This Weekend Only!
+Preview-Text: Get 50% off everything this weekend! Limited time flash sale on electronics, fashion, and more.
 Content-Type: text/html; charset=utf-8
 
 <html>
@@ -19,6 +20,7 @@ Content-Type: text/html; charset=utf-8
   </style>
 </head>
 <body>
+<span style="display:none; font-size:0; line-height:0; max-height:0; overflow:hidden;">Get 50% off everything this weekend! Limited time flash sale on electronics, fashion, and more.</span>
 <div class="container">
   <div class="banner">
     <h1>FLASH SALE!</h1>

@@ -115,6 +115,27 @@ module MailCatcher::Mail extend self
     nil
   end
 
+  def message_preview_text(id)
+    source = message_source(id)
+    return nil unless source
+
+    # Extract Preview-Text header from email source (tier 1 of preview text extraction)
+    # This is a de facto standard header (not formal RFC) used by email clients
+    # to display preview/preheader text in the inbox preview pane
+    source.each_line do |line|
+      # Stop at first blank line (end of headers)
+      break if line.strip.empty?
+      # Match Preview-Text header (case-insensitive)
+      if line.match?(/^preview-text:\s*/i)
+        # Extract the value and clean it up
+        value = line.sub(/^preview-text:\s*/i, '').strip
+        return value unless value.empty?
+      end
+    end
+
+    nil
+  end
+
   def message_authentication_results(id)
     source = message_source(id)
     return {} unless source
@@ -125,13 +146,22 @@ module MailCatcher::Mail extend self
       spf: nil
     }
 
-    source.each_line do |line|
+    lines = source.lines
+    lines.each_with_index do |line, index|
       break if line.strip.empty?
 
       # Authentication-Results header contains DMARC, DKIM, and SPF info
       if line.match?(/^authentication-results:\s*/i)
-        # Extract the value (handling multi-line headers)
+        # Extract the value and handle multi-line headers
         value = line.sub(/^authentication-results:\s*/i, '').strip
+
+        # Continue reading continuation lines (lines starting with whitespace)
+        next_index = index + 1
+        while next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += " " + lines[next_index].strip
+          next_index += 1
+        end
+
         auth_results = parse_authentication_results(value)
         break
       end

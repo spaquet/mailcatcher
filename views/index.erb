@@ -9,6 +9,9 @@
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
+    <!-- Highlight.js for syntax highlighting HTML emails -->
+    <script src="https://unpkg.com/highlight.js@11/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/highlight.js@11/styles/atom-one-light.min.css">
     <style>
       /* MailCatcher UI Styles - Complete inline stylesheet
          This is the single source of truth for all MailCatcher UI styling.
@@ -449,9 +452,54 @@
       }
 
       #messages td.from-cell {
-        white-space: normal;
-        word-break: break-word;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
         padding: 10px 16px;
+        overflow: hidden;
+      }
+
+      #messages .sender-text-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        overflow: hidden;
+      }
+
+      #messages .sender-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: normal;
+      }
+
+      #messages .sender-name strong {
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      #messages .sender-email {
+        font-size: 12px;
+        color: #999;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: normal;
+      }
+
+      #messages td.to-cell {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+        padding: 10px 16px;
+        overflow: hidden;
+      }
+
+      #messages td.to-cell strong {
+        font-weight: 600;
+        color: #1a1a1a;
       }
 
       #messages .from-content {
@@ -538,10 +586,14 @@
       }
 
       .attachments-column {
-        display: flex;
+        display: none;
         flex-direction: column;
         gap: 8px;
         min-width: 0;
+      }
+
+      .attachments-column.visible {
+        display: flex;
       }
 
       .attachments-header {
@@ -733,6 +785,10 @@
         background: #ffffff;
       }
 
+      #message iframe.body[src*=".source"] {
+        background: #f5f5f5;
+      }
+
       #noscript-overlay {
         position: fixed;
         top: 0;
@@ -895,6 +951,53 @@
         border-radius: 50%;
         background: currentColor;
         content: '';
+      }
+
+      /* Syntax highlighting for HTML source */
+      pre {
+        margin: 0;
+        padding: 16px;
+        background: #ffffff;
+        border: 1px solid #e8eaed;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-family: 'Courier New', 'Monaco', 'Ubuntu Mono', monospace;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      code {
+        background: transparent;
+        padding: 0;
+        font-family: inherit;
+        font-size: inherit;
+        color: #1a1a1a;
+      }
+
+      /* Override highlight.js default styles for light theme compatibility */
+      .hljs {
+        background: #ffffff;
+        color: #1a1a1a;
+      }
+
+      .hljs-tag {
+        color: #2196F3;
+      }
+
+      .hljs-attr {
+        color: #2196F3;
+      }
+
+      .hljs-string {
+        color: #34a853;
+      }
+
+      .hljs-number {
+        color: #ea4335;
+      }
+
+      .hljs-literal {
+        color: #ea4335;
       }
     </style>
   </head>
@@ -1234,6 +1337,9 @@
                     arrow: true,
                     trigger: 'manual',
                     maxWidth: 360,
+                    onClickOutside: (instance) => {
+                      instance.hide();
+                    },
                   });
 
                   // Show tooltip
@@ -1256,6 +1362,9 @@
                     duration: [200, 150],
                     arrow: true,
                     trigger: 'manual',
+                    onClickOutside: (instance) => {
+                      instance.hide();
+                    },
                   });
 
                   signatureTooltip.show();
@@ -1265,9 +1374,23 @@
 
           // Close tooltip when clicking elsewhere
           document.addEventListener('click', function(e) {
-            if (signatureTooltip && !signatureInfoBtn.contains(e.target) && !e.target.closest('.tippy-box')) {
+            // Check if this click is on the button
+            if (signatureInfoBtn && signatureInfoBtn.contains(e.target)) return;
+
+            // Check if this click is on a tippy-box
+            if (e.target.closest('.tippy-box')) return;
+
+            // Click is outside everything, hide tooltip
+            if (signatureTooltip) {
               signatureTooltip.hide();
             }
+
+            // Also ensure any visible tippy-box is hidden
+            const visibleBoxes = document.querySelectorAll('.tippy-box[data-state="visible"]');
+            visibleBoxes.forEach(box => {
+              box.style.visibility = 'hidden';
+              box.style.pointerEvents = 'none';
+            });
           });
         }
       });
