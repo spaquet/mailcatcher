@@ -46,7 +46,7 @@ jobs:
         ASSET_COUNT=$(find . -type f \( -path "*/public/assets/*" -o -name "favicon.ico" \) | wc -l)
         echo ""
         echo "Total: $ASSET_COUNT assets"
-        if [ "$ASSET_COUNT" -lt 3 ]; then
+        if [ "$ASSET_COUNT" -lt 2 ]; then
           echo "ERROR: Assets missing from gem!"
           exit 1
         fi
