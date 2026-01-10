@@ -345,16 +345,6 @@ class MailCatcher
 
     $fromCell.append($fromCellText).toggleClass("blank", !message.sender)
 
-    # Format recipients with two-tier format (name bold + email preview)
-    recipientElements = (message.recipients || []).map((email) =>
-      parts = @parseSender(email)
-      if parts.name
-        "<strong>#{@escapeHtml(parts.name)}</strong><br/>#{@escapeHtml(parts.email)}"
-      else
-        @escapeHtml(parts.email)
-    )
-    formattedRecipients = recipientElements.join(", ")
-
     # Create attachment indicator cell
     $attachmentCell = $("<td/>").addClass("col-attachments")
     if hasAttachments
@@ -372,8 +362,27 @@ class MailCatcher
     $bimiIcon.append($("<text/>").attr("x", "12").attr("y", "13").attr("text-anchor", "middle").attr("font-size", "10").attr("font-weight", "bold").text("B"))
     $bimiCell.append($bimiIcon)
 
-    # Create recipients cell with HTML content
-    $toCell = $("<td/>").addClass("to-cell").html(formattedRecipients or "No recipients").toggleClass("blank", !message.recipients.length)
+    # Create recipients cell with two-tier format (name bold + email preview)
+    $toCell = $("<td/>").addClass("to-cell")
+    if message.recipients && message.recipients.length > 0
+      # Show first recipient (same pattern as From column)
+      firstRecipient = message.recipients[0]
+      recipientParts = @parseSender(firstRecipient)
+
+      $toCellText = $("<div/>").addClass("sender-text-container")
+      if recipientParts.name
+        # Show name in bold and email below
+        $recipientName = $("<div/>").addClass("sender-name").html("<strong>#{@escapeHtml(recipientParts.name)}</strong>")
+        $recipientEmail = $("<div/>").addClass("sender-email").text(recipientParts.email)
+        $toCellText.append($recipientName).append($recipientEmail)
+      else
+        # Just email address
+        $recipientEmail = $("<div/>").addClass("sender-email").text(recipientParts.email)
+        $toCellText.append($recipientEmail)
+
+      $toCell.append($toCellText)
+    else
+      $toCell.addClass("blank").text("No recipients")
 
     $tr = $("<tr />").attr("data-message-id", message.id.toString())
       .append($attachmentCell)
@@ -406,14 +415,21 @@ class MailCatcher
 
       if fullMessage.to_header
         $toCell.empty()
-        recipientElements = fullMessage.to_header.split(",").map((email) ->
-          parts = self.parseSender(email.trim())
-          if parts.name
-            "<strong>#{self.escapeHtml(parts.name)}</strong><br/>#{self.escapeHtml(parts.email)}"
+        recipients = fullMessage.to_header.split(",").map((email) -> email.trim())
+        if recipients.length > 0
+          firstRecipient = recipients[0]
+          recipientParts = self.parseSender(firstRecipient)
+
+          $toCellText = $("<div/>").addClass("sender-text-container")
+          if recipientParts.name
+            $recipientName = $("<div/>").addClass("sender-name").html("<strong>#{self.escapeHtml(recipientParts.name)}</strong>")
+            $recipientEmail = $("<div/>").addClass("sender-email").text(recipientParts.email)
+            $toCellText.append($recipientName).append($recipientEmail)
           else
-            self.escapeHtml(parts.email)
-        )
-        $toCell.html(recipientElements.join(", "))
+            $recipientEmail = $("<div/>").addClass("sender-email").text(recipientParts.email)
+            $toCellText.append($recipientEmail)
+
+          $toCell.append($toCellText)
 
       # Update attachment cell if attachments are present
       if fullMessage.attachments && fullMessage.attachments.length > 0
@@ -440,6 +456,7 @@ class MailCatcher
         $bimiCell.append($bimiImg)
 
     @updateMessagesCount()
+    @applyFilters()
 
   escapeHtml: (text) ->
     div = document.createElement("div")
