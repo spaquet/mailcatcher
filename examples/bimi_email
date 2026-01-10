@@ -1,0 +1,33 @@
+To: Jane Doe <jane.doe@example.com>
+From: Marketing Team <marketing@acme-corp.com>
+Subject: Your Monthly Newsletter
+Bimi-Location: data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%232196F3' width='100' height='100'/%3E%3Ctext x='50' y='60' font-size='60' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'%3EA%3C/text%3E%3C/svg%3E
+Content-Type: text/html; charset=utf-8
+
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #f0f0f0; padding: 20px; text-align: center; }
+    .content { padding: 20px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Welcome to ACME Corp</h1>
+  </div>
+  <div class="content">
+    <h2>Your Monthly Update</h2>
+    <p>Thank you for being a valued customer. Here are the latest updates from our team.</p>
+    <ul>
+      <li>New product features released</li>
+      <li>Improved performance and reliability</li>
+      <li>Enhanced security measures</li>
+    </ul>
+    <p>Best regards,<br>The ACME Team</p>
+  </div>
+</div>
+</body>
+</html>

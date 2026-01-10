@@ -1,0 +1,74 @@
+To: Subscriber <subscriber@email.com>
+From: Deals <deals@retailer.com>
+Subject: Exclusive 50% Off Sale - This Weekend Only!
+Content-Type: text/html; charset=utf-8
+
+<html>
+<head>
+  <style>
+    * { margin: 0; padding: 0; }
+    body { font-family: 'Arial', sans-serif; background: #fff; }
+    .container { max-width: 500px; margin: 0 auto; }
+    .banner { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; padding: 30px; text-align: center; }
+    .banner h1 { font-size: 36px; margin-bottom: 10px; }
+    .banner p { font-size: 18px; opacity: 0.95; }
+    .content { padding: 30px 20px; background: white; }
+    .cta { background: #ff6b6b; color: white; padding: 15px 30px; text-align: center; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 4px; margin: 20px 0; }
+    .product { border: 1px solid #eee; padding: 20px; margin: 15px 0; border-radius: 4px; }
+    .timer { background: #fff3cd; padding: 15px; border-radius: 4px; margin: 20px 0; text-align: center; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="banner">
+    <h1>FLASH SALE!</h1>
+    <p>Get 50% Off Everything</p>
+  </div>
+
+  <div class="content">
+    <h2 style="color: #333; margin-bottom: 20px;">Limited Time Only - This Weekend!</h2>
+
+    <div class="timer">
+      ⏰ Sale Ends Sunday at Midnight!
+    </div>
+
+    <p style="margin-bottom: 20px; color: #555; line-height: 1.6;">
+      We're thrilled to announce our biggest sale of the season! For the next 48 hours, enjoy an incredible 50% discount on thousands of items across all categories. Whether you're looking for fashion, electronics, home goods, or beauty products, now is the perfect time to shop and save big.
+    </p>
+
+    <a class="cta" href="#">Shop Now and Save 50%</a>
+
+    <div class="product">
+      <h3>Premium Wireless Headphones</h3>
+      <p>Originally $299.99 → Now $149.99</p>
+      <p style="font-size: 12px; color: #999;">High-quality sound, 30-hour battery life, noise cancellation</p>
+    </div>
+
+    <div class="product">
+      <h3>Smart Watch Pro</h3>
+      <p>Originally $399.99 → Now $199.99</p>
+      <p style="font-size: 12px; color: #999;">Heart rate monitor, fitness tracking, water resistant</p>
+    </div>
+
+    <div class="product">
+      <h3>Ultra-Fast Charger</h3>
+      <p>Originally $79.99 → Now $39.99</p>
+      <p style="font-size: 12px; color: #999;">USB-C, 65W output, compatible with all devices</p>
+    </div>
+
+    <p style="margin-top: 30px; color: #555; line-height: 1.6;">
+      Don't miss out on these incredible savings! Our customers absolutely love these products, and with this 50% discount, there's never been a better time to upgrade your tech collection. Stock is limited, and we expect these items to sell out quickly.
+    </p>
+
+    <p style="margin-top: 20px; color: #555;">
+      Ready to save? <a href="#" style="color: #ff6b6b; text-decoration: none; font-weight: bold;">Click here to start shopping →</a>
+    </p>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
+      <p>This offer is valid for subscribers only. Sale applies to in-stock items. Some exclusions may apply.</p>
+      <p style="margin-top: 10px;">Questions? Contact our support team at support@retailer.com</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

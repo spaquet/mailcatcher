@@ -320,6 +320,18 @@
       flex: 1;
     }
 
+    #messages th.col-attachments {
+      flex: 0 0 40px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
+    #messages th.col-bimi {
+      flex: 0 0 40px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+
     #messages tbody {
       overflow-y: auto;
       flex: 1;
@@ -365,6 +377,108 @@
     #messages td.blank {
       color: #999;
       font-style: italic;
+    }
+
+    #messages td.col-attachments {
+      flex: 0 0 40px;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 16px;
+      overflow: visible;
+      white-space: normal;
+    }
+
+    #messages td.col-bimi {
+      flex: 0 0 40px;
+      padding: 12px 8px;
+      text-align: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #messages .bimi-placeholder-icon {
+      width: 24px;
+      height: 24px;
+      color: #ccc;
+      flex-shrink: 0;
+    }
+
+    #messages .bimi-image {
+      max-width: 32px;
+      max-height: 32px;
+      flex-shrink: 0;
+    }
+
+    #messages td.subject-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      padding: 10px 16px;
+      overflow: hidden;
+    }
+
+    #messages .subject-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: normal;
+    }
+
+    #messages .subject-text strong {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    #messages .preview-text {
+      font-size: 12px;
+      color: #999;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: normal;
+    }
+
+    #messages td.from-cell {
+      white-space: normal;
+      word-break: break-word;
+      padding: 10px 16px;
+    }
+
+    #messages .from-content {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    #messages .attachment-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+      margin-right: -2px;
+    }
+
+    #messages .bimi-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin-right: 4px;
+    }
+
+    #messages .sender-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     #message {
@@ -717,6 +831,8 @@
       <table>
         <thead>
           <tr>
+            <th class="col-attachments"></th>
+            <th class="col-bimi"></th>
             <th>From</th>
             <th>To</th>
             <th>Subject</th>

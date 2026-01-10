@@ -12,10 +12,33 @@ FROM_ADDRESS = ENV['FROM_ADDRESS'] || 'test@example.com'
 TO_ADDRESS = ENV['TO_ADDRESS'] || 'recipient@example.com'
 DELAY = (ENV['DELAY'] || 1).to_i
 
-# Get list of email files to send (exclude 'attachment' which is a binary file)
-email_files = Dir.glob(File.join(EXAMPLES_DIR, '*')).select do |file|
-  File.file?(file) && File.basename(file) != 'attachment'
-end
+# Define example emails to send (in order, excluding binary 'attachment' file)
+example_names = [
+  'mail',
+  'plainmail',
+  'plainlinkmail',
+  'htmlmail',
+  'xhtmlmail',
+  'quoted_printable_htmlmail',
+  'multipartmail',
+  'multipartmail-with-utf8',
+  'attachmail',
+  'multiattachmail',
+  'dotmail',
+  'unknownmail',
+  'breaking',
+  'mailcatcher_redesign',          # Large email with full redesign content
+  'bimi_email',                    # New: BIMI branded email
+  'newsletter_with_preview',       # New: Newsletter with preview content
+  'enterprise_branded_email',      # New: Enterprise branded email with BIMI
+  'promotional_email'              # New: Promotional email with rich preview
+]
+
+# Get list of email files to send
+email_files = example_names.map do |name|
+  file = File.join(EXAMPLES_DIR, name)
+  File.exist?(file) ? file : nil
+end.compact
 
 if email_files.empty?
   puts "No email files found in #{EXAMPLES_DIR}"

@@ -1,0 +1,49 @@
+To: Customer <customer@example.com>
+From: Support Team <support@techco.com>
+Subject: Important Product Updates and Security Improvements
+Content-Type: text/html; charset=utf-8
+
+<html>
+<head>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px 8px 0 0; }
+    .content { padding: 30px; background: white; }
+    .footer { background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Important Updates for Our Users</h1>
+  </div>
+  <div class="content">
+    <p>Dear Valued Customer,</p>
+
+    <p>We are excited to announce several major updates and improvements to our platform that will enhance your experience and security.</p>
+
+    <h2>What's New</h2>
+    <h3>1. Enhanced Security Features</h3>
+    <p>We have implemented advanced encryption protocols and two-factor authentication to ensure your data remains secure. All accounts are automatically protected with these new features.</p>
+
+    <h3>2. Performance Improvements</h3>
+    <p>Our team has optimized the database and caching systems, resulting in 40% faster load times for most operations. Users should notice immediate improvements when accessing their accounts.</p>
+
+    <h3>3. New User Interface</h3>
+    <p>We've redesigned the dashboard with a modern, intuitive interface that makes it easier to access the features you use most frequently.</p>
+
+    <h3>4. API Enhancements</h3>
+    <p>For developers, we've expanded our API with new endpoints and improved documentation. Visit our developer portal for more information.</p>
+
+    <p>Thank you for your continued trust and support. If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+
+    <p>Best regards,<br>
+    <strong>The TechCo Team</strong></p>
+  </div>
+  <div class="footer">
+    <p>© 2025 TechCo Inc. All rights reserved. | <a href="#">Unsubscribe</a></p>
+  </div>
+</div>
+</body>
+</html>

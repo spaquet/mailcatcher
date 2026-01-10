@@ -160,6 +160,7 @@ module MailCatcher
               ("plain" if Mail.message_has_plain? id)
             ].compact,
             "attachments" => Mail.message_attachments(id),
+            "bimi_location" => Mail.message_bimi_location(id),
           }))
         else
           not_found

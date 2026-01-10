@@ -95,6 +95,26 @@ module MailCatcher::Mail extend self
     row && row.first
   end
 
+  def message_bimi_location(id)
+    source = message_source(id)
+    return nil unless source
+
+    # Extract BIMI-Location header from email source
+    # Headers are case-insensitive
+    source.each_line do |line|
+      # Stop at first blank line (end of headers)
+      break if line.strip.empty?
+      # Match BIMI-Location header (case-insensitive)
+      if line.match?(/^bimi-location:\s*/i)
+        # Extract the value and clean it up
+        value = line.sub(/^bimi-location:\s*/i, '').strip
+        return value unless value.empty?
+      end
+    end
+
+    nil
+  end
+
   def message_has_html?(id)
     @message_has_html_query ||= db.prepare "SELECT 1 FROM message_part WHERE message_id = ? AND is_attachment = 0 AND type IN ('application/xhtml+xml', 'text/html') LIMIT 1"
     (!!@message_has_html_query.execute(id).next) || ["text/html", "application/xhtml+xml"].include?(message(id)["type"])

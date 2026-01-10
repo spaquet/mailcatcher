@@ -255,17 +255,131 @@ class MailCatcher
       else
         $row.hide()
 
+  formatSender: (sender) ->
+    # Handle sender format: either "email@example.com" or "<email@example.com>" or "Name <email@example.com>"
+    unless sender
+      return ""
+
+    # Remove angle brackets if present
+    sender = sender.replace(/^<(.+?)>$/, "$1")
+
+    # Handle "Name <email>" format
+    match = sender.match(/^(.+?)\s+<(.+?)>$/)
+    if match
+      name = match[1].trim()
+      email = match[2].trim()
+      return "#{name} #{email}"
+
+    # Return clean email (angle brackets already removed above)
+    return sender
+
+  getEmailPreview: (message, callback) ->
+    # Extract a brief preview from the email body
+    # This is async so we pass a callback
+    self = @
+    if message.formats && (message.formats.includes("plain") || message.formats.includes("html"))
+      # Fetch the plain text or HTML version to extract preview
+      format = if message.formats.includes("plain") then "plain" else "html"
+      $.ajax
+        url: "messages/#{message.id}.#{format}"
+        type: "GET"
+        success: (data) ->
+          # Extract first 100 characters, strip HTML tags
+          preview = data.replace(/<[^>]*>/g, "").trim()
+          preview = preview.substring(0, 100)
+          if preview.length >= 100
+            preview += "..."
+          callback(preview) if callback
+        error: ->
+          callback("") if callback
+    else
+      callback("") if callback
+
   addMessage: (message) ->
+    # Format sender: remove angle brackets and show name + email
+    formattedSender = @formatSender(message.sender or "No sender")
+
+    # Check if email has attachments (from detailed message data, or assume false initially)
+    hasAttachments = message.attachments && message.attachments.length > 0
+
+    # Create subject cell with bold subject and preview
+    $subjectCell = $("<td/>").addClass("subject-cell")
+    $subject = $("<div/>").addClass("subject-text").html("<strong>#{@escapeHtml(message.subject or "No subject")}</strong>")
+    $preview = $("<div/>").addClass("preview-text").text("")
+    $subjectCell.append($subject).append($preview)
+
+    # Create from cell with sender and optional BIMI/attachment icons
+    $fromCell = $("<td/>").addClass("from-cell")
+    $fromCellText = $("<div/>").addClass("from-content")
+
+    # Placeholder for attachment and BIMI icons (will be updated after fetching full data)
+    $iconContainer = $("<span/>").addClass("icon-container")
+    $fromCellText.append($iconContainer)
+
+    # Add sender name
+    $senderText = $("<span/>").addClass("sender-text").text(formattedSender)
+    $fromCellText.append($senderText)
+
+    $fromCell.append($fromCellText).toggleClass("blank", !message.sender)
+
+    # Format recipients - remove angle brackets
+    formattedRecipients = (message.recipients || []).map((email) => @formatSender(email)).join(", ")
+
+    # Create attachment indicator cell
+    $attachmentCell = $("<td/>").addClass("col-attachments")
+    if hasAttachments
+      $attachmentCell.text("📎")
+
+    # Create BIMI cell with generic icon (will be updated with actual logo if available)
+    $bimiCell = $("<td/>").addClass("col-bimi")
+    # Add generic BIMI icon SVG
+    $bimiIcon = $("<svg/>").addClass("bimi-placeholder-icon")
+      .attr("viewBox", "0 0 24 24")
+      .attr("fill", "none")
+      .attr("stroke", "currentColor")
+      .attr("stroke-width", "2")
+    $bimiIcon.append($("<circle/>").attr("cx", "12").attr("cy", "12").attr("r", "10"))
+    $bimiIcon.append($("<text/>").attr("x", "12").attr("y", "13").attr("text-anchor", "middle").attr("font-size", "10").attr("font-weight", "bold").text("B"))
+    $bimiCell.append($bimiIcon)
+
     $tr = $("<tr />").attr("data-message-id", message.id.toString())
-      .append($("<td/>").text(message.sender or "No sender").toggleClass("blank", !message.sender))
-      .append($("<td/>").text((message.recipients || []).join(", ") or "No recipients").toggleClass("blank", !message.recipients.length))
-      .append($("<td/>").text(message.subject or "No subject").toggleClass("blank", !message.subject))
+      .append($attachmentCell)
+      .append($bimiCell)
+      .append($fromCell)
+      .append($("<td/>").text(formattedRecipients or "No recipients").toggleClass("blank", !message.recipients.length))
+      .append($subjectCell)
       .append($("<td/>").text(@formatDate(message.created_at)))
       .append($("<td/>").text(@formatSize(message.size)))
+
     # Store attachment information for filtering
-    $tr.data("has-attachments", message.attachments && message.attachments.length > 0)
+    $tr.data("has-attachments", hasAttachments)
     $tr.prependTo($("#messages tbody"))
+
+    # Fetch full message data to get attachment and BIMI info
+    self = @
+    $.getJSON "messages/#{message.id}.json", (fullMessage) ->
+      # Update attachment cell if attachments are present
+      if fullMessage.attachments && fullMessage.attachments.length > 0
+        $tr.data("has-attachments", true)
+        $attachmentCell.text("📎")
+
+      # Fetch and display email preview
+      self.getEmailPreview(fullMessage, (previewText) ->
+        $preview.text(previewText)
+      )
+
+      # Add BIMI image if available in message headers
+      if fullMessage.bimi_location
+        $bimiCell.empty()
+        $bimiImg = $("<img/>").addClass("bimi-image").attr("src", fullMessage.bimi_location).attr("alt", "BIMI")
+        $bimiCell.append($bimiImg)
+
     @updateMessagesCount()
+
+  escapeHtml: (text) ->
+    div = document.createElement("div")
+    div.textContent = text
+    div.innerHTML
 
   removeMessage: (id) ->
     messageRow = $("""#messages tbody tr[data-message-id="#{id}"]""")
