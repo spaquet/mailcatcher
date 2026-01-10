@@ -314,6 +314,79 @@ module MailCatcher::Mail extend self
     end
   end
 
+  def message_encryption_data(id)
+    source = message_source(id)
+    return {} unless source
+
+    encryption_data = {
+      smime: nil,
+      pgp: nil
+    }
+
+    lines = source.lines
+    lines.each_with_index do |line, index|
+      break if line.strip.empty?
+
+      # Check for S/MIME certificate headers
+      if line.match?(/^x-certificate:/i)
+        value = line.sub(/^x-certificate:\s*/i, '').strip
+        # Handle multi-line headers
+        next_index = index + 1
+        while next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += lines[next_index].strip
+          next_index += 1
+        end
+        encryption_data[:smime] = { certificate: value } if value.present?
+      end
+
+      # Check for S/MIME signature headers
+      if line.match?(/^x-smime-signature:/i)
+        value = line.sub(/^x-smime-signature:\s*/i, '').strip
+        # Handle multi-line headers
+        next_index = index + 1
+        while next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += lines[next_index].strip
+          next_index += 1
+        end
+        if encryption_data[:smime].nil?
+          encryption_data[:smime] = { signature: value }
+        else
+          encryption_data[:smime][:signature] = value
+        end
+      end
+
+      # Check for PGP key or signature headers
+      if line.match?(/^x-pgp-key:/i)
+        value = line.sub(/^x-pgp-key:\s*/i, '').strip
+        # Handle multi-line headers
+        next_index = index + 1
+        while next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += lines[next_index].strip
+          next_index += 1
+        end
+        encryption_data[:pgp] = { key: value } if value.present?
+      end
+
+      # Check for PGP signature headers
+      if line.match?(/^x-pgp-signature:/i)
+        value = line.sub(/^x-pgp-signature:\s*/i, '').strip
+        # Handle multi-line headers
+        next_index = index + 1
+        while next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += lines[next_index].strip
+          next_index += 1
+        end
+        if encryption_data[:pgp].nil?
+          encryption_data[:pgp] = { signature: value }
+        else
+          encryption_data[:pgp][:signature] = value
+        end
+      end
+    end
+
+    encryption_data
+  end
+
   private
 
   def parse_authentication_results(auth_header)

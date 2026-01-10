@@ -860,6 +860,97 @@
         height: 18px;
       }
 
+      /* Encryption/Signature Tooltip Styling */
+      .encryption-tooltip-content {
+        padding: 12px 16px;
+        font-size: 13px;
+        line-height: 1.6;
+        max-width: 400px;
+      }
+
+      .encryption-tooltip-content h3 {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #5f5f5f;
+        margin: 0 0 8px 0;
+        padding-top: 8px;
+      }
+
+      .encryption-tooltip-content h3:first-child {
+        padding-top: 0;
+        margin-top: 0;
+      }
+
+      .encryption-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .encryption-info-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .encryption-info-label {
+        font-weight: 500;
+        color: #333;
+        min-width: 100px;
+      }
+
+      .encryption-info-value {
+        color: #666;
+        flex-grow: 1;
+        word-break: break-all;
+      }
+
+      .encryption-copy-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        margin-top: 8px;
+        background: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        color: #333;
+        transition: all 0.2s;
+      }
+
+      .encryption-copy-button:hover {
+        background: #efefef;
+        border-color: #d0d0d0;
+      }
+
+      .encryption-copy-button:active {
+        transform: scale(0.98);
+      }
+
+      .encryption-copy-button svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .encryption-copy-button.copied {
+        background: #c8e6c9;
+        border-color: #4caf50;
+        color: #2e7d32;
+      }
+
+      .encryption-copy-button.copied svg {
+        stroke: #2e7d32;
+      }
+
+      .encryption-no-data {
+        color: #999;
+        font-size: 12px;
+      }
+
       /* Tippy tooltip customization */
       .tippy-box[data-theme~='light'] {
         background-color: #ffffff;
@@ -1101,6 +1192,11 @@
                 <li class="format tab source" data-message-format="source"><a href="#">Source</a></li>
               </ul>
               <ul class="views-actions">
+                <li><button class="signature-info-btn" id="encryptionInfoBtn" title="Email encryption and signature information">
+                  <svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"></path>
+                  </svg>
+                </button></li>
                 <li><button class="signature-info-btn" id="signatureInfoBtn" title="Email signature verification (DMARC, DKIM, SPF)">
                   <svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"></path>
@@ -1391,6 +1487,217 @@
               box.style.visibility = 'hidden';
               box.style.pointerEvents = 'none';
             });
+          });
+        }
+
+        // Setup encryption/signature info tooltip
+        const encryptionInfoBtn = document.getElementById('encryptionInfoBtn');
+        let encryptionTooltip = null;
+
+        function generateEncryptionContent(encryptionData) {
+          const smime = encryptionData?.smime;
+          const pgp = encryptionData?.pgp;
+
+          // Check if any encryption data exists
+          const hasEncryptionData = smime || pgp;
+
+          if (!hasEncryptionData) {
+            return `
+              <div class="encryption-tooltip-content">
+                <p class="encryption-no-data">No encryption or signature information found for this email.</p>
+              </div>
+            `;
+          }
+
+          let content = '<div class="encryption-tooltip-content">';
+
+          if (smime) {
+            content += `
+              <h3>S/MIME</h3>
+              ${smime.certificate ? `
+                <div class="encryption-info-item">
+                  <span class="encryption-info-label">Certificate:</span>
+                  <span class="encryption-info-value">${escapeHtml(smime.certificate.substring(0, 40))}...</span>
+                </div>
+                <button class="encryption-copy-button" data-copy-type="smime-cert" data-value="${escapeHtml(smime.certificate)}">
+                  <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"></path>
+                  </svg>
+                  Copy Certificate
+                </button>
+              ` : ''}
+              ${smime.signature ? `
+                <div class="encryption-info-item">
+                  <span class="encryption-info-label">Signature:</span>
+                  <span class="encryption-info-value">${escapeHtml(smime.signature.substring(0, 40))}...</span>
+                </div>
+                <button class="encryption-copy-button" data-copy-type="smime-sig" data-value="${escapeHtml(smime.signature)}">
+                  <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"></path>
+                  </svg>
+                  Copy Signature
+                </button>
+              ` : ''}
+            `;
+          }
+
+          if (pgp) {
+            content += `
+              <h3>OpenPGP</h3>
+              ${pgp.key ? `
+                <div class="encryption-info-item">
+                  <span class="encryption-info-label">Key:</span>
+                  <span class="encryption-info-value">${escapeHtml(pgp.key.substring(0, 40))}...</span>
+                </div>
+                <button class="encryption-copy-button" data-copy-type="pgp-key" data-value="${escapeHtml(pgp.key)}">
+                  <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"></path>
+                  </svg>
+                  Copy Key
+                </button>
+              ` : ''}
+              ${pgp.signature ? `
+                <div class="encryption-info-item">
+                  <span class="encryption-info-label">Signature:</span>
+                  <span class="encryption-info-value">${escapeHtml(pgp.signature.substring(0, 40))}...</span>
+                </div>
+                <button class="encryption-copy-button" data-copy-type="pgp-sig" data-value="${escapeHtml(pgp.signature)}">
+                  <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z"></path>
+                  </svg>
+                  Copy Signature
+                </button>
+              ` : ''}
+            `;
+          }
+
+          content += '</div>';
+          return content;
+        }
+
+        function escapeHtml(text) {
+          const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+          };
+          return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        if (encryptionInfoBtn) {
+          encryptionInfoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (window.MailCatcher) {
+              const messageId = window.MailCatcher.selectedMessage();
+              if (!messageId) return;
+
+              // Destroy existing tooltip if any
+              if (encryptionTooltip) {
+                encryptionTooltip.destroy();
+              }
+
+              // Fetch message data
+              fetch(new URL(`messages/${messageId}.json`, document.baseURI).toString())
+                .then(response => response.json())
+                .then(data => {
+                  const encryptionData = data.encryption_data || {};
+                  const content = generateEncryptionContent(encryptionData);
+
+                  // Create tooltip with content
+                  encryptionTooltip = tippy(encryptionInfoBtn, {
+                    content: content,
+                    allowHTML: true,
+                    theme: 'light',
+                    placement: 'bottom-start',
+                    interactive: true,
+                    duration: [200, 150],
+                    arrow: true,
+                    trigger: 'manual',
+                    maxWidth: 400,
+                    onClickOutside: (instance) => {
+                      instance.hide();
+                    },
+                  });
+
+                  // Show tooltip
+                  encryptionTooltip.show();
+
+                  // Setup copy button handlers
+                  const copyButtons = document.querySelectorAll('.encryption-copy-button');
+                  copyButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                      e.preventDefault();
+                      e.stopPropagation();
+
+                      const value = this.getAttribute('data-value');
+                      const copyType = this.getAttribute('data-copy-type');
+
+                      // Copy to clipboard
+                      navigator.clipboard.writeText(value).then(() => {
+                        // Show success state
+                        const originalHTML = this.innerHTML;
+                        const originalClass = this.className;
+
+                        this.classList.add('copied');
+                        this.innerHTML = `
+                          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"></path>
+                          </svg>
+                          Copied!
+                        `;
+
+                        // Reset after 3 seconds
+                        setTimeout(() => {
+                          this.className = originalClass;
+                          this.innerHTML = originalHTML;
+                        }, 3000);
+                      }).catch(err => {
+                        console.error('Failed to copy to clipboard:', err);
+                      });
+                    });
+                  });
+                })
+                .catch(error => {
+                  console.error('Error fetching encryption data:', error);
+                  const errorContent = `
+                    <div class="encryption-tooltip-content">
+                      <p class="encryption-no-data">Error loading encryption data.</p>
+                    </div>
+                  `;
+
+                  encryptionTooltip = tippy(encryptionInfoBtn, {
+                    content: errorContent,
+                    allowHTML: true,
+                    theme: 'light',
+                    placement: 'bottom-start',
+                    interactive: true,
+                    duration: [200, 150],
+                    arrow: true,
+                    trigger: 'manual',
+                    onClickOutside: (instance) => {
+                      instance.hide();
+                    },
+                  });
+
+                  encryptionTooltip.show();
+                });
+            }
+          });
+
+          // Close tooltip when clicking elsewhere
+          document.addEventListener('click', function(e) {
+            // Check if this click is on the button
+            if (encryptionInfoBtn && encryptionInfoBtn.contains(e.target)) return;
+
+            // Check if this click is on a tippy-box
+            if (e.target.closest('.tippy-box')) return;
+
+            // Click is outside everything, hide tooltip
+            if (encryptionTooltip) {
+              encryptionTooltip.hide();
+            }
           });
         }
       });
