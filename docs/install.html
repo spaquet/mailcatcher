@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="MailCatcher installation guide. Easy setup instructions for macOS, Linux, Docker, and various frameworks.">
-    <meta name="keywords" content="mailcatcher installation, setup guide, docker, rails, django, php">
-    <meta name="og:title" content="Installation - MailCatcher">
-    <meta name="og:description" content="Get MailCatcher running in minutes with our comprehensive installation guide.">
-    <title>Installation Guide - MailCatcher</title>
+    <meta name="description" content="MailCatcher NG installation guide. Easy setup instructions for macOS, Linux, Docker, and various frameworks.">
+    <meta name="keywords" content="mailcatcher-ng installation, setup guide, docker, rails, django, php">
+    <meta name="og:title" content="Installation - MailCatcher NG">
+    <meta name="og:description" content="Get MailCatcher NG running in minutes with our comprehensive installation guide.">
+    <title>Installation Guide - MailCatcher NG</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
                 <span class="logo-icon">📧</span>
-                MailCatcher
+                MailCatcher NG
             </a>
             <ul class="nav-menu">
                 <li><a href="index.html#features" class="nav-link">Features</a></li>
@@ -42,10 +42,10 @@
                 <!-- Basic Installation -->
                 <div class="install-section">
                     <h2>Basic Installation</h2>
-                    <p>MailCatcher requires Ruby 3.2 or higher. Ensure you have Ruby installed:</p>
+                    <p>MailCatcher NG requires Ruby 3.2 or higher. Ensure you have Ruby installed:</p>
                     <pre><code>ruby -v</code></pre>
                     <p>Then install via RubyGems:</p>
-                    <pre><code>gem install mailcatcher</code></pre>
+                    <pre><code>gem install mailcatcher-ng</code></pre>
                     <p>Start the server:</p>
                     <pre><code>mailcatcher
 # View mail at http://127.0.0.1:1080
@@ -152,18 +152,6 @@ xcode-select --install      # macOS</code></pre>
 ln -s "$(rvm default@mailcatcher do rvm wrapper show mailcatcher)" "$rvm_bin_path/"</code></pre>
                 </div>
 
-                <!-- GitHub Packages -->
-                <div class="install-section">
-                    <h2>Install from GitHub Packages</h2>
-                    <p>This fork is available on GitHub Packages:</p>
-                    <pre><code>gem install mailcatcher \
-  --version "0.12.0" \
-  --source "https://rubygems.pkg.github.com/spaquet"</code></pre>
-                    <p>Or add to your Gemfile:</p>
-                    <pre><code>source "https://rubygems.pkg.github.com/spaquet" do
-  gem "mailcatcher", "~> 0.12.0"
-end</code></pre>
-                </div>
 
                 <!-- From Source -->
                 <div class="install-section">
@@ -172,7 +160,7 @@ end</code></pre>
 cd mailcatcher
 bundle install
 bundle exec rake package
-gem install mailcatcher-VERSION.gem</code></pre>
+gem install mailcatcher-ng-VERSION.gem</code></pre>
                 </div>
             </div>
         </div>
@@ -183,15 +171,15 @@ gem install mailcatcher-VERSION.gem</code></pre>
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>MailCatcher</h4>
+                    <h4>MailCatcher NG</h4>
                     <p>Email testing made beautiful for developers.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Links</h4>
                     <ul>
-                        <li><a href="https://github.com/spaquet/mailcatcher">This Fork</a></li>
+                        <li><a href="https://github.com/spaquet/mailcatcher">GitHub</a></li>
                         <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
-                        <li><a href="https://rubygems.org/gems/mailcatcher">RubyGems</a></li>
+                        <li><a href="https://rubygems.org/gems/mailcatcher-ng">RubyGems (NG)</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -204,7 +192,7 @@ gem install mailcatcher-VERSION.gem</code></pre>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Samuel Paquet. MIT License.</p>
+                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Stéphane Paquet. MIT License.</p>
             </div>
         </div>
     </footer>
