@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mailcatcher (0.14.0)
+    mailcatcher-ng (1.0.0)
       eventmachine (~> 1.2.7)
       faye-websocket (~> 0.12.0)
       mail (~> 2.9)
@@ -214,7 +214,7 @@ DEPENDENCIES
   capybara (~> 3.40)
   capybara-screenshot (~> 1.0, >= 1.0.26)
   coffee-script (~> 2.4, >= 2.4.1)
-  mailcatcher!
+  mailcatcher-ng!
   rake (~> 13.3, >= 13.3.1)
   rdoc (~> 7.0, >= 7.0.3)
   rspec (~> 3.13, >= 3.13.2)
