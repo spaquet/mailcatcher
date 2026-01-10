@@ -62,8 +62,11 @@ RSpec.describe MailCatcher, type: :feature do
 
     expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Plain mail")
 
-    expect(message_from_element).to have_text(DEFAULT_FROM)
-    expect(message_to_element).to have_text(DEFAULT_TO)
+    # plainmail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
     expect(message_subject_element).to have_text("Plain mail")
     # Verify the timestamp is present and can be parsed
     expect { Time.parse(message_received_element.text) }.not_to raise_error
@@ -96,8 +99,11 @@ RSpec.describe MailCatcher, type: :feature do
 
     expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test HTML Mail")
 
-    expect(message_from_element).to have_text(DEFAULT_FROM)
-    expect(message_to_element).to have_text(DEFAULT_TO)
+    # htmlmail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
     expect(message_subject_element).to have_text("Test HTML Mail")
     # Verify the timestamp is present and can be parsed
     expect { Time.parse(message_received_element.text) }.not_to raise_error
@@ -132,8 +138,11 @@ RSpec.describe MailCatcher, type: :feature do
 
     expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test Multipart Mail")
 
-    expect(message_from_element).to have_text(DEFAULT_FROM)
-    expect(message_to_element).to have_text(DEFAULT_TO)
+    # multipartmail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
     expect(message_subject_element).to have_text("Test Multipart Mail")
     # Verify the timestamp is present and can be parsed
     expect { Time.parse(message_received_element.text) }.not_to raise_error
@@ -176,8 +185,11 @@ RSpec.describe MailCatcher, type: :feature do
 
     expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test Multipart UTF8 Mail")
 
-    expect(message_from_element).to have_text(DEFAULT_FROM)
-    expect(message_to_element).to have_text(DEFAULT_TO)
+    # multipartmail-with-utf8 example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
     expect(message_subject_element).to have_text("Test Multipart UTF8 Mail")
     # Verify the timestamp is present and can be parsed
     expect { Time.parse(message_received_element.text) }.not_to raise_error
@@ -228,8 +240,11 @@ RSpec.describe MailCatcher, type: :feature do
 
     expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test Attachment Mail")
 
-    expect(message_from_element).to have_text(DEFAULT_FROM)
-    expect(message_to_element).to have_text(DEFAULT_TO)
+    # attachmail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
     expect(message_subject_element).to have_text("Test Attachment Mail")
     # Verify the timestamp is present and can be parsed
     expect { Time.parse(message_received_element.text) }.not_to raise_error

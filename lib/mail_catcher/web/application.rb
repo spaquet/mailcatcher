@@ -163,6 +163,8 @@ module MailCatcher
             "bimi_location" => Mail.message_bimi_location(id),
             "preview_text" => Mail.message_preview_text(id),
             "authentication_results" => Mail.message_authentication_results(id),
+            "from_header" => Mail.message_from(id),
+            "to_header" => Mail.message_to(id),
           }))
         else
           not_found

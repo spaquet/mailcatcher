@@ -391,6 +391,30 @@ class MailCatcher
     # Fetch full message data to get attachment and BIMI info
     self = @
     $.getJSON "messages/#{message.id}.json", (fullMessage) ->
+      # Update From and To cells with email headers if available
+      # Use from_header/to_header from email headers, fall back to sender/recipients from envelope
+      if fullMessage.from_header
+        $fromCellText.empty()
+        fromParts = self.parseSender(fullMessage.from_header)
+        if fromParts.name
+          $fromName = $("<div/>").addClass("sender-name").html("<strong>#{self.escapeHtml(fromParts.name)}</strong>")
+          $fromEmail = $("<div/>").addClass("sender-email").text(fromParts.email)
+          $fromCellText.append($fromName).append($fromEmail)
+        else
+          $fromEmail = $("<div/>").addClass("sender-email").text(fromParts.email)
+          $fromCellText.append($fromEmail)
+
+      if fullMessage.to_header
+        $toCell.empty()
+        recipientElements = fullMessage.to_header.split(",").map((email) ->
+          parts = self.parseSender(email.trim())
+          if parts.name
+            "<strong>#{self.escapeHtml(parts.name)}</strong><br/>#{self.escapeHtml(parts.email)}"
+          else
+            self.escapeHtml(parts.email)
+        )
+        $toCell.html(recipientElements.join(", "))
+
       # Update attachment cell if attachments are present
       if fullMessage.attachments && fullMessage.attachments.length > 0
         $tr.data("has-attachments", true)
@@ -479,8 +503,17 @@ class MailCatcher
         messageRow.data("has-attachments", message.attachments && message.attachments.length > 0)
 
         $("#message .metadata dd.created_at").text(@formatDate message.created_at)
-        $("#message .metadata dd.from").text(@cleanEmailAddress(message.sender))
-        $("#message .metadata dd.to").text((message.recipients || []).map((email) => @cleanEmailAddress(email)).join(", "))
+        # Use email headers if available, otherwise fall back to envelope data
+        if message.from_header
+          $("#message .metadata dd.from").text(@formatSender(message.from_header))
+        else
+          $("#message .metadata dd.from").text(@cleanEmailAddress(message.sender))
+        if message.to_header
+          # Parse To header which may have multiple recipients
+          toAddresses = message.to_header.split(",").map((email) => @formatSender(email.trim())).join(", ")
+          $("#message .metadata dd.to").text(toAddresses)
+        else
+          $("#message .metadata dd.to").text((message.recipients || []).map((email) => @cleanEmailAddress(email)).join(", "))
         $("#message .metadata dd.subject").text(message.subject)
         $("#message .views .tab.format").each (i, el) ->
           $el = $(el)

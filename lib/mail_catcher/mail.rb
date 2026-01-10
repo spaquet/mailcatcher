@@ -136,6 +136,64 @@ module MailCatcher::Mail extend self
     nil
   end
 
+  def message_from(id)
+    source = message_source(id)
+    return nil unless source
+
+    # Extract From header from email source
+    source.each_line do |line|
+      # Stop at first blank line (end of headers)
+      break if line.strip.empty?
+      # Match From header (case-insensitive)
+      if line.match?(/^from:\s*/i)
+        # Extract the value and handle multi-line headers
+        value = line.sub(/^from:\s*/i, '').strip
+
+        # Continue reading continuation lines (lines starting with whitespace)
+        lines = source.lines
+        line_index = lines.index { |l| l.match?(/^from:\s*/i) }
+        next_index = line_index + 1 if line_index
+        while next_index && next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += " " + lines[next_index].strip
+          next_index += 1
+        end
+
+        return value unless value.empty?
+      end
+    end
+
+    nil
+  end
+
+  def message_to(id)
+    source = message_source(id)
+    return nil unless source
+
+    # Extract To header from email source
+    source.each_line do |line|
+      # Stop at first blank line (end of headers)
+      break if line.strip.empty?
+      # Match To header (case-insensitive)
+      if line.match?(/^to:\s*/i)
+        # Extract the value and handle multi-line headers
+        value = line.sub(/^to:\s*/i, '').strip
+
+        # Continue reading continuation lines (lines starting with whitespace)
+        lines = source.lines
+        line_index = lines.index { |l| l.match?(/^to:\s*/i) }
+        next_index = line_index + 1 if line_index
+        while next_index && next_index < lines.length && lines[next_index].match?(/^\s+/)
+          value += " " + lines[next_index].strip
+          next_index += 1
+        end
+
+        return value unless value.empty?
+      end
+    end
+
+    nil
+  end
+
   def message_authentication_results(id)
     source = message_source(id)
     return {} unless source
