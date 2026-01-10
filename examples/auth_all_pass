@@ -1,0 +1,18 @@
+To: Test User <test@example.com>
+From: Trusted Sender <sender@trusted-domain.com>
+Subject: Email with All Auth Methods Passing
+Authentication-Results: example.com; dmarc=pass; dkim=pass; spf=pass
+Content-Type: text/html
+
+<html>
+<body>
+<h1>Secure Email</h1>
+<p>This email has passed all authentication checks:</p>
+<ul>
+  <li>DMARC: Pass</li>
+  <li>DKIM: Pass</li>
+  <li>SPF: Pass</li>
+</ul>
+<p>This is a trusted message from a verified sender.</p>
+</body>
+</html>

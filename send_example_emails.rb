@@ -31,7 +31,11 @@ example_names = [
   'bimi_email',                    # New: BIMI branded email
   'newsletter_with_preview',       # New: Newsletter with preview content
   'enterprise_branded_email',      # New: Enterprise branded email with BIMI
-  'promotional_email'              # New: Promotional email with rich preview
+  'promotional_email',             # New: Promotional email with rich preview
+  'auth_all_pass',                 # New: Email with all auth methods passing
+  'auth_mixed',                    # New: Email with mixed auth results
+  'auth_partial_data',             # New: Email with only SPF authentication
+  'auth_all_fail'                  # New: Email with all auth methods failing
 ]
 
 # Get list of email files to send

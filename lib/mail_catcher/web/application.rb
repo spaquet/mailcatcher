@@ -161,6 +161,7 @@ module MailCatcher
             ].compact,
             "attachments" => Mail.message_attachments(id),
             "bimi_location" => Mail.message_bimi_location(id),
+            "authentication_results" => Mail.message_authentication_results(id),
           }))
         else
           not_found

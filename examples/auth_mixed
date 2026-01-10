@@ -1,0 +1,18 @@
+To: Test User <test@example.com>
+From: Partial Sender <sender@partial-domain.com>
+Subject: Email with Mixed Auth Results
+Authentication-Results: example.com; dmarc=fail; dkim=pass; spf=pass
+Content-Type: text/html
+
+<html>
+<body>
+<h1>Partially Authenticated Email</h1>
+<p>This email has mixed authentication results:</p>
+<ul>
+  <li>DMARC: Failed</li>
+  <li>DKIM: Pass</li>
+  <li>SPF: Pass</li>
+</ul>
+<p>Use caution with this message - DMARC validation failed.</p>
+</body>
+</html>

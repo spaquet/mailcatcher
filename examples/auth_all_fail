@@ -1,0 +1,18 @@
+To: Test User <test@example.com>
+From: Unverified Sender <sender@unverified-domain.com>
+Subject: Email with All Auth Methods Failing
+Authentication-Results: example.com; dmarc=fail; dkim=fail; spf=fail
+Content-Type: text/html
+
+<html>
+<body>
+<h1>Unverified Email</h1>
+<p>This email has failed all authentication checks:</p>
+<ul>
+  <li>DMARC: Failed</li>
+  <li>DKIM: Failed</li>
+  <li>SPF: Failed</li>
+</ul>
+<p>⚠️ WARNING: This message could not be authenticated. Be cautious with any links or attachments.</p>
+</body>
+</html>

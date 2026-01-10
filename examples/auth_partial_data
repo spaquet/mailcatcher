@@ -1,0 +1,18 @@
+To: Test User <test@example.com>
+From: Selective Sender <sender@selective-domain.com>
+Subject: Email with Only SPF Authentication
+Authentication-Results: example.com; spf=pass
+Content-Type: text/html
+
+<html>
+<body>
+<h1>Partially Authenticated Email</h1>
+<p>This email only has SPF authentication:</p>
+<ul>
+  <li>DMARC: Not checked</li>
+  <li>DKIM: Not checked</li>
+  <li>SPF: Pass</li>
+</ul>
+<p>This server only performed SPF validation.</p>
+</body>
+</html>

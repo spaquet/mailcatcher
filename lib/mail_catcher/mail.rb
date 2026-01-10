@@ -115,6 +115,31 @@ module MailCatcher::Mail extend self
     nil
   end
 
+  def message_authentication_results(id)
+    source = message_source(id)
+    return {} unless source
+
+    auth_results = {
+      dmarc: nil,
+      dkim: nil,
+      spf: nil
+    }
+
+    source.each_line do |line|
+      break if line.strip.empty?
+
+      # Authentication-Results header contains DMARC, DKIM, and SPF info
+      if line.match?(/^authentication-results:\s*/i)
+        # Extract the value (handling multi-line headers)
+        value = line.sub(/^authentication-results:\s*/i, '').strip
+        auth_results = parse_authentication_results(value)
+        break
+      end
+    end
+
+    auth_results
+  end
+
   def message_has_html?(id)
     @message_has_html_query ||= db.prepare "SELECT 1 FROM message_part WHERE message_id = ? AND is_attachment = 0 AND type IN ('application/xhtml+xml', 'text/html') LIMIT 1"
     (!!@message_has_html_query.execute(id).next) || ["text/html", "application/xhtml+xml"].include?(message(id)["type"])
@@ -199,5 +224,35 @@ module MailCatcher::Mail extend self
     end.each do |message|
       delete_message!(message["id"])
     end
+  end
+
+  private
+
+  def parse_authentication_results(auth_header)
+    results = {
+      dmarc: nil,
+      dkim: nil,
+      spf: nil
+    }
+
+    # Parse DMARC result
+    if auth_header.match?(/dmarc=/i)
+      dmarc_match = auth_header.match(/dmarc=(\w+)/i)
+      results[:dmarc] = dmarc_match[1].downcase if dmarc_match
+    end
+
+    # Parse DKIM result
+    if auth_header.match?(/dkim=/i)
+      dkim_match = auth_header.match(/dkim=(\w+)/i)
+      results[:dkim] = dkim_match[1].downcase if dkim_match
+    end
+
+    # Parse SPF result
+    if auth_header.match?(/spf=/i)
+      spf_match = auth_header.match(/spf=(\w+)/i)
+      results[:spf] = spf_match[1].downcase if spf_match
+    end
+
+    results
   end
 end
