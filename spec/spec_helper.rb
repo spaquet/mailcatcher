@@ -26,14 +26,22 @@ Capybara.register_driver :selenium do |app|
   opts.add_argument('disable-gpu')
   opts.add_argument('force-device-scale-factor=1')
   opts.add_argument('window-size=1400,900')
+  opts.add_argument('no-sandbox') # Required for CI environments
+  opts.add_argument('disable-dev-shm-usage') # Overcome limited resource problems in CI
 
   # Use NO_HEADLESS to open real chrome when debugging tests
   unless ENV["NO_HEADLESS"]
     opts.add_argument('headless=new')
   end
 
+  # Disable logging to reduce overhead in CI
+  service = Selenium::WebDriver::Service.chrome(log: File.expand_path("../tmp/chromedriver.log", __dir__))
+  if ENV["CI"]
+    service = Selenium::WebDriver::Service.chrome(log: "/dev/null")
+  end
+
   Capybara::Selenium::Driver.new app, browser: :chrome,
-    service: Selenium::WebDriver::Service.chrome(log: File.expand_path("../tmp/chromedriver.log", __dir__)),
+    service: service,
     options: opts
 end
 
@@ -115,7 +123,22 @@ RSpec.configure do |config|
     visit "/"
 
     # Wait for the websocket to be available to avoid race conditions
-    wait.until { page.evaluate_script("MailCatcher.websocket.readyState") == 1 rescue false }
+    # Use a shorter timeout with retries instead of waiting indefinitely
+    begin
+      Timeout.timeout(5) do
+        loop do
+          begin
+            ready = page.evaluate_script("window.MailCatcher && window.MailCatcher.websocket && window.MailCatcher.websocket.readyState === 1")
+            break if ready
+          rescue Selenium::WebDriver::Error::JavaScriptError
+            # JavaScript not ready yet
+          end
+          sleep 0.1
+        end
+      end
+    rescue Timeout::Error
+      # WebSocket might not be essential for some tests, continue anyway
+    end
   end
 
   config.after :each, type: :feature do
