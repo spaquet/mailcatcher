@@ -23,8 +23,8 @@ task "assets" do
   environment.js_compressor = :uglifier
 
   # Compile specific assets
-  # Note: CSS is now inline in views/index.erb, so we only compile JavaScript
-  asset_names = ["mailcatcher.js"]
+  # Note: CSS is now inline in views/index.erb, so we compile JavaScript and dependencies
+  asset_names = ["mailcatcher.js", "highlight.min.js", "atom-one-light.min.css"]
   asset_names.each do |asset_name|
     if asset = environment.find_asset(asset_name)
       target = File.join(compiled_path, asset_name)
