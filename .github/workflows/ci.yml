@@ -35,10 +35,3 @@ jobs:
       timeout-minutes: 40
       env:
         CI: true
-
-    - name: Upload test artifacts
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-artifacts-${{ matrix.os }}-ruby-${{ matrix.ruby-version }}
-        path: tmp
