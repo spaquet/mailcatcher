@@ -89,6 +89,10 @@ module MailCatcher
     @options
   end
 
+  def http_server
+    @http_server
+  end
+
   def quittable?
     options[:quit]
   end
@@ -178,7 +182,7 @@ module MailCatcher
     # If we're running in the foreground sync the output.
     $stdout.sync = $stderr.sync = true unless options[:daemon]
 
-    @logger.info("Starting MailCatcher v#{VERSION}")
+    @logger.info("Starting MailCatcher NG v#{VERSION}")
 
     Thin::Logging.debug = development?
     Thin::Logging.silent = !development?
@@ -195,7 +199,8 @@ module MailCatcher
       # Let Thin set itself up inside our EventMachine loop
       # Faye connections are hijacked but continue to be supervised by thin
       rescue_port options[:http_port] do
-        Thin::Server.start(options[:http_ip], options[:http_port], Web, signals: false)
+        @http_server = Thin::Server.new(options[:http_ip], options[:http_port], Web, signals: false)
+        @http_server.start
         @logger.info("==> #{http_url}")
       end
 

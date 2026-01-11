@@ -81,6 +81,10 @@ module MailCatcher
         @http_port = MailCatcher.options[:http_port]
         @http_path = MailCatcher.options[:http_path]
 
+        # Get current connection counts
+        @http_connections = MailCatcher.http_server&.backend&.size || 0
+        @smtp_connections = MailCatcher::Smtp.connection_count
+
         require "socket"
         if @http_ip == "127.0.0.1"
           @hostname = "localhost"

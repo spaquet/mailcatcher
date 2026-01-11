@@ -197,7 +197,7 @@ latest: Pulling from stpaquet/alpinemailcatcher
 6c9f5f5b4c6d: Pull complete
 Digest: sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0
 Status: Downloaded newer image for stpaquet/alpinemailcatcher:latest
-Starting MailCatcher v0.12.0
+Starting MailCatcher NG v1.0.0
 ==> smtp://0.0.0.0:1025
 ==> http://0.0.0.0:1080
 ```

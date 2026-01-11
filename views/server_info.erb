@@ -176,6 +176,22 @@
     </div>
 
     <div class="info-section">
+      <div class="section-title">Active Connections</div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">HTTP Connections</span>
+          <div class="info-value"><%= @http_connections %></div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">SMTP Connections</span>
+          <div class="info-value"><%= @smtp_connections %></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
       <div class="section-title">SMTP Server</div>
 
       <div class="info-item">
