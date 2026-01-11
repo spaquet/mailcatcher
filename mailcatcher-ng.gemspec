@@ -8,23 +8,7 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.summary     = 'Modernized MailCatcher – catches emails via SMTP and displays them in a clean web interface'
   s.description = <<~DESCRIPTION
-    MailCatcher NG is a modern, actively maintained evolution of the classic MailCatcher tool.
-
-    It runs a lightweight SMTP server (default: 127.0.0.1:1025) that captures any email sent to it,
-    and provides a beautiful web interface (default: http://127.0.0.1:1080) to view messages in real-time.
-
-    Features include:
-    • Instant updates via WebSockets (with polling fallback)
-    • Elegant UI with HTML, plain text, raw source, and attachment views
-    • Download original .eml files
-    • Keyboard navigation and mobile-friendly design
-    • Updated dependencies compatible with Ruby 3.2+
-    • Email authentication verification (DMARC, DKIM, SPF), encryption support, BIMI preview, and more
-
-    Run `mailcatcher`, configure your app to send via `smtp://127.0.0.1:1025`,
-    then visit http://127.0.0.1:1080 to inspect captured emails – perfect for development & testing.
-
-    Note: This is the `mailcatcher-ng` gem – the executable remains `mailcatcher` for maximum compatibility.
+    MailCatcher NG brings the beloved MailCatcher into the modern era: fast, reliable SMTP catching with a stunning real-time interface, updated dependencies, and powerful email inspection features
   DESCRIPTION
 
   s.author      = 'Stephane Paquet'
