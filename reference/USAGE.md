@@ -1,6 +1,6 @@
 # Usage
 
-## Running MailCatcher
+## Running MailCatcher NG
 
 ### Basic Usage
 
@@ -41,7 +41,7 @@ MailCatcher v0.11.2
 
 ## Development Mode
 
-Run MailCatcher in development mode with custom ports:
+Run MailCatcher NG in development mode with custom ports:
 
 ```bash
 MAILCATCHER_ENV=development bundle exec mailcatcher --foreground --smtp-port 1025 --http-port 1080
@@ -80,7 +80,7 @@ Use keyboard shortcuts to navigate between messages in the web interface.
 
 ## Background Operation
 
-MailCatcher runs as a daemon in the background by default. To run in the foreground instead:
+MailCatcher NG runs as a daemon in the background by default. To run in the foreground instead:
 
 ```bash
 mailcatcher --foreground

@@ -7,6 +7,32 @@
 3. Go to http://127.0.0.1:1080/
 4. Send mail through smtp://127.0.0.1:1025
 
+## Docker
+
+The official MailCatcher Docker image is available [on Docker Hub](https://hub.docker.com/r/stpaquet/alpinemailcatcher):
+
+```bash
+docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher
+```
+
+Example output:
+
+```
+Unable to find image 'stpaquet/alpinemailcatcher:latest' locally
+latest: Pulling from stpaquet/alpinemailcatcher
+4abcf2090661: Pull complete
+9f403268fa96: Pull complete
+6c9f5f5b4c6d: Pull complete
+Digest: sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0
+Status: Downloaded newer image for stpaquet/alpinemailcatcher:latest
+Starting MailCatcher NG v1.0.0
+==> smtp://0.0.0.0:1025
+==> http://0.0.0.0:1080
+```
+
+Port mapping may vary based on your Docker configuration. For example, you may need to use `http://127.0.0.1:1080` or `smtp://127.0.0.1:1025` instead of the listed address. The image is Alpine Linux based for minimal size and quick startup.
+
+
 ## Requirements
 
 ### Ruby
@@ -93,28 +119,3 @@ Under RVM your mailcatcher command may only be available under the ruby you inst
 rvm default@mailcatcher --create do gem install mailcatcher-ng
 ln -s "$(rvm default@mailcatcher do rvm wrapper show mailcatcher)" "$rvm_bin_path/"
 ```
-
-### Docker
-
-The official MailCatcher Docker image is available [on Docker Hub](https://hub.docker.com/r/stpaquet/alpinemailcatcher):
-
-```bash
-docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher
-```
-
-Example output:
-
-```
-Unable to find image 'stpaquet/alpinemailcatcher:latest' locally
-latest: Pulling from stpaquet/alpinemailcatcher
-4abcf2090661: Pull complete
-9f403268fa96: Pull complete
-6c9f5f5b4c6d: Pull complete
-Digest: sha256:a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0
-Status: Downloaded newer image for stpaquet/alpinemailcatcher:latest
-Starting MailCatcher NG v1.0.0
-==> smtp://0.0.0.0:1025
-==> http://0.0.0.0:1080
-```
-
-Port mapping may vary based on your Docker configuration. For example, you may need to use `http://127.0.0.1:1080` or `smtp://127.0.0.1:1025` instead of the listed address. The image is Alpine Linux based for minimal size and quick startup.

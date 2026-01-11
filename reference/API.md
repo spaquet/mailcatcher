@@ -1,6 +1,6 @@
 # REST API
 
-MailCatcher provides a RESTful API for accessing and downloading messages programmatically.
+MailCatcher NG provides a RESTful API for accessing and downloading messages programmatically.
 
 ## Endpoints
 

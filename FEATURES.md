@@ -1,4 +1,4 @@
-# MailCatcher Features
+# MailCatcher NG Features
 
 ## Table of Contents
 
@@ -51,7 +51,7 @@
 
 ## Email Encryption and Signature Support
 
-MailCatcher displays encryption and signature information from email headers, allowing testing and verification of email security metadata:
+MailCatcher NG displays encryption and signature information from email headers, allowing testing and verification of email security metadata:
 
 - **S/MIME Support**:
   - X-Certificate header: Displays S/MIME certificate information
@@ -66,7 +66,7 @@ MailCatcher displays encryption and signature information from email headers, al
 - **Encryption Info Tooltip**: Interactive button to view detailed encryption/signature information with copy-to-clipboard functionality
 - **Certificate Display**: Shows truncated certificate/key values with ability to copy full values for testing
 
-**Note**: MailCatcher is a display-only tool. It extracts and displays encryption/signature headers and certificate data from emails but does not perform actual decryption or cryptographic verification. Users can copy the certificate and key data to test with external encryption tools.
+**Note**: MailCatcher NG is a display-only tool. It extracts and displays encryption/signature headers and certificate data from emails but does not perform actual decryption or cryptographic verification. Users can copy the certificate and key data to test with external encryption tools.
 
 ## BIMI (Brand Indicators for Message Identification)
 
@@ -162,8 +162,8 @@ MailCatcher displays encryption and signature information from email headers, al
 
 ## Server Control and Information
 
-- **Server Info Page**: Displays MailCatcher version, SMTP/HTTP configuration, hostname, FQDN
-- **Quit Button**: Gracefully stop MailCatcher server (if --no-quit not set)
+- **Server Info Page**: Displays MailCatcher NG version, SMTP/HTTP configuration, hostname, FQDN
+- **Quit Button**: Gracefully stop MailCatcher NG server (if --no-quit not set)
 - **Clear Button**: Delete all messages (confirmation required)
 - **WebSocket Test Page**: Testing utility for WebSocket connection diagnostics
 

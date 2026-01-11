@@ -2,7 +2,7 @@
 
 ## SSL/TLS Support
 
-MailCatcher supports both STARTTLS and direct TLS (SMTPS) for encrypted SMTP connections. This is useful for testing email delivery in staging environments that require secure connections.
+MailCatcher NG supports both STARTTLS and direct TLS (SMTPS) for encrypted SMTP connections. This is useful for testing email delivery in staging environments that require secure connections.
 
 ### Generate a Self-Signed Certificate
 
@@ -16,7 +16,7 @@ This creates:
 - `cert.pem`: Certificate file
 - `key.pem`: Private key file
 
-### Start MailCatcher with SSL/TLS
+### Start MailCatcher NG with SSL/TLS
 
 ```bash
 mailcatcher --smtp-ssl --smtp-ssl-cert cert.pem --smtp-ssl-key key.pem
@@ -77,7 +77,7 @@ MailCatcher NG fully supports modern SMTP capabilities for UTF-8 and internation
 
 ### SMTP Capabilities
 
-MailCatcher advertises support for:
+MailCatcher NG advertises support for:
 
 - **SMTPUTF8 (RFC 6531)**: Allows clients to send UTF-8 directly without encoding
 - **8BITMIME (RFC 6152)**: Accepts 8bit transfer encoding for UTF-8 content without base64 overhead
@@ -86,7 +86,7 @@ MailCatcher advertises support for:
 
 ### Benefits
 
-Modern mail libraries can send UTF-8 encoded messages directly to MailCatcher without additional encoding overhead. This reduces message size and improves compatibility with international content.
+Modern mail libraries can send UTF-8 encoded messages directly to MailCatcher NG without additional encoding overhead. This reduces message size and improves compatibility with international content.
 
 ### Supported Encodings
 
@@ -97,7 +97,7 @@ Modern mail libraries can send UTF-8 encoded messages directly to MailCatcher wi
 
 ### Character Display
 
-MailCatcher properly displays:
+MailCatcher NG properly displays:
 - International characters and scripts
 - Multiple languages in a single message
 - Proper charset detection and preservation
@@ -117,7 +117,7 @@ This sends messages with various UTF-8 encodings for testing and verification.
 
 ### Email Authentication Verification
 
-MailCatcher verifies and displays:
+MailCatcher NG verifies and displays:
 
 - **DMARC (Domain-based Message Authentication, Reporting and Conformance)**: Domain policy enforcement
 - **DKIM (DomainKeys Identified Mail)**: Message signature verification
@@ -127,7 +127,7 @@ These authentication results are displayed in the web interface.
 
 ### Email Encryption and Signatures
 
-MailCatcher can display:
+MailCatcher NG can display:
 
 - **S/MIME (Secure/Multipurpose Internet Mail Extensions)**: Certificate-based encryption and signatures
 - **OpenPGP**: PGP-based encryption and signatures
@@ -136,11 +136,11 @@ Both encrypted and signed messages are properly handled and displayed.
 
 ### BIMI Support
 
-**Brand Indicators for Message Identification (BIMI)** display authenticated brand logos in email clients. MailCatcher supports viewing BIMI data associated with authenticated messages.
+**Brand Indicators for Message Identification (BIMI)** display authenticated brand logos in email clients. MailCatcher NG supports viewing BIMI data associated with authenticated messages.
 
 ### Advanced Preview Text Extraction
 
-MailCatcher uses intelligent preview text extraction with a 3-tier fallback system:
+MailCatcher NG uses intelligent preview text extraction with a 3-tier fallback system:
 
 1. Explicit preview header (from message metadata)
 2. First plain text content (if available)

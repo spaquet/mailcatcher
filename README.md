@@ -57,15 +57,15 @@ Detailed documentation is organized by topic:
 
 ### [Installation & Setup](reference/INSTALLATION.md)
 
-Get MailCatcher up and running. Covers gem installation, source compilation, Docker, and special scenarios like RVM and Bundler.
+Get MailCatcher NG up and running. Covers gem installation, source compilation, Docker, and special scenarios like RVM and Bundler.
 
 ### [Usage & Configuration](reference/USAGE.md)
 
-Learn how to run MailCatcher, command-line options, development mode, and web interface features.
+Learn how to run MailCatcher NG, command-line options, development mode, and web interface features.
 
 ### [Framework Integration](reference/INTEGRATIONS.md)
 
-Configure your framework (Rails, Django, PHP, Docker) to send mail through MailCatcher.
+Configure your framework (Rails, Django, PHP, Docker) to send mail through MailCatcher NG.
 
 ### [REST API](reference/API.md)
 
