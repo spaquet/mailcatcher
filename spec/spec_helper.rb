@@ -35,10 +35,16 @@ Capybara.register_driver :selenium do |app|
   end
 
   # Disable logging to reduce overhead in CI
-  service = Selenium::WebDriver::Service.chrome(log: File.expand_path("../tmp/chromedriver.log", __dir__))
+  log_path = ENV["CI"] ? "/dev/null" : File.expand_path("../tmp/chromedriver.log", __dir__)
+
+  # Increase timeout for macOS CI where ChromeDriver startup is slow
+  # Default is 60 seconds, but macOS runners need more time
+  service_args = { log: log_path }
   if ENV["CI"]
-    service = Selenium::WebDriver::Service.chrome(log: "/dev/null")
+    service_args[:timeout] = 120 # 2 minutes for macOS
   end
+
+  service = Selenium::WebDriver::Service.chrome(**service_args)
 
   Capybara::Selenium::Driver.new app, browser: :chrome,
     service: service,
