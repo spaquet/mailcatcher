@@ -27,6 +27,9 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
 * Email encryption and signature support (S/MIME and OpenPGP)
 * BIMI (Brand Indicators for Message Identification) display
 * Advanced preview text extraction with intelligent fallback
+* Full UTF-8 and 8bit MIME transfer encoding support (SMTPUTF8, 8BITMIME)
+* Support for quoted-printable, base64, and other transfer encodings
+* Charset preservation and proper character display for international content
 
 For a comprehensive list of all features, see [FEATURES.md](FEATURES.md).
 
@@ -69,6 +72,11 @@ MailCatcher v0.11.2
         --ip IP                      Set the ip address of both servers
         --smtp-ip IP                 Set the ip address of the smtp server
         --smtp-port PORT             Set the port of the smtp server
+        --smtp-ssl                   Enable SSL/TLS support for SMTP
+        --smtp-ssl-cert PATH         Path to SSL certificate file
+        --smtp-ssl-key PATH          Path to SSL private key file
+        --smtp-ssl-verify-peer       Verify client SSL certificates
+        --smtps-port PORT            Set the port for direct TLS (default: 1465)
         --http-ip IP                 Set the ip address of the http server
         --http-port PORT             Set the port address of the http server
         --messages-limit COUNT       Only keep up to COUNT most recent messages
@@ -80,6 +88,57 @@ MailCatcher v0.11.2
     -h, --help                       Display this help information
         --version                    Display the current version
 ```
+
+### SSL/TLS Support
+
+MailCatcher supports both STARTTLS and direct TLS (SMTPS) for encrypted SMTP connections. This is useful for testing email delivery in staging environments that require secure connections.
+
+**Generate a self-signed certificate for testing:**
+
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+```
+
+**Start MailCatcher with SSL/TLS support:**
+
+```bash
+mailcatcher --smtp-ssl --smtp-ssl-cert cert.pem --smtp-ssl-key key.pem
+```
+
+This enables:
+
+* **STARTTLS on port 1025**: Plain connections that upgrade via STARTTLS command (required)
+* **Direct TLS on port 1465**: Encrypted connections from the start (SMTPS)
+
+**Important:** When SSL/TLS is enabled, STARTTLS is required before sending mail (clients must complete the TLS upgrade first).
+
+**Rails with STARTTLS:**
+
+```ruby
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {
+  address: '127.0.0.1',
+  port: 1025,
+  enable_starttls_auto: true
+}
+```
+
+**Django with TLS:**
+
+```python
+if DEBUG:
+    EMAIL_HOST = '127.0.0.1'
+    EMAIL_PORT = 1465  # Direct TLS
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = True
+```
+
+**Security Notes:**
+
+* You must provide your own certificate and private key files
+* Self-signed certificates will trigger warnings in mail clients
+* Use production certificates for staging environments
+* Client certificate verification is optional (use `--smtp-ssl-verify-peer`)
 
 ### Upgrading
 
@@ -208,10 +267,20 @@ How those ports appear and can be accessed may vary based on your Docker configu
 
 A fairly RESTful URL schema means you can download a list of messages in JSON from `/messages`, each message's metadata with `/messages/:id.json`, and then the pertinent parts with `/messages/:id.html` and `/messages/:id.plain` for the default HTML and plain text version, `/messages/:id/parts/:cid` for individual attachments by CID, or the whole message with `/messages/:id.source`.
 
+## UTF-8 and 8bit Transfer Encoding Support
+
+MailCatcher NG now advertises and fully supports modern SMTP capabilities for UTF-8 content:
+
+* **SMTPUTF8 (RFC 6531)**: MailCatcher advertises SMTPUTF8 capability, allowing clients to send UTF-8 directly
+* **8BITMIME (RFC 6152)**: MailCatcher advertises and accepts 8bit transfer encoding, allowing UTF-8 content without base64 encoding
+* **Multiple encodings**: Supports 7bit, 8bit, base64, and quoted-printable transfer encodings
+* **Charset preservation**: Automatically preserves and displays charset information for all email parts
+
+This means modern mail libraries can send UTF-8 encoded messages directly to MailCatcher without additional encoding overhead.
+
 ## Caveats
 
 * Mail processing is fairly basic but easily modified. If something doesn't work for you, fork and fix it or [file an issue](https://github.com/spaquet/mailcatcher-ng/issues). Include the whole message you're having problems with.
-* Encodings are difficult. MailCatcher NG does not completely support utf-8 straight over the wire, you must use a mail library which encodes things properly based on SMTP server capabilities.
 
 ## License
 

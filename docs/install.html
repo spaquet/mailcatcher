@@ -116,6 +116,11 @@ Options:
   --ip IP                    Set IP address for both servers
   --smtp-ip IP              Set SMTP server IP
   --smtp-port PORT          Set SMTP port (default: 1025)
+  --smtp-ssl                Enable SSL/TLS support for SMTP
+  --smtp-ssl-cert PATH      Path to SSL certificate file
+  --smtp-ssl-key PATH       Path to SSL private key file
+  --smtp-ssl-verify-peer    Verify client SSL certificates
+  --smtps-port PORT         Direct TLS port (default: 1465)
   --http-ip IP              Set HTTP server IP
   --http-port PORT          Set HTTP port (default: 1080)
   --messages-limit COUNT    Keep only N most recent messages
@@ -126,6 +131,67 @@ Options:
   -v, --verbose             Be more verbose
   -h, --help                Show this help
   --version                 Show version</code></pre>
+                </div>
+
+                <!-- SSL/TLS Configuration -->
+                <div class="install-section">
+                    <h2>SSL/TLS Configuration</h2>
+                    <p>MailCatcher supports encrypted SMTP connections using SSL/TLS. You must provide your own certificate and private key files.</p>
+
+                    <h3>Generate Self-Signed Certificate (Testing)</h3>
+                    <pre><code>openssl req -x509 -newkey rsa:4096 \
+  -keyout mailcatcher-key.pem \
+  -out mailcatcher-cert.pem \
+  -days 365 -nodes \
+  -subj "/CN=localhost"</code></pre>
+
+                    <h3>Start with SSL/TLS</h3>
+                    <pre><code>mailcatcher \
+  --smtp-ssl \
+  --smtp-ssl-cert mailcatcher-cert.pem \
+  --smtp-ssl-key mailcatcher-key.pem</code></pre>
+
+                    <p>This enables:</p>
+                    <ul>
+                        <li><strong>STARTTLS on port 1025</strong>: Upgrade to TLS (required before sending mail)</li>
+                        <li><strong>Direct TLS on port 1465</strong>: Encrypted from connection start (SMTPS)</li>
+                    </ul>
+
+                    <h3>Framework Configuration with TLS</h3>
+
+                    <h4>Rails with STARTTLS</h4>
+                    <pre><code>config.action_mailer.smtp_settings = {
+  address: '127.0.0.1',
+  port: 1025,
+  enable_starttls_auto: true
+}</code></pre>
+
+                    <h4>Django with TLS</h4>
+                    <pre><code>if DEBUG:
+    EMAIL_HOST = '127.0.0.1'
+    EMAIL_PORT = 1465  # Direct TLS
+    EMAIL_USE_TLS = True
+    EMAIL_USE_SSL = True</code></pre>
+
+                    <h4>PHP with TLS</h4>
+                    <pre><code>MAIL_PORT=1465
+MAIL_ENCRYPTION=ssl  # or 'tls' for STARTTLS on port 1025</code></pre>
+
+                    <h3>Production Certificates</h3>
+                    <p>For production-like testing, use certificates from your CA or Let's Encrypt:</p>
+                    <pre><code>mailcatcher \
+  --smtp-ssl \
+  --smtp-ssl-cert /etc/ssl/certs/your-cert.pem \
+  --smtp-ssl-key /etc/ssl/private/your-key.pem \
+  --smtp-ssl-verify-peer</code></pre>
+
+                    <h3>Security Notes</h3>
+                    <ul>
+                        <li>Certificate and key files must be readable by the user running MailCatcher</li>
+                        <li>STARTTLS is REQUIRED when SSL is enabled (no plain SMTP allowed)</li>
+                        <li>Self-signed certificates will trigger warnings in most mail clients</li>
+                        <li>Client certificate verification is disabled by default</li>
+                    </ul>
                 </div>
 
                 <!-- Troubleshooting -->

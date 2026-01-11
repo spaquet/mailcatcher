@@ -43,12 +43,26 @@ class MailCatcher::Smtp < EventMachine::Protocols::SmtpServer
     true
   end
 
+  def get_server_capabilities
+    # Advertise SMTP capabilities per RFC standards
+    # SIZE: RFC 1870 - Message size extension
+    # 8BITMIME: RFC 6152 - 8bit MIME transport
+    # SMTPUTF8: RFC 6531 - UTF-8 support in SMTP
+    capabilities = super.to_a
+    capabilities << "8BITMIME"
+    capabilities << "SMTPUTF8"
+    capabilities
+  end
+
   def receive_sender(sender)
     # EventMachine SMTP advertises size extensions [https://tools.ietf.org/html/rfc1870]
-    # so strip potential " SIZE=..." suffixes from senders
-    sender = $` if sender =~ / SIZE=\d+\z/
+    # and other SMTP parameters via the MAIL FROM command
+    # Strip potential " SIZE=..." and "BODY=..." suffixes from senders
+    sender = sender.gsub(/ (?:SIZE|BODY)=\S+/i, "")
 
     current_message[:sender] = sender
+    # Store the original sender line to track if 8BIT was specified
+    current_message[:sender_line] = sender
 
     true
   end
@@ -80,5 +94,19 @@ class MailCatcher::Smtp < EventMachine::Protocols::SmtpServer
     false
   ensure
     @current_message = nil
+  end
+end
+
+# Direct TLS (SMTPS) handler that starts TLS immediately on connection
+class MailCatcher::SmtpTls < MailCatcher::Smtp
+  def post_init
+    # Increment connection count
+    super
+
+    # Start TLS immediately on connection for SMTPS (port 1465 behavior)
+    # The @@parms hash with starttls_options is already set by configure_smtp_ssl!
+    if defined?(@@parms) && @@parms[:starttls_options]
+      start_tls(@@parms[:starttls_options])
+    end
   end
 end

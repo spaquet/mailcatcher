@@ -4,6 +4,7 @@ require 'logger'
 require 'open3'
 require 'optparse'
 require 'rbconfig'
+require 'openssl'
 
 require 'eventmachine'
 require 'thin'
@@ -75,6 +76,11 @@ module MailCatcher
   @defaults = {
     smtp_ip: '127.0.0.1',
     smtp_port: '1025',
+    smtp_ssl: false,
+    smtp_ssl_cert: nil,
+    smtp_ssl_key: nil,
+    smtp_ssl_verify_peer: false,
+    smtps_port: '1465',
     http_ip: '127.0.0.1',
     http_port: '1080',
     http_path: '/',
@@ -116,6 +122,26 @@ module MailCatcher
 
         parser.on('--smtp-port PORT', Integer, 'Set the port of the smtp server') do |port|
           options[:smtp_port] = port
+        end
+
+        parser.on('--smtp-ssl', 'Enable SSL/TLS support for SMTP') do
+          options[:smtp_ssl] = true
+        end
+
+        parser.on('--smtp-ssl-cert PATH', 'Path to SSL certificate file (required with --smtp-ssl)') do |path|
+          options[:smtp_ssl_cert] = path
+        end
+
+        parser.on('--smtp-ssl-key PATH', 'Path to SSL private key file (required with --smtp-ssl)') do |path|
+          options[:smtp_ssl_key] = path
+        end
+
+        parser.on('--smtp-ssl-verify-peer', 'Verify client SSL certificates') do
+          options[:smtp_ssl_verify_peer] = true
+        end
+
+        parser.on('--smtps-port PORT', Integer, 'Set the port for direct TLS SMTP server (default: 1465)') do |port|
+          options[:smtps_port] = port
         end
 
         parser.on('--http-ip IP', 'Set the ip address of the http server') do |ip|
@@ -179,6 +205,9 @@ module MailCatcher
     # Stash them away for later
     @options = options
 
+    # Validate SSL configuration if enabled
+    validate_ssl_config!
+
     # If we're running in the foreground sync the output.
     $stdout.sync = $stderr.sync = true unless options[:daemon]
 
@@ -188,12 +217,23 @@ module MailCatcher
     Thin::Logging.silent = !development?
     @logger.level = development? ? Logger::DEBUG : Logger::INFO
 
+    # Configure SSL/TLS if enabled
+    configure_smtp_ssl!
+
     # One EventMachine loop...
     EventMachine.run do
       # Set up an SMTP server to run within EventMachine
       rescue_port options[:smtp_port] do
         EventMachine.start_server options[:smtp_ip], options[:smtp_port], Smtp
         @logger.info("==> #{smtp_url}")
+      end
+
+      # Set up direct TLS (SMTPS) server if SSL is enabled
+      if options[:smtp_ssl]
+        rescue_port options[:smtps_port] do
+          EventMachine.start_server options[:smtp_ip], options[:smtps_port], SmtpTls
+          @logger.info("==> #{smtps_url}")
+        end
       end
 
       # Let Thin set itself up inside our EventMachine loop
@@ -239,8 +279,92 @@ module MailCatcher
 
   protected
 
+  def validate_ssl_config!
+    return unless @options[:smtp_ssl]
+
+    # Require certificate and key files
+    unless @options[:smtp_ssl_cert] && @options[:smtp_ssl_key]
+      @logger.error('SSL/TLS enabled but certificate or key file not specified')
+      @logger.error('Use --smtp-ssl-cert and --smtp-ssl-key to provide paths')
+      exit(-1)
+    end
+
+    # Check certificate file exists and is readable
+    unless File.exist?(@options[:smtp_ssl_cert])
+      @logger.error("SSL certificate file not found: #{@options[:smtp_ssl_cert]}")
+      exit(-1)
+    end
+
+    unless File.readable?(@options[:smtp_ssl_cert])
+      @logger.error("SSL certificate file not readable: #{@options[:smtp_ssl_cert]}")
+      exit(-1)
+    end
+
+    # Check key file exists and is readable
+    unless File.exist?(@options[:smtp_ssl_key])
+      @logger.error("SSL private key file not found: #{@options[:smtp_ssl_key]}")
+      exit(-1)
+    end
+
+    unless File.readable?(@options[:smtp_ssl_key])
+      @logger.error("SSL private key file not readable: #{@options[:smtp_ssl_key]}")
+      exit(-1)
+    end
+
+    # Try to load the certificate to validate format
+    begin
+      OpenSSL::X509::Certificate.new(File.read(@options[:smtp_ssl_cert]))
+    rescue OpenSSL::X509::CertificateError => e
+      @logger.error("Invalid SSL certificate file: #{e.message}")
+      exit(-1)
+    end
+
+    # Try to load the private key to validate format
+    begin
+      OpenSSL::PKey.read(File.read(@options[:smtp_ssl_key]))
+    rescue OpenSSL::PKey::PKeyError => e
+      @logger.error("Invalid SSL private key file: #{e.message}")
+      exit(-1)
+    end
+
+    @logger.info('SSL/TLS certificate and key validated successfully')
+  end
+
+  def configure_smtp_ssl!
+    return unless @options[:smtp_ssl]
+
+    # Build TLS options hash for EventMachine
+    ssl_options = {
+      cert_chain_file: @options[:smtp_ssl_cert],
+      private_key_file: @options[:smtp_ssl_key],
+      verify_peer: @options[:smtp_ssl_verify_peer]
+    }
+
+    # Configure the STARTTLS Smtp class
+    Smtp.class_variable_set(:@@parms, {
+      starttls: :required,
+      starttls_options: ssl_options
+    })
+
+    # Configure the Direct TLS SmtpTls class
+    SmtpTls.class_variable_set(:@@parms, {
+      starttls: :required,
+      starttls_options: ssl_options
+    })
+
+    @ssl_options = ssl_options
+  end
+
   def smtp_url
-    "smtp://#{@options[:smtp_ip]}:#{@options[:smtp_port]}"
+    if @options[:smtp_ssl]
+      "smtp+starttls://#{@options[:smtp_ip]}:#{@options[:smtp_port]}"
+    else
+      "smtp://#{@options[:smtp_ip]}:#{@options[:smtp_port]}"
+    end
+  end
+
+  def smtps_url
+    "smtps://#{@options[:smtp_ip]}:#{@options[:smtps_port]}"
   end
 
   def http_url

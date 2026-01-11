@@ -171,12 +171,29 @@ MailCatcher displays encryption and signature information from email headers, al
 
 - **IP Configuration**: `--ip`, `--smtp-ip`, `--http-ip` for network binding
 - **Port Configuration**: `--smtp-port`, `--http-port` for custom ports
+- **SSL/TLS Configuration**:
+  - `--smtp-ssl` - Enable SSL/TLS support
+  - `--smtp-ssl-cert PATH` - Path to SSL certificate file
+  - `--smtp-ssl-key PATH` - Path to SSL private key file
+  - `--smtp-ssl-verify-peer` - Enable client certificate verification
+  - `--smtps-port PORT` - Port for direct TLS (default: 1465)
 - **HTTP Path Prefix**: `--http-path` for running behind proxies
 - **Daemon Mode**: `-f/--foreground`, automatic daemonization on Unix
 - **Browser Launch**: `-b/--browse` to automatically open web browser
 - **Message Limit**: `--messages-limit` for retention management
 - **No-Quit Mode**: `--no-quit` to prevent server shutdown
 - **Verbose Logging**: `-v/--verbose` for debug output
+
+## SSL/TLS Security
+
+- **STARTTLS Support**: Opportunistic TLS upgrade on standard SMTP port (1025)
+- **Direct TLS (SMTPS)**: TLS-wrapped connections from start (port 1465)
+- **Required STARTTLS Mode**: When SSL enabled, STARTTLS must be used before MAIL FROM
+- **Certificate Management**: User-provided certificates and private keys
+- **Certificate Validation**: Validates certificate and key format on startup
+- **Optional Client Verification**: Support for mutual TLS authentication
+- **Dual Server Mode**: Both STARTTLS and direct TLS run concurrently
+- **EventMachine TLS**: Uses EventMachine's built-in TLS support
 
 ## API Endpoints
 
