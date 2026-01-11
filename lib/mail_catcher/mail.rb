@@ -36,6 +36,27 @@ module MailCatcher::Mail extend self
             FOREIGN KEY (message_id) REFERENCES message (id) ON DELETE CASCADE
           )
         SQL
+        db.execute(<<-SQL)
+          CREATE TABLE smtp_transcript (
+            id INTEGER PRIMARY KEY ASC,
+            message_id INTEGER,
+            session_id TEXT NOT NULL,
+            client_ip TEXT,
+            client_port INTEGER,
+            server_ip TEXT,
+            server_port INTEGER,
+            tls_enabled INTEGER DEFAULT 0,
+            tls_protocol TEXT,
+            tls_cipher TEXT,
+            connection_started_at DATETIME,
+            connection_ended_at DATETIME,
+            entries TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_DATETIME,
+            FOREIGN KEY (message_id) REFERENCES message (id) ON DELETE CASCADE
+          )
+        SQL
+        db.execute("CREATE INDEX idx_smtp_transcript_message_id ON smtp_transcript(message_id)")
+        db.execute("CREATE INDEX idx_smtp_transcript_session_id ON smtp_transcript(session_id)")
         db.execute("PRAGMA foreign_keys = ON")
       end
     end
@@ -60,6 +81,8 @@ module MailCatcher::Mail extend self
       message = MailCatcher::Mail.message message_id
       MailCatcher::Bus.push(type: "add", message: message)
     end
+
+    message_id
   end
 
   def add_message_part(*args)
@@ -385,6 +408,66 @@ module MailCatcher::Mail extend self
     end
 
     encryption_data
+  end
+
+  def add_smtp_transcript(params)
+    @add_smtp_transcript_query ||= db.prepare(<<-SQL)
+      INSERT INTO smtp_transcript (
+        message_id, session_id, client_ip, client_port,
+        server_ip, server_port, tls_enabled, tls_protocol,
+        tls_cipher, connection_started_at, connection_ended_at,
+        entries, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    SQL
+
+    @add_smtp_transcript_query.execute(
+      params[:message_id],
+      params[:session_id],
+      params[:client_ip],
+      params[:client_port],
+      params[:server_ip],
+      params[:server_port],
+      params[:tls_enabled],
+      params[:tls_protocol],
+      params[:tls_cipher],
+      params[:connection_started_at]&.utc&.iso8601,
+      params[:connection_ended_at]&.utc&.iso8601,
+      JSON.generate(params[:entries])
+    )
+  end
+
+  def message_transcript(message_id)
+    @message_transcript_query ||= db.prepare(<<-SQL)
+      SELECT id, session_id, client_ip, client_port,
+             server_ip, server_port, tls_enabled, tls_protocol,
+             tls_cipher, connection_started_at, connection_ended_at,
+             entries, created_at
+      FROM smtp_transcript
+      WHERE message_id = ?
+      ORDER BY created_at DESC
+      LIMIT 1
+    SQL
+
+    row = @message_transcript_query.execute(message_id).next
+    return nil unless row
+
+    result = Hash[@message_transcript_query.columns.zip(row)]
+    result['entries'] = JSON.parse(result['entries']) if result['entries']
+    result['tls_enabled'] = result['tls_enabled'] == 1
+    result
+  end
+
+  def all_transcripts
+    @all_transcripts_query ||= db.prepare(<<-SQL)
+      SELECT id, message_id, session_id, client_ip,
+             connection_started_at, tls_enabled
+      FROM smtp_transcript
+      ORDER BY created_at DESC
+    SQL
+
+    @all_transcripts_query.execute.map do |row|
+      Hash[@all_transcripts_query.columns.zip(row)]
+    end
   end
 
   private

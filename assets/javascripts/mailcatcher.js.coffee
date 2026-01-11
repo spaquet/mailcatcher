@@ -535,7 +535,11 @@ class MailCatcher
         $("#message .views .tab.format").each (i, el) ->
           $el = $(el)
           format = $el.attr("data-message-format")
-          if $.inArray(format, message.formats) >= 0
+
+          # Special handling for transcript tab - always show it since all messages have transcripts
+          if format == "transcript"
+            $el.show()
+          else if $.inArray(format, message.formats) >= 0
             $el.find("a").attr("href", "messages/#{id}.#{format}")
             $el.show()
           else

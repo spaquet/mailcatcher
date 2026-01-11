@@ -161,7 +161,8 @@ module MailCatcher
             "formats" => [
               "source",
               ("html" if Mail.message_has_html? id),
-              ("plain" if Mail.message_has_plain? id)
+              ("plain" if Mail.message_has_plain? id),
+              ("transcript" if Mail.message_transcript(id))
             ].compact,
             "attachments" => Mail.message_attachments(id),
             "bimi_location" => Mail.message_bimi_location(id),
@@ -169,7 +170,7 @@ module MailCatcher
             "authentication_results" => Mail.message_authentication_results(id),
             "encryption_data" => Mail.message_encryption_data(id),
             "from_header" => Mail.message_from(id),
-            "to_header" => Mail.message_to(id),
+            "to_header" => Mail.message_to(id)
           }))
         else
           not_found
@@ -217,6 +218,26 @@ module MailCatcher
         if message_source = Mail.message_source(id)
           content_type "message/rfc822"
           message_source
+        else
+          not_found
+        end
+      end
+
+      get "/messages/:id/transcript.json" do
+        id = params[:id].to_i
+        if transcript = Mail.message_transcript(id)
+          content_type :json
+          JSON.generate(transcript)
+        else
+          not_found
+        end
+      end
+
+      get "/messages/:id.transcript" do
+        id = params[:id].to_i
+        if transcript = Mail.message_transcript(id)
+          content_type :html, charset: "utf-8"
+          erb :transcript, locals: { transcript: transcript }
         else
           not_found
         end
