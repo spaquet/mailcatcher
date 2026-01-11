@@ -1,0 +1,31 @@
+To: Blah <blah@blah.com>
+From: Me <me@sj26.com>
+Subject: Test 8bit UTF-8 Multipart Mail
+Mime-Version: 1.0
+Content-Type: multipart/alternative; boundary=BOUNDARY--8bit
+
+--BOUNDARY--8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Plain text version:
+
+This is a test of 8bit transfer encoding with UTF-8 characters.
+Émojis: 🎉 café naïve
+
+--BOUNDARY--8bit
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+<html>
+<body>
+<p>HTML version with 8bit encoding:</p>
+<p>This is a test of 8bit transfer encoding with UTF-8 characters.</p>
+<p>Émojis: 🎉 café naïve résumé</p>
+<p>Greek: Ελληνικά</p>
+<p>Cyrillic: Русский</p>
+<p>Arabic: العربية</p>
+</body>
+</html>
+
+--BOUNDARY--8bit--

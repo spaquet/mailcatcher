@@ -7,7 +7,7 @@ require 'fileutils'
 # Configuration
 SMTP_HOST = ENV['SMTP_HOST'] || '127.0.0.1'
 SMTP_PORT = ENV['SMTP_PORT'] || 1025
-EXAMPLES_DIR = File.expand_path('../examples', __FILE__)
+EXAMPLES_DIR = File.expand_path('examples', __dir__)
 FROM_ADDRESS = ENV['FROM_ADDRESS'] || 'test@example.com'
 TO_ADDRESS = ENV['TO_ADDRESS'] || 'recipient@example.com'
 DELAY = (ENV['DELAY'] || 1).to_i
@@ -35,7 +35,9 @@ example_names = [
   'auth_all_pass',                 # New: Email with all auth methods passing
   'auth_mixed',                    # New: Email with mixed auth results
   'auth_partial_data',             # New: Email with only SPF authentication
-  'auth_all_fail'                  # New: Email with all auth methods failing
+  'auth_all_fail',                 # New: Email with all auth methods failing
+  '8bit-utf8-multipartmail',       # New: 8bit UTF-8 multipart email
+  '8bit-utf8mail' # New: 8bit UTF-8 simple email
 ]
 
 # Get list of email files to send
@@ -50,7 +52,7 @@ if email_files.empty?
 end
 
 puts "Sending #{email_files.length} example emails to #{SMTP_HOST}:#{SMTP_PORT}"
-puts "=" * 60
+puts '=' * 60
 
 email_files.sort.each_with_index do |file, index|
   filename = File.basename(file)
@@ -61,7 +63,7 @@ email_files.sort.each_with_index do |file, index|
 
     # Create a message with a descriptive subject if one doesn't exist
     # This helps identify emails when they arrive in different order
-    if content.include?("Subject:")
+    if content.include?('Subject:')
       message = content
     else
       # Create a simple email with subject
@@ -83,12 +85,12 @@ email_files.sort.each_with_index do |file, index|
 
     puts "[#{index + 1}/#{email_files.length}] ✓ #{filename}"
     sleep(DELAY) if index < email_files.length - 1
-  rescue => e
+  rescue StandardError => e
     puts "[#{index + 1}/#{email_files.length}] ✗ #{filename} - Error: #{e.message}"
   end
 end
 
-puts "=" * 60
-puts "All emails sent!"
-puts ""
+puts '=' * 60
+puts 'All emails sent!'
+puts ''
 puts "View them at: http://#{SMTP_HOST}:1080"

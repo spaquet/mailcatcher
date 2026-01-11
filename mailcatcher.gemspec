@@ -3,21 +3,44 @@
 require File.expand_path('lib/mail_catcher/version', __dir__)
 
 Gem::Specification.new do |s|
-  s.name = 'mailcatcher-ng'
-  s.version = MailCatcher::VERSION
-  s.license = 'MIT'
-  s.summary = 'Runs an SMTP server, catches and displays email in a web interface.'
-  s.description = <<-DESCRIPTION
-    MailCatcher NG runs a super simple SMTP server which catches any
-    message sent to it to display in a web interface. Run
-    mailcatcher NG, set your favourite app to deliver to
-    smtp://127.0.0.1:1025 instead of your default SMTP server,
-    then check out http://127.0.0.1:1080 to see the mail.
+  s.name        = 'mailcatcher-ng'
+  s.version     = MailCatcher::VERSION
+  s.license     = 'MIT'
+  s.summary     = 'Modernized MailCatcher – catches emails via SMTP and displays them in a clean web interface'
+  s.description = <<~DESCRIPTION
+    MailCatcher NG is a modern, actively maintained evolution of the classic MailCatcher tool.
+
+    It runs a lightweight SMTP server (default: 127.0.0.1:1025) that captures any email sent to it,
+    and provides a beautiful web interface (default: http://127.0.0.1:1080) to view messages in real-time.
+
+    Features include:
+    • Instant updates via WebSockets (with polling fallback)
+    • Elegant UI with HTML, plain text, raw source, and attachment views
+    • Download original .eml files
+    • Keyboard navigation and mobile-friendly design
+    • Updated dependencies compatible with Ruby 3.2+
+    • Email authentication verification (DMARC, DKIM, SPF), encryption support, BIMI preview, and more
+
+    Run `mailcatcher`, configure your app to send via `smtp://127.0.0.1:1025`,
+    then visit http://127.0.0.1:1080 to inspect captured emails – perfect for development & testing.
+
+    Note: This is the `mailcatcher-ng` gem – the executable remains `mailcatcher` for maximum compatibility.
   DESCRIPTION
 
-  s.author = 'Stephane Paquet'
-  s.email = 'contact@thepew.io'
-  s.homepage = 'https://github.com/spaquet/mailcatcher'
+  s.author      = 'Stephane Paquet'
+  s.email       = 'contact@thepew.io'
+
+  # ── Most important: point homepage to the nice gh-pages site ──
+  s.homepage    = 'https://spaquet.github.io/mailcatcher/'
+
+  # Additional useful metadata (shown on RubyGems.org)
+  s.metadata    = {
+    'source_code_uri' => 'https://github.com/spaquet/mailcatcher',
+    'homepage_uri' => 'https://spaquet.github.io/mailcatcher/', # optional redundancy, but nice
+    'bug_tracker_uri' => 'https://github.com/spaquet/mailcatcher/issues',
+    'changelog_uri' => 'https://github.com/spaquet/mailcatcher/blob/main/CHANGELOG.md',
+    'rubygems_mfa_required' => 'true'
+  }
 
   s.files = Dir[
     'README.md', 'LICENSE',

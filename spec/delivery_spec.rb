@@ -291,6 +291,124 @@ RSpec.describe MailCatcher, type: :feature do
 
     # Do not reload, make sure that the message appears via websockets
 
-    skip
+    expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test quoted-printable HTML mail")
+
+    # quoted_printable_htmlmail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
+    expect(message_subject_element).to have_text("Test quoted-printable HTML mail")
+
+    message_row_element.click
+
+    expect(source_tab_element).to be_visible
+    expect(html_tab_element).to be_visible
+
+    html_tab_element.click
+
+    within_frame do
+      # The Mail gem should decode the quoted-printable content
+      expect(page).to have_text("Thank you for allowing Grand Rounds to provide a test case that may demonstrate a limitation in MailCatcher")
+      expect(page).to have_text("Open source makes dev good")
+      expect(page).to have_text("here")
+    end
+
+    source_tab_element.click
+
+    within_frame do
+      # Source should show the original quoted-printable encoding
+      expect(page).to have_text("Content-Transfer-Encoding: quoted-printable")
+    end
+  end
+
+  it "supports 8bit UTF-8 transfer encoding with special characters" do
+    deliver_example("8bit-utf8mail")
+
+    # Do not reload, make sure that the message appears via websockets
+
+    expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test 8bit UTF-8 Mail")
+
+    # 8bit-utf8mail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
+    expect(message_subject_element).to have_text("Test 8bit UTF-8 Mail")
+
+    message_row_element.click
+
+    expect(source_tab_element).to be_visible
+    expect(plain_tab_element).to be_visible
+
+    plain_tab_element.click
+
+    within_frame do
+      # The Mail gem should decode the 8bit content and preserve UTF-8 characters
+      expect(page).to have_text("Hello! This is a test of 8bit transfer encoding with UTF-8 characters.")
+      expect(page).to have_text("café")
+      expect(page).to have_text("naïve")
+      expect(page).to have_text("résumé")
+      expect(page).to have_text("Ελληνικά")
+      expect(page).to have_text("Русский")
+      expect(page).to have_text("中文")
+    end
+
+    source_tab_element.click
+
+    within_frame do
+      # Source should show the original 8bit encoding header
+      expect(page).to have_text("Content-Transfer-Encoding: 8bit")
+      expect(page).to have_text("charset=UTF-8")
+    end
+  end
+
+  it "supports 8bit UTF-8 transfer encoding in multipart messages" do
+    deliver_example("8bit-utf8-multipartmail")
+
+    # Do not reload, make sure that the message appears via websockets
+
+    expect(page).to have_selector("#messages table tbody tr:first-of-type", text: "Test 8bit UTF-8 Multipart Mail")
+
+    # 8bit-utf8-multipartmail example has From: Me <me@sj26.com> and To: Blah <blah@blah.com>
+    expect(message_from_element).to have_text("Me")
+    expect(message_from_element).to have_text("me@sj26.com")
+    expect(message_to_element).to have_text("Blah")
+    expect(message_to_element).to have_text("blah@blah.com")
+    expect(message_subject_element).to have_text("Test 8bit UTF-8 Multipart Mail")
+
+    message_row_element.click
+
+    expect(source_tab_element).to be_visible
+    expect(plain_tab_element).to be_visible
+    expect(html_tab_element).to be_visible
+
+    plain_tab_element.click
+
+    within_frame do
+      # The plain text part should be decoded correctly with UTF-8
+      expect(page).to have_text("Plain text version:")
+      expect(page).to have_text("café")
+      expect(page).to have_text("naïve")
+    end
+
+    html_tab_element.click
+
+    within_frame do
+      # The HTML part should be decoded correctly with UTF-8
+      expect(page).to have_text("HTML version with 8bit encoding:")
+      expect(page).to have_text("café")
+      expect(page).to have_text("résumé")
+      expect(page).to have_text("Ελληνικά")
+      expect(page).to have_text("Русский")
+      expect(page).to have_text("العربية")
+    end
+
+    source_tab_element.click
+
+    within_frame do
+      # Source should show the original 8bit encoding header
+      expect(page).to have_text("Content-Transfer-Encoding: 8bit")
+    end
   end
 end

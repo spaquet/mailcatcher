@@ -20,10 +20,32 @@ task "assets" do
 
   # Sprockets 4.x compatibility: access the internal environment
   environment = sprockets.instance_variable_get(:@environment)
-  environment.js_compressor = :uglifier
+  require "uglifier"
+
+  # Custom compressor that conditionally minifies based on file extension
+  class SelectiveUglifier
+    def initialize(uglifier)
+      @uglifier = uglifier
+    end
+
+    def call(input)
+      # Skip minification for already-minified files
+      filename = input[:filename] || ""
+      if filename.include?(".min.")
+        input[:data]
+      else
+        @uglifier.compress(input[:data])
+      end
+    end
+  end
+
+  uglifier = Uglifier.new(:harmony => true)
+  environment.js_compressor = SelectiveUglifier.new(uglifier)
 
   # Compile specific assets
   # Note: CSS is now inline in views/index.erb, so we compile JavaScript and dependencies
+  # Development: Sprockets serves these directly from assets/ with correct MIME types
+  # Production: These are minified and compiled to public/assets/
   asset_names = ["mailcatcher.js", "highlight.min.js", "atom-one-light.min.css"]
   asset_names.each do |asset_name|
     if asset = environment.find_asset(asset_name)
