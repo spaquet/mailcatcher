@@ -40,9 +40,6 @@ Capybara.register_driver :selenium do |app|
   # Increase timeout for macOS CI where ChromeDriver startup is slow
   # Default is 60 seconds, but macOS runners need more time
   service_args = { log: log_path }
-  if ENV["CI"]
-    service_args[:timeout] = 120 # 2 minutes for macOS
-  end
 
   service = Selenium::WebDriver::Service.chrome(**service_args)
 
