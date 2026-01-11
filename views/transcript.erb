@@ -170,15 +170,15 @@
     </div>
   </div>
 
-  <div class="transcript-search-box">
-    <input type="text" id="transcriptSearch" placeholder="Filter transcript entries..." />
+  <div class="transcript-search-box" style="width: 50%;">
+    <input type="text" id="transcriptSearch" placeholder="Filter transcript entries..." style="width: 100%;" />
     <button class="transcript-search-clear" id="transcriptSearchClear" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; cursor: pointer; display: none; font-size: 18px; padding: 0; width: 20px; height: 20px;">×</button>
   </div>
 
   <div class="transcript-log">
     <% if transcript['entries'] && transcript['entries'].length > 0 %>
       <% transcript['entries'].each do |entry| %>
-        <div class="transcript-entry" data-searchable="<%= entry.to_json.downcase %>">
+        <div class="transcript-entry" data-searchable="<%= CGI.escapeHTML(entry.to_json.downcase) %>">
           <div class="transcript-time">
             <%
               time = Time.parse(entry['timestamp'])
