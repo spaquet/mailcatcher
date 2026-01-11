@@ -1,8 +1,8 @@
 # MailCatcher NG (Next Generation)
 
 [![Gem Version](https://img.shields.io/gem/v/mailcatcher-ng)](https://rubygems.org/gems/mailcatcher-ng)
-[![CI](https://github.com/spaquet/mailcatcher-ng/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spaquet/mailcatcher-ng/actions/workflows/ci.yml)
-[![GitHub License](https://img.shields.io/github/license/spaquet/mailcatcher-ng)](LICENSE)
+[![CI](https://github.com/spaquet/mailcatcher/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/spaquet/mailcatcher/actions/workflows/ci.yml)
+[![GitHub License](https://img.shields.io/github/license/spaquet/mailcatcher)](LICENSE)
 
 Catches mail and serves it through a dream.
 
