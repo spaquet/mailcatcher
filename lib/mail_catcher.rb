@@ -85,6 +85,7 @@ module MailCatcher
     http_port: '1080',
     http_path: '/',
     messages_limit: nil,
+    persistence: false,
     verbose: false,
     daemon: !windows?,
     browse: false,
@@ -155,6 +156,10 @@ module MailCatcher
         parser.on('--messages-limit COUNT', Integer,
                   'Only keep up to COUNT most recent messages') do |count|
           options[:messages_limit] = count
+        end
+
+        parser.on('--persistence', 'Store messages in a persistent SQLite database file') do
+          options[:persistence] = true
         end
 
         parser.on('--http-path PATH', String, 'Add a prefix to all HTTP paths') do |path|

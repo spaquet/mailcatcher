@@ -18,6 +18,7 @@ class MailCatcher::Smtp < EventMachine::Protocols::SmtpServer
     @session_id = SecureRandom.uuid
     @connection_started_at = Time.now
     @data_started = false
+    @last_message_id = nil
     super
   end
 
@@ -58,8 +59,9 @@ class MailCatcher::Smtp < EventMachine::Protocols::SmtpServer
     @connection_ended_at = Time.now
     log_transcript('connection', 'server', "Connection closed")
 
-    # Save transcript even if no message was completed
-    save_transcript(nil) if @transcript_entries.any?
+    # Save transcript with the last message if available, otherwise without message_id
+    # This ensures "Connection closed" is included in the transcript
+    save_transcript(@last_message_id) if @transcript_entries.any?
 
     super
   end
@@ -205,6 +207,7 @@ class MailCatcher::Smtp < EventMachine::Protocols::SmtpServer
 
     begin
       message_id = MailCatcher::Mail.add_message current_message
+      @last_message_id = message_id
     rescue => e
       $stderr.puts "Error in add_message: #{e.message}"
       $stderr.puts e.backtrace.join("\n")
@@ -213,16 +216,15 @@ class MailCatcher::Smtp < EventMachine::Protocols::SmtpServer
 
     MailCatcher::Mail.delete_older_messages!
 
-    # Save transcript linked to message
-    save_transcript(message_id)
+    # Don't save transcript here - save it when connection closes (in unbind)
+    # This ensures "Connection closed" entry is included
 
     true
   rescue => exception
     log_transcript('error', 'server', "Exception: #{exception.class} - #{exception.message}")
     MailCatcher.log_exception("Error receiving message", @current_message, exception)
 
-    # Save transcript even on error
-    save_transcript(nil)
+    # Don't save transcript here - save it when connection closes (in unbind)
 
     false
   ensure

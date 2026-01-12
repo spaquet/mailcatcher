@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "eventmachine"
+require "fileutils"
 require "json"
 require "mail"
 require "sqlite3"
@@ -8,9 +9,10 @@ require "sqlite3"
 module MailCatcher::Mail extend self
   def db
     @__db ||= begin
-      SQLite3::Database.new(":memory:", :type_translation => true).tap do |db|
+      db_path = determine_db_path
+      SQLite3::Database.new(db_path, :type_translation => true).tap do |db|
         db.execute(<<-SQL)
-          CREATE TABLE message (
+          CREATE TABLE IF NOT EXISTS message (
             id INTEGER PRIMARY KEY ASC,
             sender TEXT,
             recipients TEXT,
@@ -22,7 +24,7 @@ module MailCatcher::Mail extend self
           )
         SQL
         db.execute(<<-SQL)
-          CREATE TABLE message_part (
+          CREATE TABLE IF NOT EXISTS message_part (
             id INTEGER PRIMARY KEY ASC,
             message_id INTEGER NOT NULL,
             cid TEXT,
@@ -37,7 +39,7 @@ module MailCatcher::Mail extend self
           )
         SQL
         db.execute(<<-SQL)
-          CREATE TABLE smtp_transcript (
+          CREATE TABLE IF NOT EXISTS smtp_transcript (
             id INTEGER PRIMARY KEY ASC,
             message_id INTEGER,
             session_id TEXT NOT NULL,
@@ -55,10 +57,22 @@ module MailCatcher::Mail extend self
             FOREIGN KEY (message_id) REFERENCES message (id) ON DELETE CASCADE
           )
         SQL
-        db.execute("CREATE INDEX idx_smtp_transcript_message_id ON smtp_transcript(message_id)")
-        db.execute("CREATE INDEX idx_smtp_transcript_session_id ON smtp_transcript(session_id)")
+        db.execute("CREATE INDEX IF NOT EXISTS idx_smtp_transcript_message_id ON smtp_transcript(message_id)")
+        db.execute("CREATE INDEX IF NOT EXISTS idx_smtp_transcript_session_id ON smtp_transcript(session_id)")
         db.execute("PRAGMA foreign_keys = ON")
       end
+    end
+  end
+
+  def determine_db_path
+    if MailCatcher.options && MailCatcher.options[:persistence]
+      # Use a persistent SQLite file in the user's home directory
+      db_dir = File.expand_path('~/.mailcatcher')
+      FileUtils.mkdir_p(db_dir) unless Dir.exist?(db_dir)
+      File.join(db_dir, 'mailcatcher.db')
+    else
+      # Use in-memory database
+      ':memory:'
     end
   end
 

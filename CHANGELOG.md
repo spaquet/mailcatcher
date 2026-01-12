@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-01-12
+
+### Added
+
+- **SMTP Transcript Enhancements**: Improved transcript capture and storage
+  - Connection closure entries now properly included in transcripts
+  - Full conversation history from connection establishment to closure
+  - Persistent database option with `--persistence` flag for storing messages in SQLite
+
+- **Test Improvements**: Comprehensive test fixes and enhancements
+  - Fixed JSON endpoint tests with proper response parsing
+  - Added helper methods for Capybara/Selenium compatibility
+  - Fixed HTML text matching with CSS text-transform considerations
+  - Improved 404 error handling in tests
+
+### Changed
+
+- **Transcript Saving Logic**: Deferred transcript saving until connection close
+  - Transcripts now save when connection closes (in `unbind` method)
+  - Ensures "Connection closed" entry is captured in final transcript
+  - Maintains message_id linkage when available
+
+- **Database**: Changed from in-memory SQLite to optional persistent storage
+  - New `determine_db_path` method for flexible storage configuration
+  - In-memory by default, persistent when `--persistence` flag is used
+
+### Fixed
+
+- Connection closure not being recorded in SMTP transcripts
+- Transcript entries not being preserved after message delivery
+- JSON response parsing in Selenium/Capybara tests
+- HTML text matching failures due to CSS text transformation
+
 ## [1.3.3] - 2026-01-12
 
 ### Added
