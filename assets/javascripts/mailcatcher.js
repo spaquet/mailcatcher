@@ -138,6 +138,9 @@ class MailCatcher {
 
     this.refresh();
     this.subscribe();
+
+    // Check for updates asynchronously
+    setTimeout(() => this.checkForUpdates(), 500);
   }
 
   parseDate(dateString) {
@@ -928,6 +931,10 @@ class MailCatcher {
   reconnectWebSocketAttempts = 0;
   maxReconnectAttempts = 10;
   reconnectBaseDelay = 1000;  // 1 second
+  connectionTimeoutMs = 5000;  // 5 seconds to establish connection
+  pollingRetryIntervalMs = 15000;  // 15 seconds - retry WebSocket while polling
+  connectionTimeoutHandle = null;
+  pollingRetryTimer = null;
 
   subscribeWebSocket() {
     const secure = window.location.protocol === "https:";
@@ -935,17 +942,41 @@ class MailCatcher {
     url.protocol = secure ? "wss" : "ws";
     this.websocket = new WebSocket(url.toString());
 
+    // Set timeout to detect if connection hangs during handshake
+    this.connectionTimeoutHandle = setTimeout(() => {
+      console.warn("[MailCatcher] WebSocket connection timeout - no response within " + this.connectionTimeoutMs + "ms");
+      if (this.websocket) {
+        this.websocket.close();
+      }
+    }, this.connectionTimeoutMs);
+
     this.websocket.onopen = () => {
       console.log("[MailCatcher] WebSocket connection established");
+      clearTimeout(this.connectionTimeoutHandle);
+      this.connectionTimeoutHandle = null;
       this.reconnectWebSocketAttempts = 0;
       this.updateWebSocketStatus(true);
+      // Clear any polling interval since we're back on WebSocket
+      if (this.refreshInterval) {
+        clearInterval(this.refreshInterval);
+        this.refreshInterval = null;
+      }
+      // Clear polling retry timer
+      if (this.pollingRetryTimer) {
+        clearInterval(this.pollingRetryTimer);
+        this.pollingRetryTimer = null;
+      }
     };
 
     this.websocket.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         console.log("[MailCatcher] WebSocket message received:", data);
-        if (data.type === "add") {
+        if (data.type === "ping") {
+          // Respond to server ping with pong
+          console.log("[MailCatcher] Received ping, sending pong");
+          this.websocket.send(JSON.stringify({ type: "pong" }));
+        } else if (data.type === "add") {
           this.addMessage(data.message);
         } else if (data.type === "remove") {
           this.removeMessage(data.id);
@@ -961,11 +992,15 @@ class MailCatcher {
 
     this.websocket.onerror = (event) => {
       console.error("[MailCatcher] WebSocket error:", event);
+      clearTimeout(this.connectionTimeoutHandle);
+      this.connectionTimeoutHandle = null;
       this.updateWebSocketStatus(false);
     };
 
     this.websocket.onclose = () => {
       console.log("[MailCatcher] WebSocket connection closed");
+      clearTimeout(this.connectionTimeoutHandle);
+      this.connectionTimeoutHandle = null;
       this.updateWebSocketStatus(false);
       this.attemptWebSocketReconnect();
     };
@@ -973,7 +1008,18 @@ class MailCatcher {
 
   subscribePoll() {
     if (!this.refreshInterval) {
+      console.log("[MailCatcher] Starting polling mode (1s interval)");
       this.refreshInterval = setInterval(() => this.refresh(), 1000);
+    }
+    // Start periodic attempt to reconnect to WebSocket while in polling mode
+    if (!this.pollingRetryTimer) {
+      console.log("[MailCatcher] Starting WebSocket retry timer (" + this.pollingRetryIntervalMs + "ms interval)");
+      this.pollingRetryTimer = setInterval(() => {
+        console.log("[MailCatcher] Attempting to reconnect to WebSocket from polling mode");
+        // Reset the reconnect attempt counter to try WebSocket again
+        this.reconnectWebSocketAttempts = 0;
+        this.subscribeWebSocket();
+      }, this.pollingRetryIntervalMs);
     }
   }
 
@@ -984,7 +1030,7 @@ class MailCatcher {
       console.log(`[MailCatcher] Attempting WebSocket reconnection in ${delay}ms (attempt ${this.reconnectWebSocketAttempts}/${this.maxReconnectAttempts})`);
       setTimeout(() => this.subscribeWebSocket(), delay);
     } else {
-      console.log("[MailCatcher] Max WebSocket reconnection attempts reached, staying in polling mode");
+      console.log("[MailCatcher] Max WebSocket reconnection attempts reached, switching to polling mode with periodic WebSocket retry");
       this.subscribePoll();
     }
   }
@@ -1027,6 +1073,104 @@ class MailCatcher {
   hasQuit() {
     // Server has quit, stay on current page
     console.log("[MailCatcher] Server has quit");
+  }
+
+  checkForUpdates() {
+    const versionNotification = document.getElementById("versionNotification");
+    const versionNotificationText = document.getElementById("versionNotificationText");
+
+    if (!versionNotification || !versionNotificationText) {
+      return;
+    }
+
+    // Parse current version from the page - get text before the first newline
+    const versionBadge = document.querySelector(".version-badge");
+    if (!versionBadge) {
+      return;
+    }
+
+    // Get all text nodes in the version badge and find the first non-whitespace text
+    let currentVersion = null;
+    for (let node of versionBadge.childNodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent.trim();
+        if (text) {
+          currentVersion = text;
+          break;
+        }
+      }
+    }
+
+    if (!currentVersion) {
+      return;
+    }
+
+    // Normalize version (remove 'v' prefix if present)
+    currentVersion = currentVersion.replace(/^v/, "");
+
+    // Semantic version comparison function
+    const compareVersions = (v1, v2) => {
+      const parts1 = v1.split('.').map(p => parseInt(p, 10));
+      const parts2 = v2.split('.').map(p => parseInt(p, 10));
+
+      for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+        const p1 = parts1[i] || 0;
+        const p2 = parts2[i] || 0;
+        if (p1 > p2) return 1;
+        if (p1 < p2) return -1;
+      }
+      return 0;
+    };
+
+    // Fetch latest version from GitHub API
+    fetch("https://api.github.com/repos/spaquet/mailcatcher/releases/latest", {
+      headers: {
+        "Accept": "application/vnd.github.v3+json"
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch latest version");
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (!data.tag_name) {
+        throw new Error("Invalid release data");
+      }
+
+      // Extract version number (remove 'v' prefix if present)
+      const latestVersion = data.tag_name.replace(/^v/, "");
+
+      // Compare versions using semantic versioning
+      const comparison = compareVersions(latestVersion, currentVersion);
+
+      const icon = versionNotification.querySelector(".version-notification-icon");
+
+      if (comparison > 0) {
+        // Update available
+        versionNotification.className = "version-notification update-available";
+        versionNotificationText.textContent = `Update available: v${latestVersion}`;
+        versionNotification.href = data.html_url;
+        versionNotification.target = "_blank";
+        versionNotification.title = `Click to download v${latestVersion}`;
+        versionNotification.style.display = "inline-flex";
+        if (icon) icon.style.display = "none";
+      } else {
+        // On latest version or newer
+        versionNotification.className = "version-notification latest-version";
+        versionNotificationText.textContent = "latest version";
+        versionNotification.style.display = "inline-flex";
+        versionNotification.href = "#";
+        versionNotification.style.cursor = "default";
+        versionNotification.style.pointerEvents = "none";
+        versionNotification.onclick = (e) => e.preventDefault();
+        if (icon) icon.style.display = "inline-block";
+      }
+    })
+    .catch(error => {
+      // Silently fail - don't show anything if we can't fetch the latest version
+    });
   }
 }
 

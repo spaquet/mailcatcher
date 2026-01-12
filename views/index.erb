@@ -31,7 +31,15 @@
     <header>
       <div>
         <h1><a href="https://github.com/spaquet/mailcatcher" target="_blank">MailCatcher NG</a></h1>
-        <div class="version-badge"><%= @version %></div>
+        <div class="version-badge">
+          <%= @version %>
+          <a href="#" class="version-notification" id="versionNotification" style="display: none;">
+            <svg class="version-notification-icon" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display: none;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
+            </svg>
+            <span id="versionNotificationText">Update available</span>
+          </a>
+        </div>
       </div>
       <div class="header-controls">
         <div class="search-box">

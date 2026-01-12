@@ -73,6 +73,13 @@ module MailCatcher
         erb :websocket_test
       end
 
+      get "/version.json" do
+        content_type :json
+        JSON.generate({
+          version: MailCatcher::VERSION
+        })
+      end
+
       get "/server-info" do
         @version = MailCatcher::VERSION
         @smtp_ip = MailCatcher.options[:smtp_ip]
@@ -146,11 +153,16 @@ module MailCatcher
       get "/messages" do
         if request.websocket?
           bus_subscription = nil
+          ping_timer = nil
+          session_id = SecureRandom.uuid
+          client_ip = request.ip
 
           ws = Faye::WebSocket.new(request.env)
 
           ws.on(:open) do |_|
-            $stderr.puts "[WebSocket] Connection opened"
+            $stderr.puts "[WebSocket] Connection opened (session: #{session_id}, ip: #{client_ip})"
+            MailCatcher::Mail.create_websocket_connection(session_id, client_ip)
+
             bus_subscription = MailCatcher::Bus.subscribe do |message|
               begin
                 $stderr.puts "[WebSocket] Sending message: #{message.inspect}"
@@ -160,15 +172,41 @@ module MailCatcher
                 MailCatcher.log_exception("Error sending message through websocket", message, exception)
               end
             end
+
+            # Send initial ping and set up periodic ping timer (every 30 seconds)
+            ping_interval = 30
+            ping_timer = EventMachine.add_periodic_timer(ping_interval) do
+              begin
+                $stderr.puts "[WebSocket] Sending ping (session: #{session_id})"
+                MailCatcher::Mail.record_websocket_ping(session_id)
+                ws.send(JSON.generate({ type: "ping" }))
+              rescue => exception
+                $stderr.puts "[WebSocket] Error sending ping: #{exception.message}"
+              end
+            end
+          end
+
+          ws.on(:message) do |event|
+            begin
+              data = JSON.parse(event.data)
+              if data["type"] == "pong"
+                $stderr.puts "[WebSocket] Received pong (session: #{session_id})"
+                MailCatcher::Mail.record_websocket_pong(session_id)
+              end
+            rescue => exception
+              $stderr.puts "[WebSocket] Error processing message: #{exception.message}"
+            end
           end
 
           ws.on(:close) do |_|
-            $stderr.puts "[WebSocket] Connection closed"
+            $stderr.puts "[WebSocket] Connection closed (session: #{session_id})"
+            EventMachine.cancel_timer(ping_timer) if ping_timer
             MailCatcher::Bus.unsubscribe(bus_subscription) if bus_subscription
+            MailCatcher::Mail.close_websocket_connection(session_id)
           end
 
           ws.on(:error) do |event|
-            $stderr.puts "[WebSocket] WebSocket error: #{event}"
+            $stderr.puts "[WebSocket] WebSocket error: #{event} (session: #{session_id})"
           end
 
           ws.rack_response

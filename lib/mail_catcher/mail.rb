@@ -57,8 +57,24 @@ module MailCatcher::Mail extend self
             FOREIGN KEY (message_id) REFERENCES message (id) ON DELETE CASCADE
           )
         SQL
+        db.execute(<<-SQL)
+          CREATE TABLE IF NOT EXISTS websocket_connection (
+            id INTEGER PRIMARY KEY ASC,
+            session_id TEXT NOT NULL,
+            client_ip TEXT,
+            opened_at DATETIME,
+            closed_at DATETIME,
+            last_ping_at DATETIME,
+            last_pong_at DATETIME,
+            ping_count INTEGER DEFAULT 0,
+            pong_count INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_DATETIME,
+            updated_at DATETIME DEFAULT CURRENT_DATETIME
+          )
+        SQL
         db.execute("CREATE INDEX IF NOT EXISTS idx_smtp_transcript_message_id ON smtp_transcript(message_id)")
         db.execute("CREATE INDEX IF NOT EXISTS idx_smtp_transcript_session_id ON smtp_transcript(session_id)")
+        db.execute("CREATE INDEX IF NOT EXISTS idx_websocket_connection_session_id ON websocket_connection(session_id)")
         db.execute("PRAGMA foreign_keys = ON")
       end
     end
@@ -503,6 +519,42 @@ module MailCatcher::Mail extend self
       result['tls_enabled'] = result['tls_enabled'] == 1
       result
     end
+  end
+
+  def create_websocket_connection(session_id, client_ip)
+    @create_ws_connection_query ||= db.prepare(<<-SQL)
+      INSERT INTO websocket_connection (session_id, client_ip, opened_at, created_at, updated_at)
+      VALUES (?, ?, datetime('now'), datetime('now'), datetime('now'))
+    SQL
+    @create_ws_connection_query.execute(session_id, client_ip)
+    db.last_insert_row_id
+  end
+
+  def close_websocket_connection(session_id)
+    @close_ws_connection_query ||= db.prepare(<<-SQL)
+      UPDATE websocket_connection
+      SET closed_at = datetime('now'), updated_at = datetime('now')
+      WHERE session_id = ? AND closed_at IS NULL
+    SQL
+    @close_ws_connection_query.execute(session_id)
+  end
+
+  def record_websocket_ping(session_id)
+    @record_ping_query ||= db.prepare(<<-SQL)
+      UPDATE websocket_connection
+      SET last_ping_at = datetime('now'), ping_count = ping_count + 1, updated_at = datetime('now')
+      WHERE session_id = ? AND closed_at IS NULL
+    SQL
+    @record_ping_query.execute(session_id)
+  end
+
+  def record_websocket_pong(session_id)
+    @record_pong_query ||= db.prepare(<<-SQL)
+      UPDATE websocket_connection
+      SET last_pong_at = datetime('now'), pong_count = pong_count + 1, updated_at = datetime('now')
+      WHERE session_id = ? AND closed_at IS NULL
+    SQL
+    @record_pong_query.execute(session_id)
   end
 
   private
