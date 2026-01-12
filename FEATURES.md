@@ -18,19 +18,22 @@
 14. [Message Metadata Display](#message-metadata-display)
 15. [Message Download Options](#message-download-options)
 16. [Message Management](#message-management)
-17. [Server Control and Information](#server-control-and-information)
-18. [Command-Line Configuration](#command-line-configuration)
-19. [API Endpoints](#api-endpoints)
-20. [Technical Infrastructure](#technical-infrastructure)
-21. [Browser Compatibility and Features](#browser-compatibility-and-features)
-22. [Email Parsing and Processing](#email-parsing-and-processing)
+17. [Persistent Storage](#persistent-storage)
+18. [Server Control and Information](#server-control-and-information)
+19. [Command-Line Configuration](#command-line-configuration)
+20. [API Endpoints](#api-endpoints)
+21. [Technical Infrastructure](#technical-infrastructure)
+22. [Browser Compatibility and Features](#browser-compatibility-and-features)
+23. [Email Parsing and Processing](#email-parsing-and-processing)
 
 ---
 
 ## Core Email Capture and Storage
 
 - **SMTP Server**: Captures all mail sent to smtp://127.0.0.1:1025
-- **In-Memory Database**: SQLite in-memory database stores messages with metadata (sender, recipients, subject, size, timestamp)
+- **Flexible Storage**: SQLite database with two modes:
+  - **In-Memory (default)**: Fast, ephemeral storage lost on process termination
+  - **Persistent (--persistence flag)**: File-based storage at ~/.mailcatcher/mailcatcher.db for retention across restarts
 - **Message Parts Storage**: Stores individual MIME parts (HTML, plain text, attachments) separately with metadata
 - **Message Cleanup**: Configurable message retention limit via `--messages-limit` parameter
 
@@ -160,6 +163,15 @@ MailCatcher NG displays encryption and signature information from email headers,
 - **Message Limit**: Automatic cleanup of oldest messages when limit exceeded
 - **Event Broadcasting**: Message changes broadcast to all connected clients via event bus
 
+## Persistent Storage
+
+- **Optional Persistence**: Enable with `--persistence` flag to store messages across process restarts
+- **File-Based Storage**: Messages stored in SQLite database file at `~/.mailcatcher/mailcatcher.db`
+- **In-Memory Default**: By default, messages are stored in memory (no persistence)
+- **Automatic Directory Creation**: `~/.mailcatcher` directory is automatically created when needed
+- **Docker Volume Support**: Compatible with Docker volumes and bind mounts for containerized deployments
+- **Combined with Limits**: Works with `--messages-limit` for retention management
+
 ## Server Control and Information
 
 - **Server Info Page**: Displays MailCatcher NG version, SMTP/HTTP configuration, hostname, FQDN
@@ -177,6 +189,7 @@ MailCatcher NG displays encryption and signature information from email headers,
   - `--smtp-ssl-key PATH` - Path to SSL private key file
   - `--smtp-ssl-verify-peer` - Enable client certificate verification
   - `--smtps-port PORT` - Port for direct TLS (default: 1465)
+- **Persistence**: `--persistence` to store messages in a persistent SQLite database file
 - **HTTP Path Prefix**: `--http-path` for running behind proxies
 - **Daemon Mode**: `-f/--foreground`, automatic daemonization on Unix
 - **Browser Launch**: `-b/--browse` to automatically open web browser

@@ -134,6 +134,7 @@ Options:
   --http-ip IP              Set HTTP server IP
   --http-port PORT          Set HTTP port (default: 1080)
   --messages-limit COUNT    Keep only N most recent messages
+  --persistence             Store messages in a persistent SQLite database file
   --http-path PATH          Add prefix to all HTTP paths
   --no-quit                 Disable quit functionality
   -f, --foreground          Run in foreground
@@ -141,6 +142,28 @@ Options:
   -v, --verbose             Be more verbose
   -h, --help                Show this help
   --version                 Show version</code></pre>
+                </div>
+
+                <!-- Persistent Storage -->
+                <div class="install-section">
+                    <h2>Persistent Storage</h2>
+                    <p>By default, MailCatcher NG stores messages in memory and they are lost when the process terminates. Enable persistent storage to keep messages across restarts:</p>
+                    <pre><code>mailcatcher --persistence</code></pre>
+                    <p>Messages will be stored in a SQLite database file at <code>~/.mailcatcher/mailcatcher.db</code></p>
+
+                    <h3>Docker with Persistent Storage</h3>
+                    <p>When using Docker, you need to mount a volume to persist the database file. Note: The current Docker image does not yet include support for the <code>--persistence</code> flag. This feature will be added in a future release.</p>
+                    <pre><code>docker run -d \
+  -p 1080:1080 \
+  -p 1025:1025 \
+  -v mailcatcher_data:/root/.mailcatcher \
+  stpaquet/alpinemailcatcher</code></pre>
+                    <p>Or with a bind mount to a host directory:</p>
+                    <pre><code>docker run -d \
+  -p 1080:1080 \
+  -p 1025:1025 \
+  -v /path/to/local/storage:/root/.mailcatcher \
+  stpaquet/alpinemailcatcher</code></pre>
                 </div>
 
                 <!-- SSL/TLS Configuration -->

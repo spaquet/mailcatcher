@@ -30,6 +30,7 @@ MailCatcher v0.11.2
         --http-ip IP                 Set the ip address of the http server
         --http-port PORT             Set the port address of the http server
         --messages-limit COUNT       Only keep up to COUNT most recent messages
+        --persistence                Store messages in a persistent SQLite database file
         --http-path PATH             Add a prefix to all HTTP paths
         --no-quit                    Don't allow quitting the process
     -f, --foreground                 Run in the foreground
@@ -103,6 +104,22 @@ mailcatcher --messages-limit 100
 ```
 
 Only the 100 most recent messages will be kept.
+
+## Persistent Storage
+
+By default, MailCatcher NG stores messages in memory and they are lost when the process terminates. To keep messages across restarts, enable persistent storage:
+
+```bash
+mailcatcher --persistence
+```
+
+Messages will be stored in a SQLite database file at `~/.mailcatcher/mailcatcher.db`. The directory is automatically created if it doesn't exist.
+
+You can combine persistence with other options:
+
+```bash
+mailcatcher --persistence --messages-limit 500
+```
 
 ## Custom HTTP Path
 
