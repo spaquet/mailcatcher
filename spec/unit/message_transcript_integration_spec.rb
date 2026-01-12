@@ -50,7 +50,7 @@ RSpec.describe "Message-Transcript Integration" do
       # Verify transcript is associated
       transcript = MailCatcher::Mail.message_transcript(message_id)
       expect(transcript).not_to be_nil
-      expect(transcripttranscript["message_id["message_id"]).to eq(message_id)
+      expect(transcript["message_id"]).to eq(message_id)
     end
 
     it "retrieves correct transcript for specific message" do
@@ -95,11 +95,11 @@ RSpec.describe "Message-Transcript Integration" do
       transcript1 = MailCatcher::Mail.message_transcript(message_ids[0])
       transcript2 = MailCatcher::Mail.message_transcript(message_ids[1])
 
-      expect(transcripttranscript1[:["session_id]).to eq(session_ids[0])
-      expect(transcripttranscript2[:["session_id]).to eq(session_ids[1])
+      expect(transcript1["session_id"]).to eq(session_ids[0])
+      expect(transcript2["session_id"]).to eq(session_ids[1])
 
       # Verify they're different
-      expect(transcripttranscript1[:["session_id]).not_to eq(transcripttranscript2[:["session_id])
+      expect(transcript1["session_id"]).not_to eq(transcript2["session_id"])
     end
 
     it "maintains message properties while storing transcript" do
@@ -134,8 +134,8 @@ RSpec.describe "Message-Transcript Integration" do
 
       # Verify message data is unchanged
       message = MailCatcher::Mail.message(message_id)
-      expect(message[:sender]).to eq("sender@example.com")
-      expect(message[:recipients]).to eq(["recipient@example.com"])
+      expect(message["sender"]).to eq("sender@example.com")
+      expect(message["recipients"]).to eq(["recipient@example.com"])
     end
   end
 
@@ -185,7 +185,7 @@ RSpec.describe "Message-Transcript Integration" do
       expect(session_transcripts.length).to eq(2)
 
       # Each should have different message_id
-      message_ids_from_transcripts = session_transcripts.map { |t| t[:message_id] }
+      message_ids_from_transcripts = session_transcripts.map { |t| t["message_id"] }
       expect(message_ids_from_transcripts).to match_array(message_ids)
     end
   end
@@ -254,14 +254,14 @@ RSpec.describe "Message-Transcript Integration" do
       )
 
       transcripts = MailCatcher::Mail.all_transcripts
-      orphaned = transcripts.find { |t| t[:session_id] == "orphaned" }
+      orphaned = transcripts.find { |t| t["session_id"] == "orphaned" }
       expect(orphaned).not_to be_nil
 
       # Orphaned should still exist even if we delete some messages
       MailCatcher::Mail.db.execute("DELETE FROM message")
 
       transcripts_after = MailCatcher::Mail.all_transcripts
-      orphaned_after = transcripts_after.find { |t| t[:session_id] == "orphaned" }
+      orphaned_after = transcripts_after.find { |t| t["session_id"] == "orphaned" }
       expect(orphaned_after).not_to be_nil
     end
   end
@@ -302,7 +302,7 @@ RSpec.describe "Message-Transcript Integration" do
       transcript = MailCatcher::Mail.message_transcript(message_id)
 
       # Connection duration should be positive
-      expect(transcripttranscript["connection_ended_at["connection_ended_at"]).to be >= transcripttranscript["connection_started_at["connection_started_at"]
+      expect(transcript["connection_ended_at"]).to be >= transcript["connection_started_at"]
     end
 
     it "records message creation timestamp in database" do
@@ -356,7 +356,7 @@ RSpec.describe "Message-Transcript Integration" do
       )
 
       transcript = MailCatcher::Mail.message_transcript(message_id)
-      retrieved_entries = transcripttranscript["entries["entries"]
+      retrieved_entries = transcript["entries"]
 
       # Verify all commands are present
       commands = retrieved_entries.map { |e| e["message"] }
@@ -397,7 +397,7 @@ RSpec.describe "Message-Transcript Integration" do
       )
 
       transcript = MailCatcher::Mail.message_transcript(message_id)
-      retrieved_entries = transcripttranscript["entries["entries"]
+      retrieved_entries = transcript["entries"]
 
       # Verify responses are present
       responses = retrieved_entries.map { |e| e["message"] }

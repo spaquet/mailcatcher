@@ -410,7 +410,7 @@ RSpec.describe "SMTP Edge Cases and Error Handling" do
       transcripts = MailCatcher::Mail.all_transcripts
       orphaned = transcripts.find { |t| t["session_id"] == "orphaned" }
       expect(orphaned).not_to be_nil
-      expect(orphaned[:message_id]).to be_nil
+      expect(orphaned["message_id"]).to be_nil
     end
   end
 
