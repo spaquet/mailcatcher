@@ -29,9 +29,9 @@ task 'assets' do
     end
 
     def call(input)
-      # Skip minification for already-minified files
+      # Skip minification for already-minified files and newer JS modules
       filename = input[:filename] || ''
-      if filename.include?('.min.')
+      if filename.include?('.min.') || filename.include?('mailcatcher-ui') || filename.include?('modules/')
         input[:data]
       else
         @uglifier.compress(input[:data])
@@ -39,14 +39,13 @@ task 'assets' do
     end
   end
 
-  uglifier = Uglifier.new(harmony: true)
+  uglifier = Uglifier.new(harmony: true, output: { beautify: false })
   environment.js_compressor = SelectiveUglifier.new(uglifier)
 
   # Compile specific assets
-  # Note: CSS is now inline in views/index.erb, so we compile JavaScript and dependencies
   # Development: Sprockets serves these directly from assets/ with correct MIME types
   # Production: These are minified and compiled to public/assets/
-  asset_names = ['mailcatcher.js', 'highlight.min.js', 'atom-one-light.min.css']
+  asset_names = ['mailcatcher.js', 'mailcatcher.css', 'mailcatcher-ui.js', 'highlight.min.js', 'atom-one-light.min.css']
   asset_names.each do |asset_name|
     if asset = environment.find_asset(asset_name)
       target = File.join(compiled_path, asset_name)
