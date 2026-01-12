@@ -7,9 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
+## [1.3.3] - 2026-01-12
 
-- **1.3.3**: Add comprehensive test coverage for SMTP transcript and message handling features
+### Added
+
+- **Comprehensive Test Coverage**: Enhanced test suite for SMTP transcript and message handling
+  - Full coverage for transcript creation and storage
+  - Tests for message deletion and cleanup functionality
+  - Edge case handling and validation tests
+
+- **Server Info Page Redesign**: Complete redesign of server-info page with real-time monitoring
+  - 2-column layout: left column for server info (compact), right column for server logs
+  - Compact server configuration display (Network, SMTP, HTTP settings)
+  - "Server Settings" placeholder block with Diagnostics button
+  - "Back to Inbox" button moved to top of page
+  - Display all SMTP/SMTPS logs in real-time with auto-refresh capability
+  - Real-time log fetching via `/logs.json` API endpoint (1 second refresh)
+  - Auto-refresh toggle button (ON/OFF) with intelligent resume
+  - Searchable/filterable log display with same design as transcript view
+  - Show session ID in each log entry with truncation (e.g., a89f3657...)
+  - Tippy.js tooltip with full session ID and copy-to-clipboard button
+  - Copy button shows checkmark feedback and resets after 2 seconds
+
+### Changed
+
+- Removed Active Connections section from UI
+- Enhanced database query methods with `all_transcript_entries` for fetching full log details
+- Updated `delete!` method to clear both messages and SMTP transcripts
+
+### Technical Details
+
+- New API endpoint: `/logs.json` for real-time log fetching
+- Extended database access methods in `lib/mail_catcher/mail.rb` with `all_transcript_entries`
+- Updated views/server-info.erb with new layout and real-time capabilities
+- Added auto-refresh state management for log display
+- Integrated Tippy.js for session ID tooltips with copy functionality
 
 ## [1.3.2] - 2026-01-12
 
