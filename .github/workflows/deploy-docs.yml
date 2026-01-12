@@ -29,6 +29,12 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v4
 
+    - name: Generate Sitemap
+      uses: cicirello/generate-sitemap@v1
+      with:
+        base-url-path: https://spaquet.github.io/mailcatcher/
+        path-to-root: docs
+
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
