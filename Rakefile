@@ -42,10 +42,10 @@ task 'assets' do
   uglifier = Uglifier.new(harmony: true, output: { beautify: false })
   environment.js_compressor = SelectiveUglifier.new(uglifier)
 
-  # Compile specific assets
+  # Compile specific assets (MailCatcher-specific code + pre-built minified libs)
   # Development: Sprockets serves these directly from assets/ with correct MIME types
   # Production: These are minified and compiled to public/assets/
-  asset_names = ['mailcatcher.js', 'mailcatcher.css', 'mailcatcher-ui.js', 'highlight.min.js', 'atom-one-light.min.css']
+  asset_names = ['mailcatcher.js', 'mailcatcher.css', 'mailcatcher-ui.js', 'highlight.min.js']
   asset_names.each do |asset_name|
     if asset = environment.find_asset(asset_name)
       target = File.join(compiled_path, asset_name)
@@ -61,6 +61,35 @@ task 'assets' do
       target = File.join(compiled_path, filename)
       FileUtils.cp(image_path, target)
     end
+  end
+
+  # Copy npm dependencies to public/assets/
+  npm_source_files = {
+    # JavaScript files
+    'node_modules/jquery/dist/jquery.min.js' => 'jquery.min.js',
+    'node_modules/jquery/dist/jquery.min.map' => 'jquery.min.map',
+    'node_modules/@popperjs/core/dist/umd/popper.min.js' => 'popper.min.js',
+    'node_modules/@popperjs/core/dist/umd/popper.min.js.map' => 'popper.min.js.map',
+    'node_modules/tippy.js/dist/tippy-bundle.umd.min.js' => 'tippy.min.js',
+    # CSS files (moved from local assets to npm)
+    'node_modules/tippy.js/themes/light.css' => 'tippy-light.min.css',
+    'node_modules/highlight.js/styles/atom-one-light.min.css' => 'atom-one-light.min.css'
+  }
+
+  npm_source_files.each do |source, dest|
+    source_path = File.expand_path(source, __dir__)
+    target_path = File.join(compiled_path, dest)
+    if File.exist?(source_path)
+      FileUtils.cp(source_path, target_path)
+    else
+      puts "Warning: npm dependency not found: #{source_path}"
+    end
+  end
+
+  # Keep favcount as vendored file since it's not on npm
+  favcount_source = File.expand_path('vendor/assets/javascripts/favcount.js', __dir__)
+  if File.exist?(favcount_source)
+    FileUtils.cp(favcount_source, File.join(compiled_path, 'favcount.js'))
   end
 end
 

@@ -24,30 +24,103 @@ jobs:
         bundler-cache: true
 
     - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install npm dependencies
+      run: npm install
 
     - name: Build gem
       run: |
         echo "Building assets and gem..."
         bundle exec rake package
 
-    - name: Verify assets in gem
+    - name: Verify assets compiled
       run: |
-        echo "Checking compiled assets..."
+        echo "Checking compiled assets in public/assets/..."
         ls -lh public/assets/
         echo ""
+        # Check for all required assets (npm dependencies, vendored files, and compiled code)
+        REQUIRED_ASSETS=(
+          "public/assets/jquery.min.js"
+          "public/assets/jquery.min.map"
+          "public/assets/popper.min.js"
+          "public/assets/popper.min.js.map"
+          "public/assets/tippy.min.js"
+          "public/assets/tippy-light.min.css"
+          "public/assets/highlight.min.js"
+          "public/assets/atom-one-light.min.css"
+          "public/assets/favcount.js"
+          "public/assets/mailcatcher.js"
+          "public/assets/mailcatcher.css"
+          "public/assets/mailcatcher-ui.js"
+        )
+        echo "Verifying required assets are compiled..."
+        MISSING=0
+        for asset in "${REQUIRED_ASSETS[@]}"; do
+          if [ -f "$asset" ]; then
+            echo "✓ $asset"
+          else
+            echo "✗ MISSING: $asset"
+            MISSING=$((MISSING + 1))
+          fi
+        done
+        if [ "$MISSING" -gt 0 ]; then
+          echo ""
+          echo "ERROR: $MISSING required assets are missing!"
+          exit 1
+        fi
+        echo ""
+        echo "All required assets compiled successfully!"
+
+    - name: Verify assets in gem
+      run: |
         echo "Verifying gem contains assets..."
         GEM_FILE=$(ls -1 mailcatcher-*.gem | head -1)
         echo "Gem file: $GEM_FILE"
         cd /tmp && rm -rf gem-check && mkdir gem-check && cd gem-check
         tar -xf "$GITHUB_WORKSPACE/$GEM_FILE"
         tar -xzf data.tar.gz
+        echo ""
         echo "Assets found in gem:"
         find . -type f \( -path "*/public/assets/*" -o -name "favicon.ico" \) | sort
+        echo ""
+        # Check for npm dependencies and required assets in gem
+        echo "Checking npm dependencies and assets in gem:"
+        REQUIRED_GEM_ASSETS=(
+          "jquery.min.js"
+          "jquery.min.map"
+          "popper.min.js"
+          "popper.min.js.map"
+          "tippy.min.js"
+          "tippy-light.min.css"
+          "atom-one-light.min.css"
+          "highlight.min.js"
+          "favcount.js"
+          "mailcatcher.js"
+          "mailcatcher.css"
+          "mailcatcher-ui.js"
+        )
+        MISSING=0
+        for asset in "${REQUIRED_GEM_ASSETS[@]}"; do
+          if find . -name "$asset" | grep -q .; then
+            echo "✓ $asset found in gem"
+          else
+            echo "✗ MISSING: $asset"
+            MISSING=$((MISSING + 1))
+          fi
+        done
+        if [ "$MISSING" -gt 0 ]; then
+          echo ""
+          echo "ERROR: $MISSING required assets missing from gem!"
+          exit 1
+        fi
         ASSET_COUNT=$(find . -type f \( -path "*/public/assets/*" -o -name "favicon.ico" \) | wc -l)
         echo ""
-        echo "Total: $ASSET_COUNT assets"
-        if [ "$ASSET_COUNT" -lt 2 ]; then
-          echo "ERROR: Assets missing from gem!"
+        echo "Total: $ASSET_COUNT assets in gem"
+        if [ "$ASSET_COUNT" -lt 10 ]; then
+          echo "ERROR: Insufficient assets in gem (expected at least 10, found $ASSET_COUNT)!"
           exit 1
         fi
 

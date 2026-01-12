@@ -4,14 +4,19 @@
     <title>MailCatcher NG</title>
     <base href="<%= settings.prefix.chomp("/") %>/">
     <link href="favicon.ico" rel="icon">
-    <script src="<%= asset_path("mailcatcher.js") %>"></script>
-    <!-- Tippy.js v6 for email signature tooltips -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
-    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
-    <!-- Highlight.js for syntax highlighting email source code (local copy) -->
+    <!-- jQuery -->
+    <script src="<%= asset_path('jquery.min.js') %>"></script>
+    <!-- Tippy.js v6 and Popper.js for email signature tooltips -->
+    <script src="<%= asset_path('popper.min.js') %>"></script>
+    <script src="<%= asset_path('tippy.min.js') %>"></script>
+    <link rel="stylesheet" href="<%= asset_path('tippy-light.min.css') %>">
+    <!-- Highlight.js for syntax highlighting email source code -->
     <script src="<%= asset_path('highlight.min.js') %>"></script>
     <link rel="stylesheet" href="<%= asset_path('atom-one-light.min.css') %>">
+    <!-- Favcount for favicon notification -->
+    <script src="<%= asset_path('favcount.js') %>"></script>
+    <!-- MailCatcher main application -->
+    <script src="<%= asset_path('mailcatcher.js') %>"></script>
     <!-- MailCatcher NG UI Stylesheet -->
     <link rel="stylesheet" href="<%= asset_path('mailcatcher.css') %>">
   </head>

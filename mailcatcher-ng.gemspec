@@ -51,7 +51,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'capybara', '~> 3.40'
   s.add_development_dependency 'capybara-screenshot', '~> 1.0', '>= 1.0.26'
-  s.add_development_dependency 'coffee-script', '~> 2.4', '>= 2.4.1'
   s.add_development_dependency 'rake', '~> 13.3', '>= 13.3.1'
   s.add_development_dependency 'rdoc', '~> 7.0', '>= 7.0.3'
   s.add_development_dependency 'rspec', '~> 3.13', '>= 3.13.2'

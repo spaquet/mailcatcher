@@ -1,9 +1,11 @@
 # Caches
 /.bundle
 /.sass-cache
+/node_modules
 
 # Gemfile locks ignored for gems
 /Gemfile.lock
+/package-lock.json
 
 # Generated documentation and assets
 /doc
@@ -35,3 +37,12 @@
 .ruby-gemset
 *.rbc
 *.lock
+
+# Development symlinks for npm assets
+/assets/javascripts/jquery.min.js
+/assets/javascripts/jquery.min.map
+/assets/javascripts/popper.min.js
+/assets/javascripts/popper.min.js.map
+/assets/javascripts/tippy.min.js
+/assets/stylesheets/tippy-light.min.css
+/assets/stylesheets/atom-one-light.min.css

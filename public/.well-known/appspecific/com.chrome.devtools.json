@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "commands": [
+    {
+      "shortcut": "Ctrl+Shift+C",
+      "description": "Inspect element"
+    }
+  ],
+  "extensions": [
+    {
+      "name": "MailCatcher DevTools",
+      "version": "1.0.0"
+    }
+  ],
+  "debuggerUrl": "http://localhost:1080",
+  "localDevelopment": true,
+  "preferences": {
+    "showDevTools": true,
+    "dockSide": "right",
+    "showMetrics": false,
+    "enableSourceMaps": true
+  }
+}

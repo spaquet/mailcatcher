@@ -4,10 +4,10 @@
   <title>Server Information - MailCatcher</title>
   <base href="<%= settings.prefix.chomp("/") %>/">
   <link href="favicon.ico" rel="icon">
-  <!-- Tippy.js v6 for session ID tooltips -->
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="https://unpkg.com/tippy.js@6"></script>
-  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
+  <!-- Tippy.js v6 and Popper.js for session ID tooltips -->
+  <script src="<%= asset_path('popper.min.js') %>"></script>
+  <script src="<%= asset_path('tippy.min.js') %>"></script>
+  <link rel="stylesheet" href="<%= asset_path('tippy-light.min.css') %>">
   <style>
     * {
       margin: 0;
@@ -654,9 +654,9 @@
     function initSessionTooltips() {
       var sessionElements = document.querySelectorAll('.log-session[data-session-id]');
       sessionElements.forEach(function(element) {
-        // Destroy existing tooltip if it exists
+        // Skip if tooltip already initialized
         if (element._tippy) {
-          element._tippy.destroy();
+          return;
         }
 
         var sessionId = element.getAttribute('data-session-id');
@@ -675,12 +675,15 @@
             '</svg>' +
           '</button>';
 
-        // Create Tippy instance
+        // Create Tippy instance with click-based trigger and longer delay
         tippy(element, {
           content: tooltipDiv,
           theme: 'light',
           placement: 'top',
           interactive: true,
+          trigger: 'click',
+          hideOnClick: 'toggle',
+          duration: [200, 150],
           onShow: function(instance) {
             // Attach click handler when tooltip shows
             var copyBtn = tooltipDiv.querySelector('.copy-session-btn');
@@ -688,6 +691,7 @@
               copyBtn._clickHandlerAttached = true;
               copyBtn.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 var sessionIdToCopy = copyBtn.getAttribute('data-session-id');
                 copyToClipboard(sessionIdToCopy, copyBtn);
               });
