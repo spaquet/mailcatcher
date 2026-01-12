@@ -29,9 +29,9 @@ task 'assets' do
     end
 
     def call(input)
-      # Skip minification for already-minified files and newer JS modules
+      # Skip minification for already-minified files, modern ES syntax, and newer JS modules
       filename = input[:filename] || ''
-      if filename.include?('.min.') || filename.include?('mailcatcher-ui') || filename.include?('modules/')
+      if filename.include?('.min.') || filename.include?('mailcatcher.js') || filename.include?('mailcatcher-ui') || filename.include?('modules/')
         input[:data]
       else
         @uglifier.compress(input[:data])
