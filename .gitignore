@@ -5,7 +5,6 @@
 
 # Gemfile locks ignored for gems
 /Gemfile.lock
-/package-lock.json
 
 # Generated documentation and assets
 /doc
