@@ -9,12 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.6] - 2026-01-12
 
+### Added
+
+- **Version Update Notification**: Added notification badge in header to alert users of new available versions
+  - Checks GitHub API for latest release
+  - Displays update availability with direct link to download page
+  - Shows "latest version" indicator when up-to-date
+
 ### Fixed
 
 - **Server Info Page Tooltip**: Made session ID tooltip sticky
   - Changed `hideOnClick` from 'toggle' to false to prevent closing when interacting with tooltip
   - Added custom outside-click handler to properly close tooltip when clicking outside
   - Tooltip now stays open while copying session ID to clipboard
+
+- **WebSocket Initialization**: Fixed initialization timing issues after page reload in quit test
+  - Proper wait handling for WebSocket connection establishment
+  - Fixed quit button and event handler conflicts
+
+- **DOM Ready Event**: Fixed MailCatcher initialization to use native DOMContentLoaded event
+  - Improved startup reliability and consistency
+
+- **Test Framework**: Improved wait helper to accept optional timeout parameter
+  - Increased WebSocket wait timeout in quit test for better reliability
+
+- **Build Compatibility**: Fixed Uglifier compatibility with ES6 class field syntax
+
+### Changed
+
+- **Development Tools**: Bumped Node.js version to 22 in GitHub Actions workflows
+- **Package Management**: Added package-lock.json for npm dependency locking
+- **npm Configuration**: Improved npm configuration in GitHub Actions workflows
 
 ## [1.4.4] - 2026-01-12
 
