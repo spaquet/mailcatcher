@@ -735,31 +735,30 @@ class MailCatcher
         message_iframe = $("#message iframe").contents()
         body = message_iframe.find("body")
 
-        # If body already exists and has content, preserve it as-is with proper styling
-        if body.length
-          body.css("font-family", "'Monaco', 'Courier New', 'Consolas', monospace")
-          body.css("font-size", "13px")
-          body.css("line-height", "1.6")
-          body.css("white-space", "pre-wrap")
-          body.css("word-wrap", "break-word")
-          body.css("background-color", "#f5f5f5")
-          body.css("padding", "20px 28px")
-          body.css("margin", "0")
-          body.css("color", "#333333")
-        else
-          # Fallback: get the text content
-          text = message_iframe.text()
+        # Apply styling to body
+        body.css("font-family", "'Monaco', 'Courier New', 'Consolas', monospace")
+        body.css("font-size", "13px")
+        body.css("line-height", "1.6")
+        body.css("white-space", "pre-wrap")
+        body.css("word-wrap", "break-word")
+        body.css("background-color", "#f5f5f5")
+        body.css("padding", "20px 28px")
+        body.css("margin", "0")
+        body.css("color", "#333333")
 
-          # Escape special characters
-          text = text.replace(/&/g, "&amp;")
-          text = text.replace(/</g, "&lt;")
-          text = text.replace(/>/g, "&gt;")
-          text = text.replace(/"/g, "&quot;")
-
-          # Autolink text
-          text = text.replace(/((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?)/g, """<a href="$1" target="_blank">$1</a>""")
-
-          message_iframe.find("html").html("""<body style="font-family: 'Monaco', 'Courier New', 'Consolas', monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; background-color: #f5f5f5; padding: 20px 28px; margin: 0; color: #333333;">#{text}</body>""")
+        # Apply autolink to all text nodes within the body
+        processNode = (element) ->
+          if element.nodeType == 3  # Text node
+            text = element.nodeValue
+            if /(https?:\/\/)/.test(text)
+              span = document.createElement("span")
+              html = text.replace(/(https?:\/\/[^\s<>"{}|\\^`\[\]]*)/g, """<a href="$1" target="_blank">$1</a>""")
+              span.innerHTML = html
+              element.parentNode.replaceChild(span, element)
+          else
+            for child in element.childNodes
+              processNode(child)
+        processNode(body[0])
       when "source"
         message_iframe = $("#message iframe").contents()
         body = message_iframe.find("body")
