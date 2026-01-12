@@ -14,7 +14,7 @@ RSpec.describe "Quit", type: :feature do
 
     # Reload the page to be sure
     visit "/"
-    wait.until { page.evaluate_script("MailCatcher.websocket.readyState") == 1 rescue false }
+    wait(timeout: 10).until { page.evaluate_script("MailCatcher.websocket.readyState") == 1 rescue false }
 
     # Quitting and confirming ..
     accept_confirm "Are you sure you want to quit?" do
