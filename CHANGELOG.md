@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.6] - 2026-01-12
+
+### Fixed
+
+- **Server Info Page Tooltip**: Made session ID tooltip sticky
+  - Changed `hideOnClick` from 'toggle' to false to prevent closing when interacting with tooltip
+  - Added custom outside-click handler to properly close tooltip when clicking outside
+  - Tooltip now stays open while copying session ID to clipboard
+
 ## [1.4.4] - 2026-01-12
 
 ### Changed
