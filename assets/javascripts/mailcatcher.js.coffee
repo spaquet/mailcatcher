@@ -733,32 +733,24 @@ class MailCatcher
         $("a", body).attr("target", "_blank")
       when "plain"
         message_iframe = $("#message iframe").contents()
-        body = message_iframe.find("body")
 
-        # Apply styling to body
-        body.css("font-family", "'Monaco', 'Courier New', 'Consolas', monospace")
-        body.css("font-size", "13px")
-        body.css("line-height", "1.6")
-        body.css("white-space", "pre-wrap")
-        body.css("word-wrap", "break-word")
-        body.css("background-color", "#f5f5f5")
-        body.css("padding", "20px 28px")
-        body.css("margin", "0")
-        body.css("color", "#333333")
+        # Get the plain text content
+        text = message_iframe.text()
 
-        # Apply autolink to all text nodes within the body
-        processNode = (element) ->
-          if element.nodeType == 3  # Text node
-            text = element.nodeValue
-            if /(https?:\/\/)/.test(text)
-              span = document.createElement("span")
-              html = text.replace(/(https?:\/\/[^\s<>"{}|\\^`\[\]]*)/g, """<a href="$1" target="_blank">$1</a>""")
-              span.innerHTML = html
-              element.parentNode.replaceChild(span, element)
-          else
-            for child in element.childNodes
-              processNode(child)
-        processNode(body[0])
+        # Escape HTML special characters
+        text = text.replace(/&/g, "&amp;")
+        text = text.replace(/</g, "&lt;")
+        text = text.replace(/>/g, "&gt;")
+        text = text.replace(/"/g, "&quot;")
+
+        # Convert URLs to clickable links
+        text = text.replace(/(https?:\/\/[^\s<>"{}|\\^`\[\]]*)/g, """<a href="$1" target="_blank">$1</a>""")
+
+        # Build the HTML with styling applied directly to body
+        html = """<body style="font-family: 'Monaco', 'Courier New', 'Consolas', monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; background-color: #f5f5f5; padding: 20px 28px; margin: 0; color: #333333;">#{text}</body>"""
+
+        # Replace iframe content
+        message_iframe.find("html").html(html)
       when "source"
         message_iframe = $("#message iframe").contents()
         body = message_iframe.find("body")
