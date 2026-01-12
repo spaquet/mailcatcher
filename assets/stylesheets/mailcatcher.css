@@ -324,6 +324,37 @@ main {
   text-align: center;
 }
 
+#messages th.sortable {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#messages th.sortable:hover {
+  background-color: #f0f0f0;
+  color: #3f3f3f;
+}
+
+#messages th.sortable .sort-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+
+#messages th.sortable:hover .sort-icon {
+  opacity: 0.6;
+}
+
+#messages th.sortable.active .sort-icon {
+  opacity: 1;
+  color: #2196F3;
+}
+
 #messages tbody {
   overflow-y: auto;
   flex: 1;

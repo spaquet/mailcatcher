@@ -28,6 +28,12 @@ class MailCatcher
     $("#attachmentFilter").on "change", (e) =>
       @applyFilters()
 
+    $("#messages").on "click", "th.sortable, th.sortable *", (e) =>
+      # Handle clicks on header or any element within it (svg, path, text)
+      $header = $(e.currentTarget).closest("th.sortable")
+      field = $header.data("sort-field")
+      @setSortField field if field
+
     $("#message").on "click", ".views .format.tab a", (e) =>
       e.preventDefault()
       @loadMessageBody @selectedMessage(), $($(e.currentTarget).parent("li")).data("message-format")
@@ -205,6 +211,8 @@ class MailCatcher
 
   currentSearchQuery: ""
   currentAttachmentFilter: "all"
+  currentSortField: null
+  currentSortDirection: "asc"
 
   searchMessages: (query) ->
     @currentSearchQuery = query
@@ -254,6 +262,142 @@ class MailCatcher
         $row.show()
       else
         $row.hide()
+
+    @sortMessages()
+
+  setSortField: (field) ->
+    # Toggle sort direction if clicking the same field
+    if @currentSortField == field
+      @currentSortDirection = if @currentSortDirection == "asc" then "desc" else "asc"
+    else
+      @currentSortField = field
+      @currentSortDirection = "asc"
+
+    console.log("setSortField called: #{field}")
+    @updateSortIndicators()
+    @sortMessages()
+
+  updateSortIndicators: ->
+    # Remove active class from all headers and hide all icons
+    $("th.sortable").removeClass("active asc desc")
+    $("th.sortable .sort-icon-up").hide()
+    $("th.sortable .sort-icon-down").show()
+
+    # Add active class and show appropriate icon for current sort field
+    if @currentSortField
+      $activeTh = $("th.sortable[data-sort-field='#{@currentSortField}']")
+      $activeTh.addClass("active " + @currentSortDirection)
+
+      # Show the appropriate arrow based on sort direction
+      if @currentSortDirection == "desc"
+        $activeTh.find(".sort-icon-up").show()
+        $activeTh.find(".sort-icon-down").hide()
+      else
+        $activeTh.find(".sort-icon-down").show()
+        $activeTh.find(".sort-icon-up").hide()
+
+  sortMessages: ->
+    $tbody = $("#messages tbody")
+    $rows = $tbody.find("tr")
+
+    return if $rows.length == 0 or !@currentSortField
+
+    # Convert rows to array and sort
+    rowsArray = $rows.toArray()
+
+    rowsArray.sort((a, b) =>
+      $aRow = $(a)
+      $bRow = $(b)
+
+      aValue = @getSortValue($aRow, @currentSortField)
+      bValue = @getSortValue($bRow, @currentSortField)
+
+      # Handle null/empty values
+      if aValue == null or aValue == ""
+        return if bValue == null or bValue == "" then 0 else 1
+      if bValue == null or bValue == ""
+        return -1
+
+      # Compare based on field type
+      comparison = @compareSortValues(aValue, bValue, @currentSortField)
+
+      if @currentSortDirection == "desc"
+        comparison * -1
+      else
+        comparison
+    )
+
+    # Detach tbody and re-append sorted rows for better performance
+    $tbody.detach()
+    rowsArray.forEach (row) =>
+      $tbody.append(row)
+    $("#messages table").append($tbody)
+
+    console.log("Sorted by #{@currentSortField} (#{@currentSortDirection})")
+
+  getSortValue: ($row, field) ->
+    switch field
+      when "from"
+        # Extract text from from cell, handling the sender-text-container
+        $fromCell = $row.find("td.from-cell")
+        # Get the email from sender-email div if available, otherwise get all text
+        $senderEmail = $fromCell.find(".sender-email").first()
+        if $senderEmail.length > 0
+          return $senderEmail.text().trim()
+        return $fromCell.text().trim()
+
+      when "to"
+        # Extract text from to cell, handling the sender-text-container
+        $toCell = $row.find("td.to-cell")
+        # Get the email from sender-email div if available, otherwise get all text
+        $senderEmail = $toCell.find(".sender-email").first()
+        if $senderEmail.length > 0
+          return $senderEmail.text().trim()
+        return $toCell.text().trim()
+
+      when "subject"
+        # Extract subject text
+        $subjectCell = $row.find("td.subject-cell")
+        $subjectText = $subjectCell.find(".subject-text")
+        if $subjectText.length > 0
+          return $subjectText.text().trim()
+        return $subjectCell.text().trim()
+
+      when "received"
+        # Get the created_at value - it's in the date cell (6th td)
+        return $row.find("td").eq(5).text().trim()
+
+      else
+        return ""
+
+  compareSortValues: (a, b, field) ->
+    if field == "received"
+      # Parse dates for comparison
+      dateA = new Date(a)
+      dateB = new Date(b)
+
+      if isNaN(dateA.getTime())
+        return if isNaN(dateB.getTime()) then 0 else 1
+      if isNaN(dateB.getTime())
+        return -1
+
+      if dateA < dateB
+        return -1
+      else if dateA > dateB
+        return 1
+      else
+        return 0
+    else
+      # String comparison (case-insensitive for email/subject)
+      aLower = a.toLowerCase()
+      bLower = b.toLowerCase()
+
+      if aLower < bLower
+        return -1
+      else if aLower > bLower
+        return 1
+      else
+        return 0
 
   formatSender: (sender) ->
     # Handle sender format: either "email@example.com" or "<email@example.com>" or "Name <email@example.com>"
