@@ -38,6 +38,9 @@ window.MailCatcherUI.initializeUIHandlers = function() {
       e.preventDefault();
       const confirmText = 'You will lose all your received messages.\n\nAre you sure you want to quit?';
       if (confirm(confirmText)) {
+        if (window.MailCatcher) {
+          window.MailCatcher.quitting = true;
+        }
         fetch(new URL('', document.baseURI).toString(), { method: 'DELETE' });
       }
     });
