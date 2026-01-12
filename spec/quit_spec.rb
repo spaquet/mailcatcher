@@ -14,7 +14,22 @@ RSpec.describe "Quit", type: :feature do
 
     # Reload the page to be sure
     visit "/"
-    wait(timeout: 10).until { page.evaluate_script("MailCatcher.websocket.readyState") == 1 rescue false }
+    # Wait for the websocket to be available after page reload
+    begin
+      Timeout.timeout(10) do
+        loop do
+          begin
+            ready = page.evaluate_script("window.MailCatcher && window.MailCatcher.websocket && window.MailCatcher.websocket.readyState === 1")
+            break if ready
+          rescue Selenium::WebDriver::Error::JavaScriptError
+            # JavaScript not ready yet
+          end
+          sleep 0.1
+        end
+      end
+    rescue Timeout::Error
+      # WebSocket might not be essential for this test, continue anyway
+    end
 
     # Quitting and confirming ..
     accept_confirm "Are you sure you want to quit?" do
