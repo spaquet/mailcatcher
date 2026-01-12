@@ -106,8 +106,8 @@ RSpec.configure do |config|
     lines << JSON.pretty_generate(logs.map { |log| log.as_json })
   end
 
-  def wait
-    Selenium::WebDriver::Wait.new
+  def wait(timeout: 5)
+    Selenium::WebDriver::Wait.new(timeout: timeout)
   end
 
   config.before :each, type: :feature do
