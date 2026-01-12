@@ -9,8 +9,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- **1.3.2**: Add sorting/ordering functionality for message list by To, From, Subject, and received date
 - **1.3.3**: Add comprehensive test coverage for SMTP transcript and message handling features
+
+## [1.3.2] - 2026-01-12
+
+### Added
+
+- **Message List Sorting**: Add sorting/ordering functionality for message list
+  - Sortable column headers for From, To, Subject, and Received date
+  - Click headers to sort ascending (A→Z or oldest→newest)
+  - Click again to sort descending (Z→A or newest→oldest)
+  - Click different column to switch sort field
+  - Visual indicators with up/down arrow icons showing active sort field and direction
+  - Arrow icons highlight in blue when active
+  - Full integration with existing search and attachment filter functionality
+
+### Technical Details
+
+- New sorting methods in MailCatcher class:
+  - `setSortField()`: Handle sort field selection and direction toggling
+  - `sortMessages()`: Reorder table rows based on selected column and direction
+  - `getSortValue()`: Extract comparable values from table cells
+  - `compareSortValues()`: Case-insensitive string comparison and date parsing
+  - `updateSortIndicators()`: Manage visual indicators for active sort state
+- Enhanced table header structure with dual SVG icons (up/down arrows)
+- New CSS styling for sortable headers with hover and active states
+- Sort state properties: `currentSortField` and `currentSortDirection`
 
 ## [1.3.1] - 2026-01-11
 
