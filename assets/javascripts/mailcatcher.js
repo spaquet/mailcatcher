@@ -1063,4 +1063,12 @@ class MailCatcher {
   }
 }
 
-$(() => window.MailCatcher = new MailCatcher());
+// Initialize MailCatcher on DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    window.MailCatcher = new MailCatcher();
+  });
+} else {
+  // DOM is already loaded
+  window.MailCatcher = new MailCatcher();
+}
