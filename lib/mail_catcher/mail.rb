@@ -438,7 +438,7 @@ module MailCatcher::Mail extend self
 
   def message_transcript(message_id)
     @message_transcript_query ||= db.prepare(<<-SQL)
-      SELECT id, session_id, client_ip, client_port,
+      SELECT id, message_id, session_id, client_ip, client_port,
              server_ip, server_port, tls_enabled, tls_protocol,
              tls_cipher, connection_started_at, connection_ended_at,
              entries, created_at
