@@ -101,7 +101,37 @@ module MailCatcher
           @fqdn = fqdn
         end
 
+        # Fetch all SMTP transcripts and flatten entries for display
+        transcripts = Mail.all_transcript_entries
+        @log_entries = transcripts.flat_map do |transcript|
+          transcript['entries'].map do |entry|
+            entry.merge({
+              'session_id' => transcript['session_id'],
+              'client_ip' => transcript['client_ip'],
+              'server_port' => transcript['server_port'],
+              'tls_enabled' => transcript['tls_enabled']
+            })
+          end
+        end.sort_by { |e| e['timestamp'] }
+
         erb :server_info
+      end
+
+      get "/logs.json" do
+        content_type :json
+        transcripts = Mail.all_transcript_entries
+        log_entries = transcripts.flat_map do |transcript|
+          transcript['entries'].map do |entry|
+            entry.merge({
+              'session_id' => transcript['session_id'],
+              'client_ip' => transcript['client_ip'],
+              'server_port' => transcript['server_port'],
+              'tls_enabled' => transcript['tls_enabled']
+            })
+          end
+        end.sort_by { |e| e['timestamp'] }
+
+        JSON.generate(entries: log_entries)
       end
 
       delete "/" do

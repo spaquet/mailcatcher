@@ -311,7 +311,10 @@ module MailCatcher::Mail extend self
 
   def delete!
     @delete_all_messages_query ||= db.prepare "DELETE FROM message"
+    @delete_all_transcripts_query ||= db.prepare "DELETE FROM smtp_transcript"
+
     @delete_all_messages_query.execute
+    @delete_all_transcripts_query.execute
 
     EventMachine.next_tick do
       MailCatcher::Bus.push(type: "clear")
@@ -467,6 +470,24 @@ module MailCatcher::Mail extend self
 
     @all_transcripts_query.execute.map do |row|
       Hash[@all_transcripts_query.columns.zip(row)]
+    end
+  end
+
+  def all_transcript_entries
+    @all_transcript_entries_query ||= db.prepare(<<-SQL)
+      SELECT id, message_id, session_id, client_ip, client_port,
+             server_ip, server_port, tls_enabled, tls_protocol,
+             tls_cipher, connection_started_at, connection_ended_at,
+             entries, created_at
+      FROM smtp_transcript
+      ORDER BY created_at DESC
+    SQL
+
+    @all_transcript_entries_query.execute.map do |row|
+      result = Hash[@all_transcript_entries_query.columns.zip(row)]
+      result['entries'] = JSON.parse(result['entries']) if result['entries']
+      result['tls_enabled'] = result['tls_enabled'] == 1
+      result
     end
   end
 

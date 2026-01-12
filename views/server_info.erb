@@ -4,6 +4,10 @@
   <title>Server Information - MailCatcher</title>
   <base href="<%= settings.prefix.chomp("/") %>/">
   <link href="favicon.ico" rel="icon">
+  <!-- Tippy.js v6 for session ID tooltips -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
   <style>
     * {
       margin: 0;
@@ -16,37 +20,57 @@
       background: #f5f5f5;
       color: #1a1a1a;
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      display: block;
+      padding: 0;
     }
 
-    .container {
+    .page-container {
+      display: grid;
+      grid-template-columns: 450px 1fr;
+      gap: 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 40px;
+      min-height: 100vh;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .info-block {
       background: white;
       border-radius: 8px;
-      padding: 40px;
+      padding: 32px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      max-width: 700px;
-      width: 100%;
     }
 
     h1 {
       font-size: 24px;
       font-weight: 700;
-      margin: 0 0 10px 0;
+      margin: 0 0 4px 0;
+      color: #1a1a1a;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
       color: #1a1a1a;
     }
 
     .page-subtitle {
       font-size: 13px;
       color: #666;
-      margin-bottom: 32px;
-      margin-top: 4px;
-    }
-
-    .info-section {
-      margin-bottom: 32px;
+      margin-bottom: 24px;
     }
 
     .section-title {
@@ -63,12 +87,12 @@
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
+      gap: 12px;
+      margin-bottom: 0;
     }
 
     .info-item {
-      padding: 12px 14px;
+      padding: 10px 12px;
       background: #f9f9f9;
       border-left: 3px solid #2196F3;
       border-radius: 4px;
@@ -79,26 +103,44 @@
     }
 
     .info-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       color: #666;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .info-value {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Courier New', monospace;
-      font-size: 14px;
+      font-size: 13px;
       color: #1a1a1a;
       word-break: break-all;
+    }
+
+    .settings-placeholder {
+      text-align: center;
+      padding: 48px 32px;
+      background: #fafafa;
+      border: 2px dashed #e8eaed;
+      border-radius: 8px;
+    }
+
+    .settings-placeholder .section-title {
+      border-bottom: none;
+      margin-bottom: 12px;
+    }
+
+    .coming-soon {
+      font-size: 13px;
+      color: #999;
+      margin: 0;
     }
 
     .button-group {
       display: flex;
       gap: 12px;
-      margin-top: 32px;
       flex-wrap: wrap;
     }
 
@@ -149,104 +191,550 @@
     .version-info {
       font-size: 12px;
       color: #999;
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid #e8eaed;
       text-align: center;
+    }
+
+    /* Logs panel styles */
+    .logs-panel {
+      background: white;
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+      min-height: 600px;
+    }
+
+    .log-search-box {
+      position: relative;
+    }
+
+    .log-search-box input {
+      width: 100%;
+      padding: 10px 36px 10px 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto';
+      background: #ffffff;
+    }
+
+    .log-search-box input:focus {
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    .log-search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      display: none;
+      font-size: 18px;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+    }
+
+    .log-search-clear:hover {
+      color: #666;
+    }
+
+    .log-container {
+      background: #f9f9f9;
+      border: 1px solid #e8eaed;
+      border-radius: 6px;
+      padding: 16px;
+      max-height: 600px;
+      overflow-y: auto;
+      font-family: 'Monaco', 'Courier New', monospace;
+      flex: 1;
+    }
+
+    .log-entry {
+      display: flex;
+      gap: 12px;
+      margin: 6px 0;
+      padding: 4px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 12px;
+      align-items: flex-start;
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-entry.hidden {
+      display: none;
+    }
+
+    .log-meta {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
+    .log-time {
+      color: #999;
+      min-width: 100px;
+      font-size: 11px;
+    }
+
+    .log-session {
+      color: #999;
+      font-size: 10px;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      cursor: help;
+      border-bottom: 1px dotted #ddd;
+    }
+
+    .log-type {
+      min-width: 80px;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .log-type.connection { color: #9c27b0; }
+    .log-type.command { color: #2196F3; }
+    .log-type.response { color: #34a853; }
+    .log-type.tls { color: #ff9800; }
+    .log-type.data { color: #607d8b; }
+    .log-type.error { color: #f44336; }
+
+    .log-direction {
+      min-width: 60px;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: #666;
+    }
+
+    .log-direction.client::before {
+      content: '→ ';
+      color: #2196F3;
+    }
+
+    .log-direction.server::before {
+      content: '← ';
+      color: #34a853;
+    }
+
+    .log-message {
+      flex: 1;
+      color: #1a1a1a;
+      font-size: 12px;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .log-message.error {
+      color: #f44336;
+      font-weight: 500;
+    }
+
+    .no-logs {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+      font-size: 14px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto';
+    }
+
+    /* Session ID tooltip styles */
+    .session-tooltip-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', monospace;
+      font-size: 12px;
+      padding: 0;
+    }
+
+    .session-id-value {
+      background: #f5f5f5;
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Courier New', monospace;
+      color: #1a1a1a;
+      user-select: all;
+    }
+
+    .copy-session-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      color: #2196F3;
+      transition: all 0.2s;
+    }
+
+    .copy-session-btn:hover {
+      color: #1976D2;
+    }
+
+    .copy-session-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .copy-session-btn.copied {
+      color: #34a853;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Server Information</h1>
-    <div class="page-subtitle">Configuration and connection details</div>
-
-    <div class="info-section">
-      <div class="section-title">Network Configuration</div>
-
-      <div class="info-item full">
-        <span class="info-label">Hostname</span>
-        <div class="info-value"><%= @hostname %></div>
-      </div>
-
-      <div class="info-item full">
-        <span class="info-label">FQDN (Fully Qualified Domain Name)</span>
-        <div class="info-value"><%= @fqdn %></div>
-      </div>
-    </div>
-
-    <div class="info-section">
-      <div class="section-title">Active Connections</div>
-
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="info-label">HTTP Connections</span>
-          <div class="info-value"><%= @http_connections %></div>
+  <div class="page-container">
+    <!-- LEFT COLUMN -->
+    <div class="left-column">
+      <div class="info-block">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+          <div>
+            <h1>Server Information</h1>
+            <div class="page-subtitle">Configuration</div>
+          </div>
+          <a href="<%= settings.prefix.chomp("/") %>/" class="btn btn-primary" style="white-space: nowrap; margin-left: 16px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back
+          </a>
         </div>
 
-        <div class="info-item">
-          <span class="info-label">SMTP Connections</span>
-          <div class="info-value"><%= @smtp_connections %></div>
+        <div class="section-title">Network</div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Hostname</span>
+            <div class="info-value"><%= @hostname %></div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">FQDN</span>
+            <div class="info-value"><%= @fqdn %></div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 16px;">SMTP Server</div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">IP Address</span>
+            <div class="info-value"><%= @smtp_ip %></div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Port</span>
+            <div class="info-value"><%= @smtp_port %></div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 16px;">HTTP Server</div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">IP Address</span>
+            <div class="info-value"><%= @http_ip %></div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-label">Port</span>
+            <div class="info-value"><%= @http_port %></div>
+          </div>
+
+          <div class="info-item full">
+            <span class="info-label">Base Path</span>
+            <div class="info-value"><%= @http_path %></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-block settings-placeholder">
+        <div class="section-title">Server Settings</div>
+        <p class="coming-soon">Coming soon</p>
+        <div class="button-group" style="margin-top: 16px; justify-content: center;">
+          <a href="<%= File.join(settings.prefix.chomp("/"), "websocket-test") %>" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="1"></circle>
+              <path d="M12 1v6m0 6v4"></path>
+              <path d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24"></path>
+              <path d="M1 12h6m6 0h4"></path>
+              <path d="M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
+            </svg>
+            Diagnostics
+          </a>
+        </div>
+        <div class="version-info" style="margin-top: 12px;">
+          MailCatcher v<%= @version %>
         </div>
       </div>
     </div>
 
-    <div class="info-section">
-      <div class="section-title">SMTP Server</div>
+    <!-- RIGHT COLUMN -->
+    <div class="right-column">
+      <div class="logs-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2>Server Logs</h2>
+          <button id="autoRefreshBtn" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+              <path d="M21.5 2v6h-6"></path>
+              <path d="M2.5 22v-6h6"></path>
+              <path d="M2 11.5a10 10 0 0 1 18.8-4.3"></path>
+              <path d="M22 12.5a10 10 0 0 1-18.8 4.2"></path>
+            </svg>
+            Auto-refresh: ON
+          </button>
+        </div>
 
-      <div class="info-item">
-        <span class="info-label">IP Address</span>
-        <div class="info-value"><%= @smtp_ip %></div>
+        <div class="log-search-box">
+          <input type="text" id="logSearch" placeholder="Filter logs..." />
+          <button class="log-search-clear" id="logSearchClear">×</button>
+        </div>
+
+        <div class="log-container" id="logContainer">
+          <div class="no-logs">
+            Loading logs...
+          </div>
+        </div>
       </div>
-
-      <div class="info-item">
-        <span class="info-label">Port</span>
-        <div class="info-value"><%= @smtp_port %></div>
-      </div>
-    </div>
-
-    <div class="info-section">
-      <div class="section-title">HTTP Server</div>
-
-      <div class="info-item">
-        <span class="info-label">IP Address</span>
-        <div class="info-value"><%= @http_ip %></div>
-      </div>
-
-      <div class="info-item">
-        <span class="info-label">Port</span>
-        <div class="info-value"><%= @http_port %></div>
-      </div>
-
-      <div class="info-item full">
-        <span class="info-label">Base Path</span>
-        <div class="info-value"><%= @http_path %></div>
-      </div>
-    </div>
-
-    <div class="button-group">
-      <a href="<%= settings.prefix.chomp("/") %>/" class="btn btn-primary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Back to Inbox
-      </a>
-      <a href="<%= File.join(settings.prefix.chomp("/"), "websocket-test") %>" class="btn btn-secondary">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="1"></circle>
-          <path d="M12 1v6m0 6v4"></path>
-          <path d="M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24"></path>
-          <path d="M1 12h6m6 0h4"></path>
-          <path d="M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
-        </svg>
-        Diagnostics
-      </a>
-    </div>
-
-    <div class="version-info">
-      MailCatcher v<%= @version %>
     </div>
   </div>
+
+  <script>
+    // Real-time log refresh system
+    var logContainer = document.getElementById('logContainer');
+    var searchInput = document.getElementById('logSearch');
+    var searchClear = document.getElementById('logSearchClear');
+    var autoRefreshBtn = document.getElementById('autoRefreshBtn');
+
+    var autoRefreshEnabled = true;
+    var refreshInterval = null;
+    var lastLogCount = 0;
+    var allLogEntries = [];
+
+    // Fetch logs from server
+    function fetchLogs() {
+      fetch('<%= settings.prefix.chomp("/") %>/logs.json')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          allLogEntries = data.entries || [];
+          renderLogs();
+        })
+        .catch(function(error) {
+          console.error('Error fetching logs:', error);
+        });
+    }
+
+    // Render logs with current search filter applied
+    function renderLogs() {
+      var query = searchInput.value.toLowerCase().trim();
+
+      logContainer.innerHTML = '';
+
+      if (allLogEntries.length === 0) {
+        logContainer.innerHTML = '<div class="no-logs">No server logs available</div>';
+        return;
+      }
+
+      allLogEntries.forEach(function(entry) {
+        var searchable = JSON.stringify(entry).toLowerCase();
+        var shouldShow = !query || searchable.indexOf(query) >= 0;
+
+        var timeStr = '';
+        try {
+          var time = new Date(entry.timestamp);
+          var hours = String(time.getHours()).padStart(2, '0');
+          var minutes = String(time.getMinutes()).padStart(2, '0');
+          var seconds = String(time.getSeconds()).padStart(2, '0');
+          var ms = String(time.getMilliseconds()).padStart(3, '0');
+          timeStr = hours + ':' + minutes + ':' + seconds + '.' + ms;
+        } catch (e) {
+          timeStr = '??:??:??';
+        }
+
+        var sessionId = entry.session_id || '';
+        var sessionDisplay = sessionId.substring(0, 8) + '...';
+
+        var entryDiv = document.createElement('div');
+        entryDiv.className = 'log-entry' + (shouldShow ? '' : ' hidden');
+        entryDiv.setAttribute('data-searchable', searchable);
+        entryDiv.innerHTML =
+          '<div class="log-meta">' +
+            '<div class="log-time">' + timeStr + '</div>' +
+            '<div class="log-session" data-session-id="' + escapeHtml(sessionId) + '">' + sessionDisplay + '</div>' +
+          '</div>' +
+          '<div class="log-type ' + entry.type + '">' + entry.type + '</div>' +
+          '<div class="log-direction ' + entry.direction + '">' + entry.direction + '</div>' +
+          '<div class="log-message' + (entry.type === 'error' ? ' error' : '') + '">' +
+            escapeHtml(entry.message) +
+          '</div>';
+
+        logContainer.appendChild(entryDiv);
+      });
+
+      // Initialize Tippy tooltips for session IDs
+      initSessionTooltips();
+
+      // Auto-scroll to bottom
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // HTML escape utility
+    function escapeHtml(text) {
+      var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Filter logs based on search input
+    function filterEntries() {
+      renderLogs();
+      searchClear.style.display = searchInput.value ? 'block' : 'none';
+    }
+
+    // Toggle auto-refresh
+    function toggleAutoRefresh() {
+      autoRefreshEnabled = !autoRefreshEnabled;
+
+      if (autoRefreshEnabled) {
+        autoRefreshBtn.textContent = '';
+        autoRefreshBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">' +
+          '<path d="M21.5 2v6h-6"></path>' +
+          '<path d="M2.5 22v-6h6"></path>' +
+          '<path d="M2 11.5a10 10 0 0 1 18.8-4.3"></path>' +
+          '<path d="M22 12.5a10 10 0 0 1-18.8 4.2"></path>' +
+          '</svg> Auto-refresh: ON';
+
+        // Fetch any missed logs immediately
+        fetchLogs();
+
+        // Resume auto-refresh interval
+        refreshInterval = setInterval(function() {
+          fetchLogs();
+        }, 1000);
+      } else {
+        autoRefreshBtn.textContent = '';
+        autoRefreshBtn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">' +
+          '<path d="M21.5 2v6h-6"></path>' +
+          '<path d="M2.5 22v-6h6"></path>' +
+          '<path d="M2 11.5a10 10 0 0 1 18.8-4.3"></path>' +
+          '<path d="M22 12.5a10 10 0 0 1-18.8 4.2"></path>' +
+          '</svg> Auto-refresh: OFF';
+
+        // Stop auto-refresh interval
+        if (refreshInterval) {
+          clearInterval(refreshInterval);
+          refreshInterval = null;
+        }
+      }
+    }
+
+    // Initialize Tippy tooltips for session IDs
+    function initSessionTooltips() {
+      var sessionElements = document.querySelectorAll('.log-session[data-session-id]');
+      sessionElements.forEach(function(element) {
+        // Destroy existing tooltip if it exists
+        if (element._tippy) {
+          element._tippy.destroy();
+        }
+
+        var sessionId = element.getAttribute('data-session-id');
+
+        // Create tooltip content
+        var tooltipDiv = document.createElement('div');
+        tooltipDiv.className = 'session-tooltip-content';
+        tooltipDiv.innerHTML =
+          '<div class="session-id-value">' + escapeHtml(sessionId) + '</div>' +
+          '<button class="copy-session-btn" data-session-id="' + escapeHtml(sessionId) + '">' +
+            '<svg class="copy-icon" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"></path>' +
+            '</svg>' +
+            '<svg class="checkmark-icon" style="display: none;" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+              '<path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75"></path>' +
+            '</svg>' +
+          '</button>';
+
+        // Create Tippy instance
+        tippy(element, {
+          content: tooltipDiv,
+          theme: 'light',
+          placement: 'top',
+          interactive: true,
+          onShow: function(instance) {
+            // Attach click handler when tooltip shows
+            var copyBtn = tooltipDiv.querySelector('.copy-session-btn');
+            if (copyBtn && !copyBtn._clickHandlerAttached) {
+              copyBtn._clickHandlerAttached = true;
+              copyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var sessionIdToCopy = copyBtn.getAttribute('data-session-id');
+                copyToClipboard(sessionIdToCopy, copyBtn);
+              });
+            }
+          }
+        });
+      });
+    }
+
+    // Copy session ID to clipboard
+    function copyToClipboard(text, button) {
+      navigator.clipboard.writeText(text).then(function() {
+        var copyIcon = button.querySelector('.copy-icon');
+        var checkmarkIcon = button.querySelector('.checkmark-icon');
+
+        // Show checkmark
+        if (copyIcon) copyIcon.style.display = 'none';
+        if (checkmarkIcon) checkmarkIcon.style.display = 'block';
+        button.classList.add('copied');
+
+        // Reset after 2 seconds
+        setTimeout(function() {
+          if (copyIcon) copyIcon.style.display = 'block';
+          if (checkmarkIcon) checkmarkIcon.style.display = 'none';
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(function(err) {
+        console.error('Failed to copy:', err);
+      });
+    }
+
+    // Event listeners
+    searchInput.addEventListener('keyup', filterEntries);
+    searchClear.addEventListener('click', function() {
+      searchInput.value = '';
+      filterEntries();
+      searchInput.focus();
+    });
+    autoRefreshBtn.addEventListener('click', toggleAutoRefresh);
+
+    // Initial load and setup auto-refresh
+    fetchLogs();
+    refreshInterval = setInterval(function() {
+      if (autoRefreshEnabled) {
+        fetchLogs();
+      }
+    }, 1000); // Fetch every 1 second
+  </script>
 </body>
 </html>
