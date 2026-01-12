@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-01-12
+
+### Changed
+
+- **npm Dependency Management**: Removed CoffeeScript and modernized JavaScript build system
+  - Converted `mailcatcher.js.coffee` to modern ES6 JavaScript
+  - Added `package.json` with explicit npm dependency tracking
+  - Dependencies: jQuery 3.7.1, @popperjs/core 2.11.8, tippy.js 6.3.7, highlight.js 11.9.0
+  - Removed jQuery 1.x vendored file and coffee-script gem dependency
+
+- **Asset Pipeline Improvements**:
+  - Implemented automatic npm symlink creation for development environment
+  - Updated `lib/mail_catcher/web/assets.rb` with npm asset handling
+  - Source maps now included in development for better debugging (jquery.min.map, popper.min.js.map)
+  - Production builds copy npm dependencies to public/assets/
+  - Cleaned up duplicate highlight.js files
+
+- **Server Info Page Enhancements**: Fixed tooltip flickering and improved UX
+  - Changed tooltips from hover-based to click-based triggers for better usability
+  - Prevents tooltip destruction/recreation during auto-refresh (eliminates flicker)
+  - Added `hideOnClick: 'toggle'` so tooltips close when clicking outside
+  - Improved event handling with proper event propagation control
+  - Bundled Popper.js and Tippy.js from npm instead of CDN for better reliability
+
+- **GitHub Actions Workflows**: Enhanced CI/CD for npm-based builds
+  - Added Node.js 20 setup with npm caching to both ci.yml and release.yml
+  - Added explicit `npm install` step before asset compilation
+  - Enhanced asset verification with 12 required assets including source maps
+  - Comprehensive gem verification ensuring all assets are bundled correctly
+
+### Fixed
+
+- Tooltip flickering on server info page during auto-refresh
+- Incorrect asset reference (highlight-lib.min.js → highlight.min.js)
+- npm dependencies not loading in development mode
+- Rack compatibility issue with private method visibility in AssetsApp
+
 ## [1.4.0] - 2026-01-12
 
 ### Added
