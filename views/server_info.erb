@@ -676,13 +676,13 @@
           '</button>';
 
         // Create Tippy instance with click-based trigger and longer delay
-        tippy(element, {
+        var tippyInstance = tippy(element, {
           content: tooltipDiv,
           theme: 'light',
           placement: 'top',
           interactive: true,
           trigger: 'click',
-          hideOnClick: 'toggle',
+          hideOnClick: false,
           duration: [200, 150],
           onShow: function(instance) {
             // Attach click handler when tooltip shows
@@ -698,6 +698,14 @@
             }
           }
         });
+
+        // Handle outside clicks to close the tooltip
+        document.addEventListener('click', function(e) {
+          // Check if click is outside both the trigger element and the tooltip
+          if (!element.contains(e.target) && tippyInstance.popper && !tippyInstance.popper.contains(e.target)) {
+            tippyInstance.hide();
+          }
+        }, true);
       });
     }
 
