@@ -110,7 +110,7 @@ module MailCatcher
         parser.banner = 'Usage: mailcatcher [options]'
         parser.version = VERSION
         parser.separator ''
-        parser.separator "MailCatcher v#{VERSION}"
+        parser.separator "MailCatcher NG v#{VERSION}"
         parser.separator ''
 
         parser.on('--ip IP', 'Set the ip address of both servers') do |ip|
@@ -347,15 +347,15 @@ module MailCatcher
 
     # Configure the STARTTLS Smtp class
     Smtp.class_variable_set(:@@parms, {
-      starttls: :required,
-      starttls_options: ssl_options
-    })
+                              starttls: :required,
+                              starttls_options: ssl_options
+                            })
 
     # Configure the Direct TLS SmtpTls class
     SmtpTls.class_variable_set(:@@parms, {
-      starttls: :required,
-      starttls_options: ssl_options
-    })
+                                 starttls: :required,
+                                 starttls_options: ssl_options
+                               })
 
     @ssl_options = ssl_options
   end

@@ -17,7 +17,7 @@ Use `mailcatcher --help` to see all available options:
 ```
 Usage: mailcatcher [options]
 
-MailCatcher v0.11.2
+MailCatcher NG v1.4.4
 
         --ip IP                      Set the ip address of both servers
         --smtp-ip IP                 Set the ip address of the smtp server
