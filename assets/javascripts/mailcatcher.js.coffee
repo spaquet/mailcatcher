@@ -593,9 +593,15 @@ class MailCatcher
 
         # If body already exists and has content, preserve it as-is with proper styling
         if body.length
-          body.css("font-family", "sans-serif")
+          body.css("font-family", "'Monaco', 'Courier New', 'Consolas', monospace")
+          body.css("font-size", "13px")
+          body.css("line-height", "1.6")
           body.css("white-space", "pre-wrap")
           body.css("word-wrap", "break-word")
+          body.css("background-color", "#f5f5f5")
+          body.css("padding", "20px 28px")
+          body.css("margin", "0")
+          body.css("color", "#333333")
         else
           # Fallback: get the text content
           text = message_iframe.text()
@@ -609,7 +615,7 @@ class MailCatcher
           # Autolink text
           text = text.replace(/((http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:\/~\+#]*[\w\-\@?^=%&amp;\/~\+#])?)/g, """<a href="$1" target="_blank">$1</a>""")
 
-          message_iframe.find("html").html("""<body style="font-family: sans-serif; white-space: pre-wrap; word-wrap: break-word">#{text}</body>""")
+          message_iframe.find("html").html("""<body style="font-family: 'Monaco', 'Courier New', 'Consolas', monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; background-color: #f5f5f5; padding: 20px 28px; margin: 0; color: #333333;">#{text}</body>""")
       when "source"
         message_iframe = $("#message iframe").contents()
         body = message_iframe.find("body")

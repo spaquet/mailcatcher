@@ -8,9 +8,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- **1.3.1**: Code refactoring for index.erb to improve maintainability and reduce complexity
+
 - **1.3.2**: Add sorting/ordering functionality for message list by To, From, Subject, and received date
 - **1.3.3**: Add comprehensive test coverage for SMTP transcript and message handling features
+
+## [1.3.1] - 2026-01-11
+
+### Added
+
+- **Code Modularization**: Refactored views/index.erb to separate CSS and JavaScript concerns
+  - Extracted 1305 lines of inline CSS to `assets/stylesheets/mailcatcher.css`
+  - Modularized 507 lines of JavaScript into focused ES6 modules in `assets/javascripts/modules/`
+  - Created modular architecture: utils, resizer, ui-handlers, and tooltips modules
+  - Maintained full backward compatibility with all existing features
+
+### Changed
+
+- **Improved Plain Text Email Display**:
+  - Added styled background color (#f5f5f5) matching source tab aesthetic
+  - Applied monospace font for better readability (Monaco, Courier New, Consolas)
+  - Added proper padding (20px 28px) to match spacing in other tabs
+  - Increased line-height to 1.6 for improved text readability
+  - Set explicit text color for better contrast
+- Updated views/index.erb from 1992 to 181 lines by extracting CSS and JavaScript
+- Refactored JavaScript to use namespace pattern (window.MailCatcherUI) for modules
+- Updated Rakefile with selective minification to support modern ES6+ syntax
+
+### Technical Details
+
+- New CSS file: `assets/stylesheets/mailcatcher.css` (extracted from index.erb)
+- New JS entry point: `assets/javascripts/mailcatcher-ui.js` (Sprockets directives)
+- New JS modules in `assets/javascripts/modules/`:
+  - `utils.js`: HTML escaping utility
+  - `resizer.js`: Message list resize functionality with localStorage persistence
+  - `ui-handlers.js`: Button handlers, email count, download, copy source
+  - `tooltips.js`: Signature and encryption information tooltips (Tippy.js)
+- Enhanced Uglifier configuration with SelectiveUglifier class to skip modern syntax minification
+- All 45 tests passing without any breaking changes
 
 ## [1.3.0] - 2026-01-11
 
