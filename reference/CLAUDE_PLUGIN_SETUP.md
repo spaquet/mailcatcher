@@ -1,6 +1,6 @@
 # Claude Plugin Setup for MailCatcher NG
 
-MailCatcher NG can be used as a Claude Plugin, giving Claude direct access to all mail inspection features without requiring any special installation on your machine.
+ MailCatcher NG can be used as a Claude Plugin, giving Claude direct access to all mail inspection features without requiring any special installation on your machine.
 
 ## Quick Start
 

@@ -75,7 +75,7 @@ lib/mail_catcher/
 ├── smtp.rb                    # SMTP server (unchanged)
 └── ...
 
-docs/
+reference/
 ├── MCP_SETUP.md              # MCP usage guide
 ├── CLAUDE_PLUGIN_SETUP.md    # Plugin usage guide
 └── INTEGRATION_ARCHITECTURE.md  # This file

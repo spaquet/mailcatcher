@@ -22,6 +22,9 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
   - [REST API](reference/API.md)
   - [Advanced Features](reference/ADVANCED.md)
   - [Claude Integration Guide](CLAUDE_INTEGRATION.md)
+  - [Claude Plugin Setup](reference/CLAUDE_PLUGIN_SETUP.md)
+  - [MCP Server Setup](reference/MCP_SETUP.md)
+  - [Integration Architecture](reference/INTEGRATION_ARCHITECTURE.md)
   - [Credits](reference/CREDITS.md)
 - [License](#license)
 
@@ -125,6 +128,18 @@ Programmatic access to messages. Query, download, and manage messages via HTTP.
 ### [Advanced Features](reference/ADVANCED.md)
 
 SSL/TLS encryption, UTF-8 and international content, email authentication, and more.
+
+### [Claude Plugin Setup](reference/CLAUDE_PLUGIN_SETUP.md)
+
+Use MailCatcher NG as a Claude Plugin for natural language interactions with caught emails. Perfect for testing email workflows with Claude.
+
+### [MCP Server Setup](reference/MCP_SETUP.md)
+
+Configure MailCatcher NG as an MCP server for programmatic access via Claude Desktop and other MCP-compatible clients.
+
+### [Integration Architecture](reference/INTEGRATION_ARCHITECTURE.md)
+
+Deep dive into how the Claude Plugin and MCP integrations work, including protocol specifications, tool definitions, and extension points.
 
 ### [Credits](reference/CREDITS.md)
 

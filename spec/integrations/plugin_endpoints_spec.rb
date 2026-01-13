@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe "Claude Plugin Endpoints" do
+describe "Claude Plugin Endpoints", type: :feature do
   let(:default_from) { "sender@example.com" }
   let(:default_to) { "recipient@example.com" }
 
@@ -241,17 +241,19 @@ describe "Claude Plugin Endpoints" do
     it "deletes all messages" do
       expect(MailCatcher::Mail.messages.length).to eq(1)
 
-      page.driver.browser.manage.delete_all_cookies # Reset state if needed
-      page.driver.browser.navigate.to("#{Capybara.app_host}/plugin/messages")
-      page.driver.browser.execute_script("return fetch('/plugin/messages', {method: 'DELETE'})")
+      # Use JavaScript to make DELETE request
+      page.evaluate_script(
+        "fetch('/plugin/messages', {method: 'DELETE'})"
+      )
 
+      # Give it a moment to process
+      sleep 0.1
       expect(MailCatcher::Mail.messages.length).to eq(0)
     end
 
     it "returns 204 No Content" do
-      page.driver.browser.navigate.to("#{Capybara.app_host}/plugin/messages")
-      response_code = page.driver.browser.execute_script(
-        "return fetch('/plugin/messages', {method: 'DELETE'}).then(r => r.status)"
+      response_code = page.evaluate_script(
+        "fetch('/plugin/messages', {method: 'DELETE'}).then(r => r.status)"
       )
       expect(response_code).to eq(204)
     end
@@ -267,16 +269,17 @@ describe "Claude Plugin Endpoints" do
     it "deletes specific message" do
       expect(MailCatcher::Mail.messages.length).to eq(1)
 
-      page.driver.browser.navigate.to("#{Capybara.app_host}/plugin/message/#{@message_id}")
-      page.driver.browser.execute_script("return fetch('/plugin/message/#{@message_id}', {method: 'DELETE'})")
+      page.evaluate_script(
+        "fetch('/plugin/message/#{@message_id}', {method: 'DELETE'})"
+      )
 
+      sleep 0.1
       expect(MailCatcher::Mail.messages.length).to eq(0)
     end
 
     it "returns 404 for non-existent message" do
-      page.driver.browser.navigate.to("#{Capybara.app_host}/plugin/message/99999")
-      response_code = page.driver.browser.execute_script(
-        "return fetch('/plugin/message/99999', {method: 'DELETE'}).then(r => r.status)"
+      response_code = page.evaluate_script(
+        "fetch('/plugin/message/99999', {method: 'DELETE'}).then(r => r.status)"
       )
       expect(response_code).to eq(404)
     end
