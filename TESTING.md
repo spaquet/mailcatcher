@@ -6,7 +6,10 @@ This guide covers comprehensive testing of the MCP Server and Claude Plugin inte
 
 ```bash
 # Run automated tests
-bundle exec rspec spec/integrations/
+bundle exec rake tests
+
+# Import test emails
+ruby send_example_emails.rb
 
 # Manual Plugin Test
 MAILCATCHER_ENV=development bundle exec mailcatcher --plugin --foreground
