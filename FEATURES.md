@@ -21,10 +21,12 @@
 17. [Persistent Storage](#persistent-storage)
 18. [Server Control and Information](#server-control-and-information)
 19. [Command-Line Configuration](#command-line-configuration)
-20. [API Endpoints](#api-endpoints)
-21. [Technical Infrastructure](#technical-infrastructure)
-22. [Browser Compatibility and Features](#browser-compatibility-and-features)
-23. [Email Parsing and Processing](#email-parsing-and-processing)
+20. [Claude Integration](#claude-integration)
+21. [Email Accessibility Scoring](#email-accessibility-scoring)
+22. [API Endpoints](#api-endpoints)
+23. [Technical Infrastructure](#technical-infrastructure)
+24. [Browser Compatibility and Features](#browser-compatibility-and-features)
+25. [Email Parsing and Processing](#email-parsing-and-processing)
 
 ---
 
@@ -196,6 +198,80 @@ MailCatcher NG displays encryption and signature information from email headers,
 - **Message Limit**: `--messages-limit` for retention management
 - **No-Quit Mode**: `--no-quit` to prevent server shutdown
 - **Verbose Logging**: `-v/--verbose` for debug output
+- **MCP Server**: `--mcp` to enable Model Context Protocol server for Claude integration
+- **Claude Plugin**: `--plugin` to enable Claude Plugin endpoints for Claude.com and Claude Desktop
+
+## Claude Integration
+
+MailCatcher NG integrates seamlessly with Claude through two complementary methods:
+
+### Claude Plugin
+
+- **Zero Configuration**: Simply start with `--plugin` flag
+- **Automatic Discovery**: Claude discovers the plugin via `.well-known/ai-plugin.json`
+- **Natural Language Interface**: Interact with MailCatcher through Claude's natural language understanding
+- **Works with Claude.com and Claude Desktop**: Same plugin works everywhere Claude is available
+
+### MCP Server
+
+- **Model Context Protocol Support**: Full MCP 2024-11-05 protocol implementation
+- **Programmatic Access**: Direct tool access for Claude Desktop and other MCP clients
+- **JSON-RPC Protocol**: Standard JSON-RPC 2.0 over stdio for reliability
+- **Optional Feature**: Enable only when needed with `--mcp` flag
+
+### Available Claude Tools
+
+Both integration methods expose 7 powerful tools:
+
+- **search_messages**: Full-text search with filtering (query, limit, attachments, date range)
+- **get_latest_message_for**: Find latest message for recipient with optional subject filtering
+- **extract_token_or_link**: Extract OTPs, magic links, reset tokens from messages
+- **get_parsed_auth_info**: Get structured authentication information (URLs, codes, tokens)
+- **get_message_preview_html**: Get responsive HTML preview with mobile optimization
+- **delete_message**: Delete specific message by ID
+- **clear_messages**: Delete all caught messages
+
+### Tool Capabilities
+
+- **Token Extraction**: Automatic detection and extraction of OTP codes, magic links, reset tokens
+- **Authentication Data**: Structured extraction of verification URLs, unsubscribe links, etc.
+- **HTML Preview**: Mobile-optimized email preview generation
+- **Search & Filter**: Full-text search across all message fields with date range filtering
+- **Message Management**: Add, remove, and clear operations for message lifecycle
+
+## Email Accessibility Scoring
+
+Comprehensive accessibility analysis for emails to ensure compliance with WCAG standards:
+
+### Accessibility Evaluation
+
+- **Accessibility Score Calculation**: 0-100 point scale based on multiple dimensions
+- **Detailed Breakdown**: Separate scores for images, semantic HTML, and link quality
+- **Alt Text Analysis**: Checks for descriptive alt text on all images
+- **Semantic HTML Detection**: Verifies proper use of semantic HTML elements
+- **Link Text Quality**: Ensures links have meaningful text (not "click here")
+
+### Accessibility Checks
+
+- **Image Alt Text**: Validates that all images have appropriate alternative text
+- **Heading Structure**: Verifies proper heading hierarchy (h1, h2, etc.)
+- **Semantic Elements**: Checks for proper use of `<table>`, `<button>`, `<nav>`, etc.
+- **Contrast Verification**: Alerts for potential contrast issues
+- **Link Text Analysis**: Identifies vague link text ("click here", "read more", etc.)
+- **Form Labels**: Checks for proper label associations
+- **List Markup**: Validates proper use of lists for structured content
+
+### Accessibility Recommendations
+
+- **Actionable Suggestions**: Specific recommendations for improving accessibility
+- **Best Practices**: Guidance on WCAG 2.1 Level AA compliance
+- **Common Issues**: Detection and reporting of frequent accessibility problems
+- **Improvement Tips**: Practical steps to enhance email accessibility
+
+### Accessibility API
+
+- `GET /messages/:id/accessibility.json` - Full accessibility evaluation for a message
+- **Response Format**: Includes score, breakdown by category, and detailed findings
 
 ## SSL/TLS Security
 

@@ -14,12 +14,14 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
 
 - [Quick Start](#quick-start)
 - [Features](#features)
+- [Claude Integration](#claude-integration)
 - [Documentation](#documentation)
   - [Installation & Setup](reference/INSTALLATION.md)
   - [Usage & Configuration](reference/USAGE.md)
   - [Framework Integration](reference/INTEGRATIONS.md)
   - [REST API](reference/API.md)
   - [Advanced Features](reference/ADVANCED.md)
+  - [Claude Integration Guide](CLAUDE_INTEGRATION.md)
   - [Credits](reference/CREDITS.md)
 - [License](#license)
 
@@ -50,6 +52,55 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
 - Charset preservation for international content
 
 For a comprehensive list of all features, see [FEATURES.md](FEATURES.md).
+
+## Claude Integration
+
+MailCatcher NG integrates seamlessly with Claude through two complementary methods:
+
+### Claude Plugin (Easiest)
+
+Use MailCatcher with Claude.com or Claude Desktop without any installation:
+
+```bash
+mailcatcher --plugin --foreground
+```
+
+Then add the plugin in Claude settings: `http://localhost:1080/.well-known/ai-plugin.json`
+
+### MCP Server (Programmatic)
+
+Enable programmatic access via Model Context Protocol:
+
+```bash
+mailcatcher --mcp --foreground
+```
+
+Configure in Claude Desktop's `~/.claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "mailcatcher": {
+      "command": "mailcatcher",
+      "args": ["--mcp", "--foreground"]
+    }
+  }
+}
+```
+
+### Available Tools
+
+Both methods expose 7 powerful tools:
+
+- **search_messages** - Full-text search with filtering
+- **get_latest_message_for** - Find latest message for recipient
+- **extract_token_or_link** - Extract OTPs, magic links, reset tokens
+- **get_parsed_auth_info** - Structured authentication data
+- **get_message_preview_html** - Responsive HTML preview
+- **delete_message** - Delete specific message
+- **clear_messages** - Delete all messages
+
+See [CLAUDE_INTEGRATION.md](CLAUDE_INTEGRATION.md) for complete setup and usage guide.
 
 ## Documentation
 
