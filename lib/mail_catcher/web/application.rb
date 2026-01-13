@@ -216,6 +216,22 @@ module MailCatcher
         end
       end
 
+      get "/messages/search" do
+        content_type :json
+        begin
+          results = Mail.search_messages(
+            query: params[:q],
+            has_attachments: params[:has_attachments] == 'true',
+            from_date: params[:from],
+            to_date: params[:to]
+          )
+          JSON.generate(results)
+        rescue => e
+          status 400
+          JSON.generate({ error: e.message, backtrace: e.backtrace.first(5) })
+        end
+      end
+
       delete "/messages" do
         Mail.delete!
         status 204
@@ -317,6 +333,68 @@ module MailCatcher
           content_type part["type"], :charset => (part["charset"] || "utf8")
           attachment part["filename"] if part["is_attachment"] == 1
           body part["body"].to_s
+        else
+          not_found
+        end
+      end
+
+      get "/messages/:id/extract" do
+        id = params[:id].to_i
+        if message = Mail.message(id)
+          content_type :json
+          JSON.generate(Mail.extract_tokens(id, type: params[:type]))
+        else
+          not_found
+        end
+      end
+
+      get "/messages/:id/links.json" do
+        id = params[:id].to_i
+        if message = Mail.message(id)
+          content_type :json
+          JSON.generate(Mail.extract_all_links(id))
+        else
+          not_found
+        end
+      end
+
+      get "/messages/:id/parsed.json" do
+        id = params[:id].to_i
+        if message = Mail.message(id)
+          content_type :json
+          JSON.generate(Mail.parse_message_structured(id))
+        else
+          not_found
+        end
+      end
+
+      get "/messages/:id/accessibility.json" do
+        id = params[:id].to_i
+        if message = Mail.message(id)
+          content_type :json
+          begin
+            JSON.generate(Mail.accessibility_score(id))
+          rescue => e
+            status 500
+            JSON.generate({ error: e.message })
+          end
+        else
+          not_found
+        end
+      end
+
+      post "/messages/:id/forward" do
+        id = params[:id].to_i
+        if message = Mail.message(id)
+          content_type :json
+          result = Mail.forward_message(id)
+
+          if result[:error]
+            status 500
+            JSON.generate(result)
+          else
+            JSON.generate(result)
+          end
         else
           not_found
         end

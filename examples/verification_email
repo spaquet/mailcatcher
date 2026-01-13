@@ -1,0 +1,26 @@
+From: noreply@myapp.com
+To: user@example.com
+Subject: Verify Your Email Address
+Content-Type: text/html; charset=utf-8
+
+<html>
+  <body style="font-family: Arial, sans-serif; color: #333;">
+    <h1>Welcome to MyApp!</h1>
+    <p>Thank you for signing up. Please verify your email address to complete your registration.</p>
+
+    <h2>Verification Code</h2>
+    <p>Your verification code is: <strong>123456</strong></p>
+    <p>This code will expire in 24 hours.</p>
+
+    <h2>Verify Your Email</h2>
+    <p><a href="https://myapp.example.com/verify?token=abc123def456&user=user@example.com" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Click here to verify your email</a></p>
+
+    <p>Or visit this link: https://myapp.example.com/verify?token=abc123def456&user=user@example.com</p>
+
+    <hr>
+    <p style="font-size: 12px; color: #666;">
+      <a href="https://myapp.example.com/unsubscribe?email=user@example.com">Unsubscribe</a> |
+      <a href="https://myapp.example.com/preferences">Email Preferences</a>
+    </p>
+  </body>
+</html>

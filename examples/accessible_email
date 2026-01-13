@@ -1,0 +1,48 @@
+From: support@company.com
+To: user@example.com
+Subject: Accessible Email Template
+Content-Type: text/html; charset=utf-8
+
+<html>
+  <head>
+    <title>Accessible Email</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; color: #333;">
+    <header style="background-color: #003366; color: white; padding: 20px;">
+      <h1>Welcome to Our Service</h1>
+      <p>This email demonstrates accessibility best practices</p>
+    </header>
+
+    <main style="padding: 20px;">
+      <section>
+        <h2>Main Content Section</h2>
+        <p>This email uses semantic HTML tags for better accessibility.</p>
+
+        <article style="margin: 20px 0; padding: 15px; border-left: 4px solid #007bff;">
+          <h3>Featured Article</h3>
+          <img src="https://example.com/image.jpg" alt="A screenshot showing the dashboard with key metrics" style="max-width: 100%; height: auto;">
+          <p>This image has descriptive alt text that explains its content and purpose.</p>
+        </article>
+
+        <section style="background-color: #f0f0f0; padding: 15px; margin: 20px 0; border-radius: 5px;">
+          <h3>Key Information</h3>
+          <ul>
+            <li>All images have descriptive alt text</li>
+            <li>Semantic HTML structure with header, main, article, and section tags</li>
+            <li>Good color contrast (WCAG AA compliant)</li>
+            <li>Proper heading hierarchy</li>
+          </ul>
+        </section>
+      </section>
+
+      <section>
+        <h2>Call to Action</h2>
+        <p><a href="https://company.example.com/dashboard" style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Access Your Dashboard</a></p>
+      </section>
+    </main>
+
+    <footer style="background-color: #f5f5f5; padding: 20px; margin-top: 20px; border-top: 1px solid #ddd; font-size: 12px;">
+      <p>Company Name | <a href="https://company.example.com/contact">Contact Us</a></p>
+    </footer>
+  </body>
+</html>

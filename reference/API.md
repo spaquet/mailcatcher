@@ -303,6 +303,216 @@ curl -X DELETE http://127.0.0.1:1080/
 - `204 No Content` - Server is shutting down
 - `403 Forbidden` - Server is not configured to allow remote shutdown
 
+## Advanced Endpoints
+
+### Search / Filter Messages
+
+```
+GET /messages/search?q=query&has_attachments=true&from=2024-01-01&to=2024-01-31
+```
+
+Searches messages across subject, sender, recipient, and body content with optional filtering.
+
+**Parameters:**
+- `q` - Search query string (searches subject, sender, recipients, and body)
+- `has_attachments` - Filter by attachment presence (`true` or `false`)
+- `from` - Start date for filtering (ISO 8601 format, e.g., `2024-01-01`)
+- `to` - End date for filtering (ISO 8601 format, e.g., `2024-12-31`)
+
+**Example:**
+
+```bash
+curl "http://127.0.0.1:1080/messages/search?q=verification&has_attachments=false"
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": 1,
+    "sender": "noreply@example.com",
+    "recipients": ["user@example.com"],
+    "subject": "Email Verification Required",
+    "size": "1234",
+    "created_at": "2024-01-10T10:30:00Z"
+  }
+]
+```
+
+### Extract Verification Tokens / Codes / Links
+
+```
+GET /messages/:id/extract?type=token|link|otp
+```
+
+Extracts verification tokens, magic links, OTP codes, or reset tokens from message content.
+
+**Parameters:**
+- `type` - Type of token to extract: `link` (magic links), `otp` (6-digit codes), or `token` (reset tokens)
+
+**Example:**
+
+```bash
+curl "http://127.0.0.1:1080/messages/1/extract?type=otp"
+```
+
+**Response:**
+
+```json
+[
+  {
+    "type": "otp",
+    "value": "123456",
+    "context": "Your verification code is: 123456. This code will expire in 10 minutes."
+  }
+]
+```
+
+### Extract All Links with Context
+
+```
+GET /messages/:id/links.json
+```
+
+Returns all links found in the message with metadata about their purpose.
+
+**Example:**
+
+```bash
+curl http://127.0.0.1:1080/messages/1/links.json
+```
+
+**Response:**
+
+```json
+[
+  {
+    "href": "https://example.com/verify?token=abc123xyz",
+    "text": "Verify Your Email",
+    "is_verification": true,
+    "is_unsubscribe": false
+  },
+  {
+    "href": "https://example.com/unsubscribe",
+    "text": "Unsubscribe",
+    "is_verification": false,
+    "is_unsubscribe": true
+  }
+]
+```
+
+### Parse & Return Structured Data
+
+```
+GET /messages/:id/parsed.json
+```
+
+Returns comprehensive structured data parsed from the message, including verification URLs, OTP codes, reset tokens, unsubscribe links, and all message links.
+
+**Example:**
+
+```bash
+curl http://127.0.0.1:1080/messages/1/parsed.json
+```
+
+**Response:**
+
+```json
+{
+  "verification_url": "https://example.com/verify?token=abc123",
+  "otp_code": "123456",
+  "reset_token": "https://example.com/reset?token=xyz789",
+  "unsubscribe_link": "https://example.com/unsubscribe",
+  "all_links": [
+    {
+      "href": "https://example.com/verify?token=abc123",
+      "text": "Verify Your Email",
+      "is_verification": true,
+      "is_unsubscribe": false
+    }
+  ]
+}
+```
+
+### Check Render / Accessibility Score
+
+```
+GET /messages/:id/accessibility.json
+```
+
+Analyzes the HTML email for accessibility issues and returns a score (0-100) with recommendations.
+
+**Example:**
+
+```bash
+curl http://127.0.0.1:1080/messages/1/accessibility.json
+```
+
+**Response:**
+
+```json
+{
+  "score": 85,
+  "breakdown": {
+    "images_with_alt": 100,
+    "semantic_html": 50
+  },
+  "recommendations": [
+    "Use semantic HTML tags (header, main, article, section)"
+  ]
+}
+```
+
+**Score Breakdown:**
+- `images_with_alt` - Percentage of images with alt text (0-100)
+- `semantic_html` - Whether semantic HTML tags are used (50 = no, 100 = yes)
+- `score` - Overall accessibility score (average of all metrics)
+
+### Forward Message (SMTP)
+
+```
+POST /messages/:id/forward
+```
+
+Forwards the caught email message to its original recipient(s) using a configured SMTP server. Useful for final validation after testing.
+
+**Configuration Required:**
+
+Start MailCatcher with SMTP forwarding configuration:
+
+```bash
+mailcatcher \
+  --forward-smtp-host smtp.example.com \
+  --forward-smtp-port 587 \
+  --forward-smtp-user your-username@example.com \
+  --forward-smtp-password your-password
+```
+
+**Example:**
+
+```bash
+curl -X POST http://127.0.0.1:1080/messages/1/forward
+```
+
+**Response (Success):**
+
+```json
+{
+  "success": true,
+  "forwarded_to": ["user@example.com"],
+  "forwarded_at": "2024-01-10T10:30:00Z"
+}
+```
+
+**Response (Error - SMTP not configured):**
+
+```json
+{
+  "error": "SMTP not configured"
+}
+```
+
 ## Usage Examples
 
 ### Check for New Messages
@@ -444,6 +654,7 @@ ws.run_forever()
 | GET | `/websocket-test` | WebSocket test interface |
 | DELETE | `/` | Shutdown server |
 | GET | `/messages` | List messages or WebSocket upgrade |
+| GET | `/messages/search` | Search messages by query and filters |
 | DELETE | `/messages` | Clear all messages |
 | GET | `/messages/:id.json` | Message metadata (JSON) |
 | GET | `/messages/:id.html` | Message body (HTML format) |
@@ -453,4 +664,9 @@ ws.run_forever()
 | GET | `/messages/:id/transcript.json` | SMTP transcript (JSON) |
 | GET | `/messages/:id.transcript` | SMTP transcript (HTML) |
 | GET | `/messages/:id/parts/:cid` | Message part/attachment by Content-ID |
+| GET | `/messages/:id/extract` | Extract tokens, OTPs, or magic links |
+| GET | `/messages/:id/links.json` | Extract all links with context |
+| GET | `/messages/:id/parsed.json` | Parse structured data from message |
+| GET | `/messages/:id/accessibility.json` | Check accessibility score |
+| POST | `/messages/:id/forward` | Forward message to recipients via SMTP |
 | DELETE | `/messages/:id` | Delete specific message |

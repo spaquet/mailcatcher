@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'faye-websocket', '~> 0.12.0'
   s.add_dependency 'mail', '~> 2.9'
   s.add_dependency 'net-smtp', '~> 0.5.1'
+  s.add_dependency 'nokogiri', '~> 1.18'
   s.add_dependency 'ostruct', '~> 0.6.3'
   s.add_dependency 'rack', '~> 3.2.4'
   s.add_dependency 'sinatra', '~> 4.2.1'

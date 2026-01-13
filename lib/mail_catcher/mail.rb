@@ -4,7 +4,9 @@ require "eventmachine"
 require "fileutils"
 require "json"
 require "mail"
+require "nokogiri"
 require "sqlite3"
+require "uri"
 
 module MailCatcher::Mail extend self
   def db
@@ -129,6 +131,62 @@ module MailCatcher::Mail extend self
     @messages_query ||= db.prepare "SELECT id, sender, recipients, subject, size, created_at FROM message ORDER BY created_at, id ASC"
     @messages_query.execute.map do |row|
       Hash[@messages_query.columns.zip(row)].tap do |message|
+        message["recipients"] &&= JSON.parse(message["recipients"])
+      end
+    end
+  end
+
+  def search_messages(query: nil, has_attachments: nil, from_date: nil, to_date: nil)
+    # Build dynamic SQL query with filters
+    sql = "SELECT DISTINCT m.id, m.sender, m.recipients, m.subject, m.size, m.created_at FROM message m"
+    params = []
+    where_clauses = []
+
+    # Determine if we need to join with message_part table
+    needs_join = (query && !query.strip.empty?) || has_attachments.is_a?(TrueClass)
+
+    # Join with message_part table if needed
+    if needs_join
+      sql += " LEFT JOIN message_part mp ON m.id = mp.message_id"
+    end
+
+    # Add search filters - search across subject, sender, and recipients (always available)
+    # Also search body if we have the JOIN
+    if query && !query.strip.empty?
+      q = "%#{query}%"
+      if needs_join
+        where_clauses << "(m.subject LIKE ? OR m.sender LIKE ? OR m.recipients LIKE ? OR mp.body LIKE ?)"
+        params.concat([q, q, q, q])
+      else
+        where_clauses << "(m.subject LIKE ? OR m.sender LIKE ? OR m.recipients LIKE ?)"
+        params.concat([q, q, q])
+      end
+    end
+
+    # Add attachment filter
+    if has_attachments.is_a?(TrueClass)
+      where_clauses << "(mp.is_attachment = 1)"
+    end
+
+    # Add date range filters
+    if from_date
+      where_clauses << "(m.created_at >= ?)"
+      params << from_date
+    end
+
+    if to_date
+      where_clauses << "(m.created_at <= ?)"
+      params << to_date
+    end
+
+    # Combine where clauses
+    sql += " WHERE #{where_clauses.join(' AND ')}" if where_clauses.any?
+
+    sql += " ORDER BY m.created_at, m.id ASC"
+
+    db.prepare(sql).execute(*params).map do |row|
+      columns = ["id", "sender", "recipients", "subject", "size", "created_at"]
+      Hash[columns.zip(row)].tap do |message|
         message["recipients"] &&= JSON.parse(message["recipients"])
       end
     end
@@ -370,6 +428,112 @@ module MailCatcher::Mail extend self
     end
   end
 
+  def extract_tokens(id, type:)
+    html_part = message_part_html(id)
+    plain_part = message_part_plain(id)
+
+    content = [html_part&.dig('body'), plain_part&.dig('body')].compact.join("\n")
+
+    case type
+    when 'link' then extract_magic_links(content)
+    when 'otp' then extract_otps(content)
+    when 'token' then extract_reset_tokens(content)
+    else []
+    end
+  end
+
+  def extract_all_links(id)
+    links = []
+
+    if html_part = message_part_html(id)
+      links += extract_links_from_html(html_part['body'])
+    end
+
+    if plain_part = message_part_plain(id)
+      links += extract_links_from_plain(plain_part['body'])
+    end
+
+    links
+  end
+
+  def parse_message_structured(id)
+    # Extract unsubscribe from List-Unsubscribe header
+    source = message_source(id)
+    unsubscribe_link = nil
+
+    if source
+      unsubscribe_header = source.lines.find { |l| l.match?(/^List-Unsubscribe:/i) }
+      unsubscribe_link = unsubscribe_header&.match(/<(https?:\/\/[^>]+)>/)&.[](1)
+    end
+
+    {
+      verification_url: extract_tokens(id, type: 'link').first&.dig(:value),
+      otp_code: extract_tokens(id, type: 'otp').first&.dig(:value),
+      reset_token: extract_tokens(id, type: 'token').first&.dig(:value),
+      unsubscribe_link: unsubscribe_link,
+      all_links: extract_all_links(id)
+    }
+  end
+
+  def accessibility_score(id)
+    html_part = message_part_html(id)
+    return { score: 0, error: 'No HTML part found' } unless html_part
+
+    doc = Nokogiri::HTML(html_part['body'])
+
+    alt_text_data = check_alt_text_detailed(doc)
+    semantic_data = check_semantic_html_detailed(doc)
+    links_data = check_links_detailed(doc)
+
+    scores = {
+      images_with_alt: alt_text_data[:score],
+      semantic_html: semantic_data[:score],
+      links_with_text: links_data[:score]
+    }
+
+    total_score = (scores.values.sum / scores.size.to_f).round
+
+    {
+      score: total_score,
+      breakdown: scores,
+      findings: {
+        images: alt_text_data[:findings],
+        semantic: semantic_data[:findings],
+        links: links_data[:findings]
+      },
+      recommendations: generate_recommendations(scores)
+    }
+  end
+
+  def forward_message(id)
+    return { error: 'SMTP not configured' } unless forward_smtp_configured?
+
+    message = message(id)
+    source = message_source(id)
+    recipients = JSON.parse(message['recipients'])
+
+    require 'net/smtp'
+
+    Net::SMTP.start(
+      MailCatcher.options[:forward_smtp_host],
+      MailCatcher.options[:forward_smtp_port] || 587,
+      'localhost',
+      MailCatcher.options[:forward_smtp_user],
+      MailCatcher.options[:forward_smtp_password],
+      :plain
+    ) do |smtp|
+      smtp.send_message(source, message['sender'], recipients)
+    end
+
+    {
+      success: true,
+      forwarded_to: recipients,
+      forwarded_at: Time.now.utc.iso8601
+    }
+  rescue => e
+    { error: e.message }
+  end
+
   def message_encryption_data(id)
     source = message_source(id)
     return {} unless source
@@ -558,6 +722,170 @@ module MailCatcher::Mail extend self
   end
 
   private
+
+  def extract_magic_links(content)
+    # Extract URLs with common token parameters: token, verify, confirmation, magic
+    # Use non-capturing group (?:...) so scan returns the full match
+    pattern = %r{https?://[^\s<>]+[?&](?:token|verify|confirmation|magic)=[a-zA-Z0-9_\-.~%]+}i
+    content.scan(pattern).compact.map do |url|
+      # Extract surrounding context (50 chars before and after)
+      start_pos = content.index(url)
+      if start_pos
+        context_start = [0, start_pos - 50].max
+        context_end = [content.length, start_pos + url.length + 50].min
+        context = content[context_start...context_end].strip
+
+        {
+          type: 'magic_link',
+          value: url,
+          context: context
+        }
+      end
+    end.compact
+  end
+
+  def extract_otps(content)
+    # Extract 6-digit OTP codes, preferring those near keywords
+    pattern = /\b(\d{6})\b/
+    results = []
+
+    content.scan(pattern).each do |match|
+      otp = match[0]
+      start_pos = content.index(otp)
+      context_start = [0, start_pos - 50].max
+      context_end = [content.length, start_pos + otp.length + 50].min
+      context = content[context_start...context_end].strip
+
+      # Check if near keywords: code, otp, verification, confirm, pin
+      if context.match?(/code|otp|verification|confirm|pin/i)
+        results << {
+          type: 'otp',
+          value: otp,
+          context: context
+        }
+      end
+    end
+
+    results
+  end
+
+  def extract_reset_tokens(content)
+    # Extract reset token URLs
+    pattern = %r{https?://[^\s<>]*reset[^\s<>]*[?&]token=[a-zA-Z0-9_\-.~%]+}i
+    content.scan(pattern).map do |url|
+      start_pos = content.index(url)
+      context_start = [0, start_pos - 50].max
+      context_end = [content.length, start_pos + url.length + 50].min
+      context = content[context_start...context_end].strip
+
+      {
+        type: 'reset_token',
+        value: url,
+        context: context
+      }
+    end
+  end
+
+  def extract_links_from_html(html)
+    doc = Nokogiri::HTML(html)
+    doc.css('a[href]').map do |link|
+      href = link['href']
+      {
+        href: href,
+        text: link.text.strip,
+        is_verification: href.match?(/verify|confirm|token|magic|activate/i),
+        is_unsubscribe: href.match?(/unsubscribe|opt-out|remove/i)
+      }
+    end
+  end
+
+  def extract_links_from_plain(text)
+    text.scan(URI.regexp(['http', 'https'])).map do |match|
+      url = match[0]
+      {
+        href: url,
+        text: url,
+        is_verification: url.match?(/verify|confirm|token|magic|activate/i),
+        is_unsubscribe: url.match?(/unsubscribe|opt-out|remove/i)
+      }
+    end
+  end
+
+  def check_alt_text_detailed(doc)
+    images = doc.css('img')
+    return { score: 100, findings: { total: 0, with_alt: 0, without_alt: [] } } if images.empty?
+
+    with_alt = images.select { |img| img['alt'] && !img['alt'].strip.empty? }
+    without_alt = images.reject { |img| img['alt'] && !img['alt'].strip.empty? }
+
+    findings = {
+      total: images.size,
+      with_alt: with_alt.size,
+      without_alt: without_alt.map { |img| { src: img['src'], alt_missing: img['alt'].nil? } }
+    }
+
+    score = (with_alt.size.to_f / images.size * 100).round
+
+    { score: score, findings: findings }
+  end
+
+  def check_semantic_html_detailed(doc)
+    semantic_tags = doc.css('header, nav, main, article, section, footer, aside')
+    has_semantic = semantic_tags.any?
+
+    findings = {
+      has_semantic_tags: has_semantic,
+      found_tags: semantic_tags.map(&:name).uniq
+    }
+
+    score = has_semantic ? 100 : 50
+
+    { score: score, findings: findings }
+  end
+
+  def check_links_detailed(doc)
+    links = doc.css('a')
+    return { score: 100, findings: { total: 0, with_text: 0, without_text: [] } } if links.empty?
+
+    with_text = links.select { |a| !a.text.strip.empty? || (a['aria-label'] && !a['aria-label'].empty?) }
+    without_text = links.reject { |a| !a.text.strip.empty? || (a['aria-label'] && !a['aria-label'].empty?) }
+
+    findings = {
+      total: links.size,
+      with_text: with_text.size,
+      without_text: without_text.map { |a| { href: a['href'], text_empty: a.text.strip.empty? } }
+    }
+
+    score = (with_text.size.to_f / links.size * 100).round
+
+    { score: score, findings: findings }
+  end
+
+  def check_alt_text(doc)
+    images = doc.css('img')
+    return 100 if images.empty?
+
+    with_alt = images.select { |img| img['alt'] && !img['alt'].strip.empty? }
+    (with_alt.size.to_f / images.size * 100).round
+  end
+
+  def check_semantic_html(doc)
+    semantic_tags = doc.css('header, nav, main, article, section, footer, aside')
+    semantic_tags.any? ? 100 : 50
+  end
+
+  def generate_recommendations(scores)
+    recs = []
+    recs << "Add alt text to all images" if scores[:images_with_alt] < 100
+    recs << "Use semantic HTML tags (header, main, article, section)" if scores[:semantic_html] < 100
+    recs << "Ensure all links have descriptive text or aria-label" if scores[:links_with_text] < 100
+    recs
+  end
+
+  def forward_smtp_configured?
+    MailCatcher.options[:forward_smtp_host] &&
+      MailCatcher.options[:forward_smtp_port]
+  end
 
   def parse_authentication_results(auth_header)
     results = {

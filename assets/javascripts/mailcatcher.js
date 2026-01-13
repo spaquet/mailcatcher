@@ -821,9 +821,185 @@ class MailCatcher {
 
         $("#message .views .download a").attr("href", `messages/${id}.eml`);
 
+        this.loadAccessibilityScore(id);
         this.loadMessageBody();
       });
     }
+  }
+
+  loadAccessibilityScore(id) {
+    $.getJSON(`messages/${id}/accessibility.json`, (data) => {
+      // Update accessibility score
+      $("#accessibilityScore").text(data.score);
+
+      // Update breakdown metrics
+      if (data.breakdown) {
+        $("#imagesWithAlt").text(data.breakdown.images_with_alt + "%");
+        $("#semanticHtml").text(data.breakdown.semantic_html + "%");
+        $("#linksWithText").text(data.breakdown.links_with_text + "%");
+      }
+
+      // Initialize Tippy tooltips with detailed findings
+      this.initAccessibilityTooltips(data);
+    }).fail(() => {
+      // Reset scores if API call fails (e.g., for plain text emails)
+      $("#accessibilityScore").text("-");
+      $("#imagesWithAlt").text("-");
+      $("#semanticHtml").text("-");
+      $("#linksWithText").text("-");
+    });
+  }
+
+  initAccessibilityTooltips(data) {
+    // Main accessibility score tooltip
+    tippy("#accessibilityScoreBtn", {
+      content: this.buildAccessibilityTooltip(data),
+      allowHTML: true,
+      interactive: true,
+      theme: 'light',
+      placement: 'bottom',
+      maxWidth: 400,
+      sticky: true
+    });
+
+    // Images with alt text tooltip
+    if (data.findings && data.findings.images) {
+      tippy("#imagesWithAltBtn", {
+        content: this.buildImagesTooltiip(data.findings.images),
+        allowHTML: true,
+        interactive: true,
+        theme: 'light',
+        placement: 'bottom',
+        maxWidth: 400,
+        sticky: true
+      });
+    }
+
+    // Semantic HTML tooltip
+    if (data.findings && data.findings.semantic) {
+      tippy("#semanticHtmlBtn", {
+        content: this.buildSemanticTooltip(data.findings.semantic),
+        allowHTML: true,
+        interactive: true,
+        theme: 'light',
+        placement: 'bottom',
+        maxWidth: 400,
+        sticky: true
+      });
+    }
+
+    // Links with text tooltip
+    if (data.findings && data.findings.links) {
+      tippy("#linksWithTextBtn", {
+        content: this.buildLinksTooltip(data.findings.links),
+        allowHTML: true,
+        interactive: true,
+        theme: 'light',
+        placement: 'bottom',
+        maxWidth: 400,
+        sticky: true
+      });
+    }
+  }
+
+  buildAccessibilityTooltip(data) {
+    let html = `<div class="accessibility-tooltip">
+      <h4>Overall Accessibility Score: ${data.score}/100</h4>`;
+
+    if (data.recommendations && data.recommendations.length) {
+      html += `<div class="tooltip-section">
+        <h5>Recommendations:</h5>
+        <ul>`;
+      data.recommendations.forEach(rec => {
+        html += `<li>${rec}</li>`;
+      });
+      html += `</ul></div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  buildImagesTooltiip(findings) {
+    let html = `<div class="accessibility-tooltip">
+      <h4>Image Accessibility</h4>
+      <div class="tooltip-stats">
+        <div><strong>Total images:</strong> ${findings.total}</div>
+        <div><strong>With alt text:</strong> ${findings.with_alt}</div>
+        <div><strong>Missing alt text:</strong> ${findings.total - findings.with_alt}</div>
+      </div>`;
+
+    if (findings.without_alt && findings.without_alt.length > 0) {
+      html += `<div class="tooltip-section">
+        <h5>Images without alt text:</h5>
+        <ul class="tooltip-issues">`;
+      findings.without_alt.slice(0, 5).forEach(img => {
+        html += `<li>${img.alt_missing ? '❌ Missing alt attribute' : '⚠️ Empty alt text'}: ${img.src || '(no src)'}</li>`;
+      });
+      if (findings.without_alt.length > 5) {
+        html += `<li>... and ${findings.without_alt.length - 5} more</li>`;
+      }
+      html += `</ul></div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  buildSemanticTooltip(findings) {
+    let html = `<div class="accessibility-tooltip">
+      <h4>Semantic HTML</h4>`;
+
+    if (findings.has_semantic_tags) {
+      html += `<div class="tooltip-stats">
+        <div>✅ Semantic tags found</div>`;
+      if (findings.found_tags && findings.found_tags.length) {
+        html += `<div><strong>Tags:</strong> ${findings.found_tags.join(', ')}</div>`;
+      }
+      html += `</div>`;
+    } else {
+      html += `<div class="tooltip-stats">
+        <div>⚠️ No semantic HTML tags found</div>
+        <div style="margin-top: 8px; font-size: 12px;">Consider using semantic tags like:</div>
+        <ul class="tooltip-tips">
+          <li>&lt;header&gt; - Page header</li>
+          <li>&lt;nav&gt; - Navigation area</li>
+          <li>&lt;main&gt; - Main content</li>
+          <li>&lt;article&gt; - Article content</li>
+          <li>&lt;section&gt; - Content section</li>
+          <li>&lt;footer&gt; - Page footer</li>
+        </ul>
+      </div>`;
+    }
+
+    html += `</div>`;
+    return html;
+  }
+
+  buildLinksTooltip(findings) {
+    let html = `<div class="accessibility-tooltip">
+      <h4>Link Accessibility</h4>
+      <div class="tooltip-stats">
+        <div><strong>Total links:</strong> ${findings.total}</div>
+        <div><strong>With descriptive text:</strong> ${findings.with_text}</div>
+        <div><strong>Missing text/aria-label:</strong> ${findings.total - findings.with_text}</div>
+      </div>`;
+
+    if (findings.without_text && findings.without_text.length > 0) {
+      html += `<div class="tooltip-section">
+        <h5>Links without descriptive text:</h5>
+        <ul class="tooltip-issues">`;
+      findings.without_text.slice(0, 5).forEach(link => {
+        html += `<li>${link.text_empty ? '❌ No text' : '⚠️ No aria-label'}: ${link.href || '(no href)'}</li>`;
+      });
+      if (findings.without_text.length > 5) {
+        html += `<li>... and ${findings.without_text.length - 5} more</li>`;
+      }
+      html += `</ul></div>`;
+    }
+
+    html += `</div>`;
+    return html;
   }
 
   loadMessageBody(id, format) {

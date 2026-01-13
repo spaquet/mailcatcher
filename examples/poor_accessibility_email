@@ -1,0 +1,45 @@
+From: newsletter@company.com
+To: user@example.com
+Subject: Newsletter - No Accessibility Features
+Content-Type: text/html; charset=utf-8
+
+<html>
+  <body>
+    <div style="color: #555; background-color: #f0f0f0; padding: 20px;">
+      <div style="font-size: 18px; font-weight: bold;">Newsletter Update</div>
+
+      <div style="margin-top: 15px;">
+        This email demonstrates poor accessibility practices. Notice the issues:
+
+        <div style="margin-top: 10px;">
+          <img src="https://example.com/newsletter-image.jpg" style="width: 300px;">
+          This image has no alt text, making it invisible to screen readers.
+        </div>
+
+        <div style="margin-top: 15px;">
+          <div style="font-weight: bold; color: #666;">No semantic structure</div>
+          The email uses only generic div tags instead of semantic HTML elements like header, main, article, nav, or section.
+        </div>
+
+        <div style="margin-top: 15px;">
+          <img src="https://example.com/graph.png">
+          Another image without alt text. Charts and graphs are especially important to describe.
+        </div>
+
+        <div style="margin-top: 15px;">
+          <div style="color: #777;">Links without context</div>
+          <a href="https://company.example.com/article/123">Click here</a> and <a href="https://company.example.com/page/456">this link</a> don't describe their destination.
+        </div>
+
+        <div style="margin-top: 15px;">
+          <div style="font-size: 20px;">Inconsistent heading structure</div>
+          The heading hierarchy is broken - this div is styled like a heading but isn't semantic.
+        </div>
+
+        <div style="margin-top: 20px;">
+          <a href="https://company.example.com/confirm?code=abc123" style="color: #0066cc;">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

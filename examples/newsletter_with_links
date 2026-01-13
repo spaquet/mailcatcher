@@ -1,0 +1,45 @@
+From: newsletter@company.com
+To: subscriber@example.com
+Subject: Weekly Newsletter - January 13, 2026
+List-Unsubscribe: <https://company.example.com/unsubscribe?token=unsub123>
+Content-Type: text/html; charset=utf-8
+
+<html>
+  <body style="font-family: Georgia, serif; color: #333; max-width: 600px; margin: 0 auto;">
+    <header style="background-color: #f5f5f5; padding: 20px; text-align: center;">
+      <h1>Weekly Newsletter</h1>
+      <p style="color: #666;">January 13, 2026</p>
+    </header>
+
+    <main style="padding: 20px;">
+      <h2>Top Stories This Week</h2>
+
+      <article>
+        <h3><a href="https://company.example.com/articles/123?utm_campaign=newsletter">Breaking: New Feature Released</a></h3>
+        <p>We're excited to announce the release of our latest feature...</p>
+        <p><a href="https://company.example.com/articles/123?utm_campaign=newsletter&utm_source=email">Read more →</a></p>
+      </article>
+
+      <article>
+        <h3><a href="https://company.example.com/articles/124?utm_campaign=newsletter">Case Study: How Company X Increased Sales by 40%</a></h3>
+        <p>Learn how one of our clients used our platform to achieve remarkable results...</p>
+        <p><a href="https://company.example.com/articles/124?utm_campaign=newsletter">Read the full case study →</a></p>
+      </article>
+
+      <h2>Upcoming Webinar</h2>
+      <p>Join us for a live webinar on advanced features:</p>
+      <p><a href="https://company.example.com/webinars/register?webinar_id=456&token=webinar789" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Register Now</a></p>
+
+      <hr style="margin: 30px 0;">
+
+      <footer style="font-size: 12px; color: #666;">
+        <p>
+          <a href="https://company.example.com">Visit our website</a> |
+          <a href="https://company.example.com/profile/verify?token=verify456">Verify your account</a> |
+          <a href="https://company.example.com/unsubscribe?token=unsub123">Unsubscribe</a>
+        </p>
+        <p>© 2026 Company Inc. All rights reserved.</p>
+      </footer>
+    </main>
+  </body>
+</html>

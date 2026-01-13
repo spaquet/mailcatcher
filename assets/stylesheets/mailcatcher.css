@@ -838,6 +838,160 @@ main {
   display: inline-block;
 }
 
+/* Accessibility Ratings */
+.accessibility-ratings {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding: 12px;
+  background: #f9f9f9;
+  border: 1px solid #e8eaed;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.accessibility-score {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.score-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2196F3;
+}
+
+.score-unit {
+  font-size: 11px;
+  color: #999;
+}
+
+.accessibility-breakdown {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex: 1;
+}
+
+.breakdown-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+
+.breakdown-label {
+  color: #999;
+  font-weight: 400;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.breakdown-value {
+  color: #2196F3;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.accessibility-score-btn,
+.accessibility-metric-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  display: inline;
+  transition: opacity 0.2s;
+}
+
+.accessibility-score-btn:hover,
+.accessibility-metric-btn:hover {
+  opacity: 0.7;
+}
+
+.accessibility-score-btn:focus,
+.accessibility-metric-btn:focus {
+  outline: 2px solid #2196F3;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Accessibility Tooltip Styles */
+.accessibility-tooltip {
+  font-size: 12px;
+  color: #333;
+}
+
+.accessibility-tooltip h4 {
+  margin: 0 0 12px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.accessibility-tooltip h5 {
+  margin: 8px 0 6px 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.tooltip-stats {
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+.tooltip-stats > div {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+.tooltip-section {
+  margin-top: 8px;
+}
+
+.tooltip-issues,
+.tooltip-tips {
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+  list-style: none;
+}
+
+.tooltip-issues li,
+.tooltip-tips li {
+  margin: 4px 0;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.accessibility-tooltip ul:not(.tooltip-issues):not(.tooltip-tips) {
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.accessibility-tooltip li {
+  margin: 4px 0;
+  font-size: 11px;
+}
+
 #message iframe.body {
   flex: 1;
   border: none;

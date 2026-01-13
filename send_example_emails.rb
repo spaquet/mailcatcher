@@ -28,16 +28,21 @@ example_names = [
   'unknownmail',
   'breaking',
   'mailcatcher_redesign',          # Large email with full redesign content
-  'bimi_email',                    # New: BIMI branded email
-  'newsletter_with_preview',       # New: Newsletter with preview content
-  'enterprise_branded_email',      # New: Enterprise branded email with BIMI
-  'promotional_email',             # New: Promotional email with rich preview
-  'auth_all_pass',                 # New: Email with all auth methods passing
-  'auth_mixed',                    # New: Email with mixed auth results
-  'auth_partial_data',             # New: Email with only SPF authentication
-  'auth_all_fail',                 # New: Email with all auth methods failing
-  '8bit-utf8-multipartmail',       # New: 8bit UTF-8 multipart email
-  '8bit-utf8mail' # New: 8bit UTF-8 simple email
+  'bimi_email',                    # BIMI branded email
+  'newsletter_with_preview',       # Newsletter with preview content
+  'enterprise_branded_email',      # Enterprise branded email with BIMI
+  'promotional_email',             # Promotional email with rich preview
+  'auth_all_pass',                 # Email with all auth methods passing
+  'auth_mixed',                    # Email with mixed auth results
+  'auth_partial_data',             # Email with only SPF authentication
+  'auth_all_fail',                 # Email with all auth methods failing
+  '8bit-utf8-multipartmail',       # 8bit UTF-8 multipart email
+  '8bit-utf8mail',                 # 8bit UTF-8 simple email
+  'verification_email',            # New: Email with verification link and OTP
+  'password_reset',                # New: Email with password reset token
+  'newsletter_with_links',         # New: Newsletter with multiple links and List-Unsubscribe
+  'accessible_email',              # New: Email with good accessibility practices
+  'poor_accessibility_email'       # New: Email demonstrating accessibility issues
 ]
 
 # Get list of email files to send

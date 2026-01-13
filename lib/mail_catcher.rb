@@ -89,7 +89,12 @@ module MailCatcher
     verbose: false,
     daemon: !windows?,
     browse: false,
-    quit: true
+    quit: true,
+    forward_smtp_host: nil,
+    forward_smtp_port: nil,
+    forward_smtp_user: nil,
+    forward_smtp_password: nil,
+    forward_smtp_tls: true
   }
 
   def options
@@ -166,6 +171,26 @@ module MailCatcher
           clean_path = Rack::Utils.clean_path_info("/#{path}")
 
           options[:http_path] = clean_path
+        end
+
+        parser.on('--forward-smtp-host HOST', 'SMTP server for forwarding messages') do |host|
+          options[:forward_smtp_host] = host
+        end
+
+        parser.on('--forward-smtp-port PORT', Integer, 'SMTP port for forwarding messages') do |port|
+          options[:forward_smtp_port] = port
+        end
+
+        parser.on('--forward-smtp-user USER', 'SMTP username for forwarding messages') do |user|
+          options[:forward_smtp_user] = user
+        end
+
+        parser.on('--forward-smtp-password PASSWORD', 'SMTP password for forwarding messages') do |password|
+          options[:forward_smtp_password] = password
+        end
+
+        parser.on('--[no-]forward-smtp-tls', 'Enable/disable TLS for forwarding SMTP (default: enabled)') do |tls|
+          options[:forward_smtp_tls] = tls
         end
 
         parser.on('--no-quit', "Don't allow quitting the process") do
