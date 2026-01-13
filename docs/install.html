@@ -199,6 +199,14 @@ Options:
   enable_starttls_auto: true
 }</code></pre>
 
+                    <h4>Rails with direct TLS (SMTPS)</h4>
+                    <pre><code>config.action_mailer.smtp_settings = {
+  address: '127.0.0.1',
+  port: 1465,
+  enable_starttls_auto: false,
+  ssl: true
+}</code></pre>
+
                     <h4>Django with TLS</h4>
                     <pre><code>if DEBUG:
     EMAIL_HOST = '127.0.0.1'

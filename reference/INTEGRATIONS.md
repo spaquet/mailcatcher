@@ -10,19 +10,29 @@ Add this to your `config/environments/development.rb`:
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
   address: '127.0.0.1',
-  port: 1025,
-  enable_starttls_auto: true
+  port: 1025
 }
 config.action_mailer.raise_delivery_errors = false
 ```
 
-With SSL/TLS enabled:
+With STARTTLS enabled:
 
 ```ruby
 config.action_mailer.smtp_settings = {
   address: '127.0.0.1',
   port: 1025,
   enable_starttls_auto: true
+}
+```
+
+With direct TLS (SMTPS):
+
+```ruby
+config.action_mailer.smtp_settings = {
+  address: '127.0.0.1',
+  port: 1465,
+  enable_starttls_auto: false,
+  ssl: true
 }
 ```
 

@@ -7,6 +7,97 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-01-12
+
+### Added
+
+- **Message Search & Filtering API**: Comprehensive search endpoint for finding messages
+  - New `/messages/search` endpoint with query string support
+  - Filter by search terms across subject, sender, recipients, and body content
+  - Date range filtering with `from` and `to` parameters
+  - Attachment filtering with `has_attachments` parameter
+  - Fast indexed queries using SQLite
+
+- **Token & Code Extraction**: Automated extraction of common authentication elements
+  - New `/messages/:id/extract` endpoint with token type support
+  - Extract magic verification links from messages
+  - Extract 6-digit OTP codes and one-time passwords
+  - Extract reset tokens and authentication URLs
+  - Intelligent pattern matching with context preservation
+
+- **Links & Content Analysis**: Comprehensive link extraction from messages
+  - New `/messages/:id/links.json` endpoint for extracting all links
+  - Metadata about link purpose (verification, unsubscribe, etc.)
+  - Support for extracting links from both HTML and plain text parts
+  - Link text and href preservation with semantic classification
+
+- **Message Structure Parsing**: Unified structured data extraction
+  - New `/messages/:id/parsed.json` endpoint for complete message analysis
+  - Returns verification URLs, OTP codes, reset tokens, unsubscribe links
+  - Complete link list with categorization
+  - Centralized access to commonly needed message elements
+
+- **Email Accessibility Scoring**: Comprehensive accessibility analysis for emails
+  - New `/messages/:id/accessibility.json` endpoint for accessibility evaluation
+  - Score calculation (0-100) across multiple dimensions
+  - Detailed breakdown of specific accessibility issues
+  - Automated recommendations for improving email accessibility
+  - Checks for alt text on images, semantic HTML, link text quality
+
+- **Message Forwarding**: SMTP-based message forwarding capability
+  - New `POST /messages/:id/forward` endpoint for forwarding messages
+  - Forwarding configuration via command-line options:
+    - `--forward-smtp-host`: SMTP server hostname
+    - `--forward-smtp-port`: SMTP server port
+    - `--forward-smtp-user`: SMTP username
+    - `--forward-smtp-password`: SMTP password
+    - `--[no-]forward-smtp-tls`: Enable/disable TLS (default: enabled)
+  - Forward caught emails to original recipients or other SMTP servers
+  - Useful for final validation before production deployment
+
+- **Example Email Files**: New example email templates for testing
+  - `accessible_email`: Well-structured email demonstrating accessibility best practices
+  - `verification_email`: Email with OTP code and verification link for testing extraction
+  - `password_reset`: Email template with password reset token for testing
+  - `newsletter_with_links`: Newsletter template with multiple link types
+  - `poor_accessibility_email`: Email with accessibility issues for testing accessibility scoring
+
+- **API Documentation**: Comprehensive API reference updates
+  - Documented all new advanced endpoints
+  - Added usage examples for search, extraction, and forwarding features
+  - Complete parameter documentation with response formats
+  - Real-world usage examples for automated testing and integration
+
+### Changed
+
+- **Command-line Options**: Added SMTP forwarding configuration flags
+  - New options for configuring forwarding SMTP server
+  - Support for TLS/non-TLS forwarding connections
+
+- **API Structure**: Enhanced message endpoint organization
+  - Clear separation between basic and advanced endpoints
+  - Consistent JSON response formatting across new endpoints
+
+### Technical Details
+
+- **Database**: Enhanced message search with efficient SQL queries
+  - Added `search_messages` method with dynamic query building
+  - Optimized JOIN operations for body content searches
+  - Proper parameter binding for SQL injection prevention
+
+- **Mail Module Extensions**: New methods for content analysis
+  - `extract_tokens`: Extract authentication tokens from message content
+  - `extract_all_links`: Extract and categorize links from HTML and plain text
+  - `parse_message_structured`: Unified structured data parsing
+  - `accessibility_score`: Comprehensive accessibility evaluation
+  - `forward_message`: Send message via external SMTP server
+  - Helper methods for pattern detection (OTP, magic links, reset tokens)
+
+- **HTML/Content Processing**: Nokogiri integration for HTML analysis
+  - Added Nokogiri gem dependency for HTML parsing
+  - Support for DOM analysis and accessibility checking
+  - Semantic HTML detection and validation
+
 ## [1.4.6] - 2026-01-12
 
 ### Added

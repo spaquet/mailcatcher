@@ -17,28 +17,47 @@ Use `mailcatcher --help` to see all available options:
 ```
 Usage: mailcatcher [options]
 
-MailCatcher NG v1.4.4
+ MailCatcher NG v1.5.0
 
-        --ip IP                      Set the ip address of both servers
-        --smtp-ip IP                 Set the ip address of the smtp server
-        --smtp-port PORT             Set the port of the smtp server
-        --smtp-ssl                   Enable SSL/TLS support for SMTP
-        --smtp-ssl-cert PATH         Path to SSL certificate file
-        --smtp-ssl-key PATH          Path to SSL private key file
-        --smtp-ssl-verify-peer       Verify client SSL certificates
-        --smtps-port PORT            Set the port for direct TLS (default: 1465)
-        --http-ip IP                 Set the ip address of the http server
-        --http-port PORT             Set the port address of the http server
-        --messages-limit COUNT       Only keep up to COUNT most recent messages
-        --persistence                Store messages in a persistent SQLite database file
-        --http-path PATH             Add a prefix to all HTTP paths
-        --no-quit                    Don't allow quitting the process
-    -f, --foreground                 Run in the foreground
-    -b, --browse                     Open web browser
-    -v, --verbose                    Be more verbose
-    -h, --help                       Display this help information
-        --version                    Display the current version
+        --ip IP                        Set the ip address of both servers
+        --smtp-ip IP                   Set the ip address of the smtp server
+        --smtp-port PORT               Set the port of the smtp server
+        --smtp-ssl                     Enable SSL/TLS support for SMTP
+        --smtp-ssl-cert PATH           Path to SSL certificate file
+        --smtp-ssl-key PATH            Path to SSL private key file
+        --smtp-ssl-verify-peer         Verify client SSL certificates
+        --smtps-port PORT              Set the port for direct TLS (default: 1465)
+        --http-ip IP                   Set the ip address of the http server
+        --http-port PORT               Set the port address of the http server
+        --messages-limit COUNT         Only keep up to COUNT most recent messages
+        --persistence                  Store messages in a persistent SQLite database file
+        --http-path PATH               Add a prefix to all HTTP paths
+        --forward-smtp-host HOST       SMTP server for forwarding messages
+        --forward-smtp-port PORT       SMTP port for forwarding messages
+        --forward-smtp-user USER       SMTP username for forwarding messages
+        --forward-smtp-password PASS   SMTP password for forwarding messages
+        --[no-]forward-smtp-tls        Enable/disable TLS for forwarding SMTP (default: enabled)
+        --no-quit                      Don't allow quitting the process
+    -f, --foreground                   Run in the foreground
+    -b, --browse                       Open web browser
+    -v, --verbose                      Be more verbose
+    -h, --help                         Display this help information
+        --version                      Display the current version
 ```
+
+## Message Forwarding
+
+Forward caught email messages to real SMTP servers for validation before production deployment:
+
+```bash
+mailcatcher \
+  --forward-smtp-host smtp.example.com \
+  --forward-smtp-port 587 \
+  --forward-smtp-user your-username@example.com \
+  --forward-smtp-password your-password
+```
+
+Then use the `/messages/:id/forward` API endpoint to forward specific messages. See [API documentation](./API.md) for details.
 
 ## Development Mode
 
