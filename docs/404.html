@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <link rel="canonical" href="https://spaquet.github.io/mailcatcher/404.html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Page not found - MailCatcher documentation">
-    <title>404 - Page Not Found</title>
+    <meta name="description" content="Page not found - MailCatcher NG documentation">
+    <title>404 - Page Not Found - MailCatcher NG</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='white' width='100' height='100'/><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%230d9488;stop-opacity:1'/><stop offset='100%' style='stop-color:%230f766e;stop-opacity:1'/></linearGradient></defs><path d='M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z' fill='url(%23g)'/><path d='M 20 30 L 50 55 L 80 30' stroke='white' stroke-width='2' fill='none'/></svg>">
     <style>
         .not-found-section {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 80px);
+            min-height: calc(100vh - 70px);
             padding: 2rem;
             text-align: center;
         }
@@ -21,10 +22,7 @@
         .not-found-number {
             font-size: 8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #ec4899 0%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--color-primary);
             line-height: 1;
             margin: 0;
         }
@@ -32,14 +30,16 @@
         .not-found-title {
             font-size: 2rem;
             margin: 1rem 0;
-            color: #f1f5f9;
+            color: var(--color-text-primary);
+            font-weight: 700;
         }
 
         .not-found-text {
-            color: #94a3b8;
+            color: var(--color-text-secondary);
             font-size: 1.1rem;
             max-width: 500px;
             margin: 1rem 0 2rem;
+            line-height: 1.6;
         }
 
         .not-found-nav {
@@ -49,29 +49,37 @@
             justify-content: center;
         }
     </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5YSM2R9KRH"></script>
+    <script src="analytics.js"></script>
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5YSM2R9KRH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-5YSM2R9KRH');
-</script>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
-                <span class="logo-icon">📧</span>
-                MailCatcher
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z" fill="url(#logoGradient)" />
+                    <path d="M 20 30 L 50 55 L 80 30" stroke="white" stroke-width="2" fill="none" />
+                </svg>
+                <span class="logo-text">MailCatcher NG</span>
             </a>
-            <ul class="nav-menu">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html#features" class="nav-link">Features</a></li>
                 <li><a href="install.html" class="nav-link">Install</a></li>
+                <li><a href="api.html" class="nav-link">APIs</a></li>
+                <li><a href="claude.html" class="nav-link">Claude</a></li>
+                <li><a href="advanced.html" class="nav-link">Advanced</a></li>
                 <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
-                <li><a href="https://github.com/sj26/mailcatcher" class="nav-link original" target="_blank">Original</a></li>
             </ul>
         </div>
     </nav>
@@ -90,35 +98,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>MailCatcher</h4>
-                    <p>Email testing made beautiful for developers.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Links</h4>
-                    <ul>
-                        <li><a href="https://github.com/spaquet/mailcatcher">This Fork</a></li>
-                        <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
-                        <li><a href="https://rubygems.org/gems/mailcatcher">RubyGems</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="install.html">Installation</a></li>
-                        <li><a href="https://github.com/spaquet/mailcatcher#api">API Reference</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Samuel Paquet. MIT License.</p>
-            </div>
-        </div>
-    </footer>
+    <script src="footer.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

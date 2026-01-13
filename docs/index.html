@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="canonical" href="https://spaquet.github.io/mailcatcher/index.html">
+    <link rel="canonical" href="https://spaquet.github.io/mailcatcher/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://www.googletagmanager.com">
-    <meta name="description" content="MailCatcher NG - Catches all mail and serves it through a dream. A super simple SMTP server with beautiful web interface for development.">
-    <meta name="keywords" content="mailcatcher, mailcatcher-ng, SMTP, email testing, development, web interface, email debugging, mail server">
+    <meta name="description" content="MailCatcher NG - Catch all email and see it through a beautiful web interface. Perfect for testing in development.">
+    <meta name="keywords" content="mailcatcher, mailcatcher-ng, SMTP, email testing, development, email debugging, mail server, Docker">
     <meta name="author" content="Stéphane Paquet">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0d9488">
     <meta property="og:site_name" content="MailCatcher NG">
     <meta property="og:locale" content="en_US">
     <meta property="og:title" content="MailCatcher NG - Email Testing Made Beautiful">
-    <meta property="og:description" content="Catch and visualize email in development with MailCatcher NG's elegant web interface. Real-time updates, SMTP Transcripts.">
+    <meta property="og:description" content="Catch and visualize all email in development with MailCatcher NG. Docker support, SMTP transcripts, BIMI, accessibility scoring, and Claude integration.">
     <meta property="og:image" content="https://raw.githubusercontent.com/spaquet/mailcatcher/main/screenshots/inbox.webp">
     <meta property="og:url" content="https://github.com/spaquet/mailcatcher">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="MailCatcher NG - Email Testing Made Beautiful">
-    <meta name="twitter:description" content="Catch and visualize email in development with MailCatcher NG's elegant web interface.">
+    <meta name="twitter:description" content="Catch and visualize email in development with beautiful UI, real-time updates, and Claude integration.">
     <meta name="twitter:image" content="https://raw.githubusercontent.com/spaquet/mailcatcher/main/screenshots/inbox.webp">
 
     <title>MailCatcher NG - Email Testing Made Beautiful</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230f172a' width='100' height='100'/><path fill='%23ec4899' d='M50 20 L70 40 L70 70 Q70 80 60 80 L40 80 Q30 80 30 70 L30 40 Z M35 35 L50 50 L65 35'/></svg>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='white' width='100' height='100'/><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%230d9488;stop-opacity:1'/><stop offset='100%' style='stop-color:%230f766e;stop-opacity:1'/></linearGradient></defs><path d='M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z' fill='url(%23g)'/><path d='M 20 30 L 50 55 L 80 30' stroke='white' stroke-width='2' fill='none'/></svg>">
     <script type="application/ld+json">
     {
     "@context": "https://schema.org",
@@ -39,27 +41,36 @@
     </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5YSM2R9KRH"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-5YSM2R9KRH');
-    </script>
+    <script src="analytics.js"></script>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
-                <span class="logo-icon">📧</span>
-                MailCatcher NG
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z" fill="url(#logoGradient)" />
+                    <path d="M 20 30 L 50 55 L 80 30" stroke="white" stroke-width="2" fill="none" />
+                </svg>
+                <span class="logo-text">MailCatcher NG</span>
             </a>
-            <ul class="nav-menu">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="#features" class="nav-link">Features</a></li>
                 <li><a href="install.html" class="nav-link">Install</a></li>
+                <li><a href="api.html" class="nav-link">APIs</a></li>
+                <li><a href="claude.html" class="nav-link">Claude</a></li>
+                <li><a href="advanced.html" class="nav-link">Advanced</a></li>
+                <li><a href="remote-access.html" class="nav-link">Remote Access</a></li>
                 <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
-                <li><a href="https://github.com/sj26/mailcatcher" class="nav-link original" target="_blank">Original</a></li>
             </ul>
         </div>
     </nav>
@@ -72,12 +83,11 @@
                 <span class="block">Like a Dream</span>
             </h1>
             <p class="hero-subtitle">
-                A beautiful SMTP server that catches all mail and displays it in an elegant web interface.
-                Perfect for development. Real-time updates. Zero configuration.
+                A beautiful SMTP server that catches all mail and displays it in an elegant web interface. Perfect for development testing with real-time updates, beautiful UI, and zero configuration.
             </p>
             <div class="hero-cta">
                 <a href="install.html" class="btn btn-primary">Get Started</a>
-                <a href="#features" class="btn btn-secondary">Learn More</a>
+                <a href="#features" class="btn btn-secondary">Explore Features</a>
             </div>
         </div>
         <div class="hero-visual">
@@ -93,9 +103,38 @@
                         <div class="mail-preview">Click here to reset your password</div>
                     </div>
                     <div class="mail-item active">
-                        <div class="mail-from">Notification</div>
+                        <div class="mail-from">Order Notification</div>
                         <div class="mail-preview">Your order has been confirmed</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Docker Quick Start -->
+    <section class="docker-section">
+        <div class="container">
+            <h2 class="section-title">Get Started in Seconds</h2>
+            <div class="docker-content">
+                <div class="docker-info">
+                    <p>The fastest way to get MailCatcher NG running is with Docker. No installation hassles, no dependencies. Just one command.</p>
+                    <div style="background-color: var(--color-bg-primary); border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1.5rem; margin: 1rem 0;">
+                        <div style="color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Docker</div>
+                        <pre style="margin: 0;"><code>docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher</code></pre>
+                    </div>
+                    <a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher" class="btn btn-primary" target="_blank">
+                        View on Docker Hub
+                    </a>
+                </div>
+                <div class="docker-features">
+                    <h3>Why Docker?</h3>
+                    <ul class="feature-list">
+                        <li>Alpine Linux - minimal image size</li>
+                        <li>Zero configuration needed</li>
+                        <li>Works with Docker Compose</li>
+                        <li>Perfect for local development</li>
+                        <li>Container isolation & easy cleanup</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -105,36 +144,89 @@
     <section class="features" id="features">
         <div class="container">
             <h2 class="section-title">Powerful Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Real-Time Updates</h3>
-                    <p>WebSocket support for instant mail delivery with automatic reconnection and exponential backoff.</p>
+            <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">Everything you need for email testing in development, plus next-generation features for modern workflows.</p>
+
+            <!-- Core Features -->
+            <div style="margin-bottom: 4rem;">
+                <h3 style="text-align: center; color: var(--color-text-primary); margin-bottom: 2rem;">Core Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📧</div>
+                        <h3>Beautiful Web Interface</h3>
+                        <p>View email in HTML, plain text, or raw source with a modern, responsive design.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Real-Time Updates</h3>
+                        <p>WebSocket support for instant mail delivery with automatic reconnection.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⌨️</div>
+                        <h3>Keyboard Navigation</h3>
+                        <p>Power user shortcuts to navigate and manage messages efficiently.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <h3>Search & Filter</h3>
+                        <p>Full-text search with intelligent filtering by attachments and date range.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📎</div>
+                        <h3>Attachment Handling</h3>
+                        <p>Download attachments, view embedded images, access original EML files.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌐</div>
+                        <h3>Framework Agnostic</h3>
+                        <p>Works with Rails, Django, Laravel, PHP, Node.js, Go, Java, Python, and more.</p>
+                    </div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Beautiful Interface</h3>
-                    <p>Elegant, intuitive web UI with HTML, plain text, and source views for every message.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📎</div>
-                    <h3>Attachment Handling</h3>
-                    <p>List attachments, download individual parts, and view complete original messages.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⌨️</div>
-                    <h3>Keyboard Navigation</h3>
-                    <p>Navigate through messages with keyboard shortcuts for power users and developers.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Zero Configuration</h3>
-                    <p>Works out of the box with sensible defaults. Customize ports and settings as needed.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌐</div>
-                    <h3>Framework Agnostic</h3>
-                    <p>Works with Rails, Django, PHP, Laravel, or any framework that can send SMTP mail.</p>
+            </div>
+
+            <!-- NG Features -->
+            <div>
+                <h3 style="text-align: center; color: var(--color-text-primary); margin-bottom: 2rem;">Next-Generation Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3>SMTP Transcripts</h3>
+                        <p>View complete SMTP server logs with searchable transcript history.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏷️</div>
+                        <h3>BIMI Support</h3>
+                        <p>Display brand indicators and logos from BIMI headers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👁️</div>
+                        <h3>Text Preview</h3>
+                        <p>Smart preview text extraction with intelligent fallback strategies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">♿</div>
+                        <h3>Email Accessibility</h3>
+                        <p>Comprehensive WCAG compliance scoring and accessibility recommendations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <h3>Email Authentication</h3>
+                        <p>Verify DMARC, DKIM, SPF, S/MIME signatures, and OpenPGP encryption.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <h3>International Support</h3>
+                        <p>Full UTF-8, SMTPUTF8, 8BITMIME, and multiple charset encoding support.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>SSL/TLS Encryption</h3>
+                        <p>STARTTLS and direct TLS/SMTPS for secure SMTP connections.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>Claude Integration</h3>
+                        <p>MCP Server and Claude Plugin for AI-powered email testing workflows.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -144,9 +236,10 @@
     <section class="screenshot">
         <div class="container">
             <h2 class="section-title">See It In Action</h2>
+            <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 2rem;">Beautiful interface for viewing, searching, and managing caught email.</p>
             <div class="screenshot-wrapper">
                 <img src="https://raw.githubusercontent.com/spaquet/mailcatcher/main/screenshots/inbox.webp"
-                     alt="MailCatcher NG inbox interface showing email messages"
+                     alt="MailCatcher NG inbox interface showing email messages with search, filters, and message details"
                      class="screenshot-image"
                      loading="lazy">
             </div>
@@ -156,124 +249,149 @@
     <!-- Quick Start Section -->
     <section class="quick-start">
         <div class="container">
-            <h2 class="section-title">Quick Start</h2>
+            <h2 class="section-title">Three Ways to Install</h2>
             <div class="quick-start-content">
                 <div class="code-example">
-                    <div class="code-header">Gem Installation</div>
-                    <pre><code>gem install mailcatcher-ng</code></pre>
+                    <div class="code-header">Docker (Recommended)</div>
+                    <pre><code>docker run -d \
+  -p 1080:1080 \
+  -p 1025:1025 \
+  stpaquet/alpinemailcatcher</code></pre>
                 </div>
                 <div class="code-example">
-                    <div class="code-header">Start Server</div>
-                    <pre><code>mailcatcher
-# View mail at http://127.0.0.1:1080
-# Send mail to smtp://127.0.0.1:1025</code></pre>
+                    <div class="code-header">Ruby Gem</div>
+                    <pre><code>gem install mailcatcher-ng
+mailcatcher
+# View at http://127.0.0.1:1080
+# Send to smtp://127.0.0.1:1025</code></pre>
                 </div>
                 <div class="code-example">
-                    <div class="code-header">Docker Installation</div>
-                    <pre><code>docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher</code></pre>
+                    <div class="code-header">From Source</div>
+                    <pre><code>git clone https://github.com/spaquet/mailcatcher
+cd mailcatcher
+bundle install && bundle exec mailcatcher</code></pre>
                 </div>
-                <div class="code-example">
-                    <div class="code-header">Rails Configuration</div>
-                    <pre><code>config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = {
-  address: '127.0.0.1',
-  port: 1025
-}</code></pre>
-                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="install.html" class="btn btn-secondary">View Complete Installation Guide</a>
             </div>
         </div>
     </section>
 
-    <!-- Docker Section -->
-    <section class="docker-section">
+    <!-- Framework Agnostic -->
+    <section style="padding: 80px 20px; background-color: var(--color-bg-secondary);">
         <div class="container">
-            <h2 class="section-title">Get Started with Docker</h2>
-            <div class="docker-content">
-                <div class="docker-info">
-                    <p>The fastest way to get MailCatcher NG running is with Docker. Our official Alpine Linux image provides a lightweight, reliable environment for email testing.</p>
-                    <a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher" class="btn btn-primary" target="_blank">
-                        🐳 View on Docker Hub
-                    </a>
+            <h2 class="section-title">Framework Agnostic</h2>
+            <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">Works with any framework or language that supports SMTP. No vendor lock-in. Pure email testing freedom.</p>
+
+            <div style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 2rem; align-items: flex-start; margin-bottom: 3rem;">
+                <!-- Ruby -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <i class="devicon-ruby-plain" style="font-size: 60px; color: var(--color-primary);"></i>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Ruby</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Rails, Sinatra, etc.</p>
                 </div>
-                <div class="docker-features">
-                    <h3>Docker Image Benefits</h3>
-                    <ul class="feature-list">
-                        <li>✅ Alpine Linux based - minimal image size</li>
-                        <li>✅ Pre-configured for immediate use</li>
-                        <li>✅ Works with Docker Compose</li>
-                        <li>✅ Perfect for development environments</li>
-                        <li>✅ Container isolation and easy cleanup</li>
-                    </ul>
+
+                <!-- Python -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <i class="devicon-python-plain" style="font-size: 60px; color: var(--color-primary);"></i>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Python</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Django, Flask, etc.</p>
                 </div>
+
+                <!-- PHP -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <i class="devicon-php-plain" style="font-size: 60px; color: var(--color-primary);"></i>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">PHP</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Laravel, Symfony, etc.</p>
+                </div>
+
+                <!-- JavaScript/Node.js -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <i class="devicon-nodejs-plain" style="font-size: 60px; color: var(--color-primary);"></i>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Node.js</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Express, Nest, etc.</p>
+                </div>
+
+                <!-- Go -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <i class="devicon-go-original-wordmark" style="font-size: 60px; color: var(--color-primary);"></i>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Go</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Pure SMTP compatible</p>
+                </div>
+
+                <!-- Java -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <i class="devicon-java-plain" style="font-size: 60px; color: var(--color-primary);"></i>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Java</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Spring, Quarkus, etc.</p>
+                </div>
+
+                <!-- More -->
+                <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 100%; height: 100px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <div style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--color-primary); border-radius: 50%; background-color: var(--color-primary); color: white; font-weight: 700; font-size: 1.5rem;">+</div>
+                    </div>
+                    <h4 style="margin: 0 0 0.5rem 0;">Many More</h4>
+                    <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin: 0;">Works everywhere</p>
+                </div>
+            </div>
+
+            <div style="background-color: var(--color-bg-primary); border-left: 4px solid var(--color-primary); border-radius: 0.5rem; padding: 2rem; margin: 2rem 0;">
+                <p style="margin: 0; color: var(--color-text-secondary); font-style: italic;">
+                    <strong>Framework agnostic by design:</strong> If your framework can send SMTP mail, MailCatcher NG works with it. No special integrations needed. Pure standards-based email testing.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="install.html" class="btn btn-secondary">View Integration Guide</a>
             </div>
         </div>
     </section>
 
     <!-- About This Fork Section -->
-    <section class="about-fork">
+    <section style="padding: 80px 20px; background-color: var(--color-bg-secondary);">
         <div class="container">
-            <h2 class="section-title">About This Fork</h2>
+            <h2 class="section-title">About MailCatcher NG</h2>
             <div class="fork-info">
                 <div class="fork-text">
                     <p>
-                        This is MailCatcher NG, an enhanced next-generation fork of the original MailCatcher by Samuel Cochran.
-                        We've improved the UI, added new features, and optimized the codebase for modern development workflows.
+                        <strong>MailCatcher NG</strong> is an enhanced next-generation fork of the original MailCatcher by Samuel Cochran. We've rebuilt the web interface with modern design, added powerful new features like SMTP transcripts, email accessibility scoring, BIMI support, and seamless Claude integration.
                     </p>
                     <p>
-                        The original MailCatcher remains the gold standard for email testing in development.
-                        MailCatcher NG builds on that solid foundation with additional polish and features.
+                        The original MailCatcher remains the gold standard for email testing. MailCatcher NG builds on that solid foundation with a beautiful UI, next-generation features, and integration with modern development tools.
                     </p>
-                    <a href="https://github.com/sj26/mailcatcher" class="link-to-original" target="_blank">
-                        → Visit Original Project on GitHub
-                    </a>
                 </div>
                 <div class="comparison">
-                    <h3>What's New in This Fork</h3>
+                    <h3>What's New</h3>
                     <ul class="feature-list">
-                        <li>✨ Enhanced UI with improved design</li>
-                        <li>⚡ Performance optimizations</li>
-                        <li>🎯 Better error handling</li>
-                        <li>📱 Improved mobile responsiveness</li>
-                        <li>🔍 Search and filter improvements</li>
-                        <li>🚀 Modern dependency updates</li>
+                        <li>Modern, minimalist web interface</li>
+                        <li>SMTP transcripts and server logs</li>
+                        <li>Email accessibility scoring</li>
+                        <li>BIMI brand indicator support</li>
+                        <li>Claude Plugin & MCP Server</li>
+                        <li>Advanced email authentication display</li>
+                        <li>Full UTF-8 and internationalization</li>
+                        <li>Persistent message storage</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>MailCatcher NG</h4>
-                    <p>Email testing made beautiful for developers.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Links</h4>
-                    <ul>
-                        <li><a href="https://github.com/spaquet/mailcatcher">GitHub</a></li>
-                        <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
-                        <li><a href="https://rubygems.org/gems/mailcatcher-ng">RubyGems (NG)</a></li>
-                        <li><a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher">Docker Hub</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="install.html">Installation</a></li>
-                        <li><a href="https://github.com/spaquet/mailcatcher#command-line-options">CLI Options</a></li>
-                        <li><a href="https://github.com/spaquet/mailcatcher#api">API Reference</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Stéphane Paquet. MIT License.</p>
-            </div>
-        </div>
-    </footer>
-
+    <script src="footer.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
