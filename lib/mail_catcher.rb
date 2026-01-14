@@ -18,6 +18,7 @@ module EventMachine
 end
 
 require 'mail_catcher/version'
+require 'mail_catcher/integrations'
 
 module MailCatcher
   extend self
@@ -94,7 +95,9 @@ module MailCatcher
     forward_smtp_port: nil,
     forward_smtp_user: nil,
     forward_smtp_password: nil,
-    forward_smtp_tls: true
+    forward_smtp_tls: true,
+    mcp_enabled: false,
+    plugin_enabled: false
   }
 
   def options
@@ -197,6 +200,14 @@ module MailCatcher
           options[:quit] = false
         end
 
+        parser.on('--mcp', 'Enable MCP server for Claude integration') do
+          options[:mcp_enabled] = true
+        end
+
+        parser.on('--plugin', 'Enable Claude Plugin endpoints') do
+          options[:plugin_enabled] = true
+        end
+
         unless windows?
           parser.on('-f', '--foreground', 'Run in the foreground') do
             options[:daemon] = false
@@ -272,6 +283,11 @@ module MailCatcher
         @http_server = Thin::Server.new(options[:http_ip], options[:http_port], Web, signals: false)
         @http_server.start
         @logger.info("==> #{http_url}")
+      end
+
+      # Start integrations (MCP, Plugins, etc.)
+      if options[:mcp_enabled] || options[:plugin_enabled]
+        Integrations.start(options)
       end
 
       # Make sure we quit nicely when asked

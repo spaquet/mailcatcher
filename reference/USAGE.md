@@ -17,7 +17,7 @@ Use `mailcatcher --help` to see all available options:
 ```
 Usage: mailcatcher [options]
 
- MailCatcher NG v1.5.0
+ MailCatcher NG v1.5.2
 
         --ip IP                        Set the ip address of both servers
         --smtp-ip IP                   Set the ip address of the smtp server
@@ -37,6 +37,8 @@ Usage: mailcatcher [options]
         --forward-smtp-user USER       SMTP username for forwarding messages
         --forward-smtp-password PASS   SMTP password for forwarding messages
         --[no-]forward-smtp-tls        Enable/disable TLS for forwarding SMTP (default: enabled)
+        --mcp                          Enable MCP server for Claude integration
+        --plugin                       Enable Claude Plugin endpoints
         --no-quit                      Don't allow quitting the process
     -f, --foreground                   Run in the foreground
     -b, --browse                       Open web browser
@@ -58,6 +60,58 @@ mailcatcher \
 ```
 
 Then use the `/messages/:id/forward` API endpoint to forward specific messages. See [API documentation](./API.md) for details.
+
+## Claude Integration
+
+### Claude Plugin
+
+Enable the Claude Plugin for use in Claude.com or Claude Desktop:
+
+```bash
+mailcatcher --plugin --foreground
+```
+
+Then add the plugin in Claude:
+
+1. Go to Claude settings/plugins
+2. Click "Create a plugin"
+3. Enter: `http://localhost:1080/.well-known/ai-plugin.json`
+4. Click Install
+
+Claude now has access to email search, token extraction, and message management tools.
+
+### MCP Server
+
+Enable the MCP (Model Context Protocol) server for programmatic access:
+
+```bash
+mailcatcher --mcp --foreground
+```
+
+Configure Claude Desktop by editing `~/.claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "mailcatcher": {
+      "command": "mailcatcher",
+      "args": ["--mcp", "--foreground"]
+    }
+  }
+}
+```
+
+Then restart Claude Desktop to enable MCP tools.
+
+### Both Plugin and MCP
+
+For maximum flexibility, enable both:
+
+```bash
+mailcatcher --mcp --plugin --foreground
+```
+
+For complete setup guide, see [Claude Integration Guide](../CLAUDE_INTEGRATION.md).
 
 ## Development Mode
 

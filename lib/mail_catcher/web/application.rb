@@ -61,6 +61,168 @@ module MailCatcher
           def asset_path(filename)
             File.join(settings.asset_prefix, filename)
           end
+
+          def generate_plugin_openapi_spec(request)
+            base_url = "#{request.scheme}://#{request.host_with_port}#{settings.prefix}"
+
+            {
+              openapi: "3.0.0",
+              info: {
+                title: "MailCatcher NG Plugin API",
+                description: "API for searching and extracting data from caught emails",
+                version: MailCatcher::VERSION
+              },
+              servers: [
+                { url: base_url, description: "MailCatcher Server" }
+              ],
+              paths: {
+                "/plugin/search": {
+                  post: {
+                    summary: "Search emails",
+                    description: "Search through caught emails with flexible filtering",
+                    parameters: [
+                      {
+                        name: "query",
+                        in: "query",
+                        required: true,
+                        schema: { type: "string" },
+                        description: "Search term"
+                      },
+                      {
+                        name: "limit",
+                        in: "query",
+                        required: false,
+                        schema: { type: "integer", default: 5 },
+                        description: "Maximum results"
+                      }
+                    ],
+                    responses: {
+                      "200": {
+                        description: "Search results",
+                        content: {
+                          "application/json": {
+                            schema: {
+                              type: "object",
+                              properties: {
+                                count: { type: "integer" },
+                                messages: {
+                                  type: "array",
+                                  items: {
+                                    type: "object",
+                                    properties: {
+                                      id: { type: "integer" },
+                                      from: { type: "string" },
+                                      to: { type: "array", items: { type: "string" } },
+                                      subject: { type: "string" },
+                                      created_at: { type: "string" }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "/plugin/message/{id}/latest": {
+                  get: {
+                    summary: "Get latest message for recipient",
+                    parameters: [
+                      {
+                        name: "recipient",
+                        in: "query",
+                        required: true,
+                        schema: { type: "string" }
+                      },
+                      {
+                        name: "subject_contains",
+                        in: "query",
+                        required: false,
+                        schema: { type: "string" }
+                      }
+                    ],
+                    responses: {
+                      "200": { description: "Message details" },
+                      "404": { description: "No matching message" }
+                    }
+                  }
+                },
+                "/plugin/message/{id}/tokens": {
+                  get: {
+                    summary: "Extract tokens from message",
+                    parameters: [
+                      {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        schema: { type: "integer" }
+                      },
+                      {
+                        name: "kind",
+                        in: "query",
+                        required: false,
+                        schema: {
+                          type: "string",
+                          enum: ["magic_link", "otp", "reset_token", "all"]
+                        }
+                      }
+                    ],
+                    responses: {
+                      "200": { description: "Extracted tokens" }
+                    }
+                  }
+                },
+                "/plugin/message/{id}/auth-info": {
+                  get: {
+                    summary: "Get authentication information",
+                    parameters: [
+                      {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        schema: { type: "integer" }
+                      }
+                    ],
+                    responses: {
+                      "200": { description: "Auth information" }
+                    }
+                  }
+                },
+                "/plugin/message/{id}/preview": {
+                  get: {
+                    summary: "Get HTML preview of message",
+                    parameters: [
+                      {
+                        name: "id",
+                        in: "path",
+                        required: true,
+                        schema: { type: "integer" }
+                      },
+                      {
+                        name: "mobile",
+                        in: "query",
+                        required: false,
+                        schema: { type: "boolean" }
+                      }
+                    ],
+                    responses: {
+                      "200": { description: "HTML preview" }
+                    }
+                  }
+                },
+                "/plugin/messages": {
+                  delete: {
+                    summary: "Delete all messages",
+                    responses: {
+                      "204": { description: "All messages deleted" }
+                    }
+                  }
+                }
+              }
+            }.to_json
+          end
         end
       end
 
@@ -401,6 +563,208 @@ module MailCatcher
       end
 
       delete "/messages/:id" do
+        id = params[:id].to_i
+        if Mail.message(id)
+          Mail.delete_message!(id)
+          status 204
+        else
+          not_found
+        end
+      end
+
+      # Claude Plugin Routes
+      # These routes provide Claude Plugin marketplace compatible endpoints
+
+      get "/.well-known/ai-plugin.json" do
+        content_type :json
+        {
+          schema_version: "v1",
+          name_for_human: "MailCatcher NG",
+          name_for_model: "MailCatcher",
+          description_for_human: "Inspect, search, and extract data from caught emails for testing and debugging",
+          description_for_model: "Plugin for MailCatcher NG - a mail catching and inspection tool. Allows searching emails, extracting authentication tokens, parsing email structure, and managing caught messages.",
+          auth: { type: "none" },
+          api: {
+            type: "openapi",
+            url: "#{request.base_url}#{settings.prefix}/plugin/openapi.json"
+          },
+          logo_url: "#{request.base_url}#{settings.prefix}/assets/logo.png",
+          contact_email: "support@mailcatcher.app",
+          legal_info_url: "#{request.base_url}#{settings.prefix}/"
+        }.to_json
+      end
+
+      get "/plugin/openapi.json" do
+        content_type :json
+        generate_plugin_openapi_spec(request)
+      end
+
+      post "/plugin/search" do
+        content_type :json
+        begin
+          query = params[:query]
+          limit = (params[:limit] || 5).to_i
+
+          unless query
+            return status(400) && JSON.generate({ error: "query parameter is required" })
+          end
+
+          results = Mail.search_messages(query: query)
+          results = results.slice(0, limit)
+
+          JSON.generate({
+            count: results.size,
+            messages: results.map { |msg|
+              {
+                id: msg["id"],
+                from: msg["sender"],
+                to: msg["recipients"],
+                subject: msg["subject"],
+                created_at: msg["created_at"]
+              }
+            }
+          })
+        rescue => e
+          status 400
+          JSON.generate({ error: e.message })
+        end
+      end
+
+      get "/plugin/message/:id/latest" do
+        content_type :json
+        begin
+          recipient = params[:recipient]
+          subject_contains = params[:subject_contains]
+
+          unless recipient
+            return status(400) && JSON.generate({ error: "recipient parameter is required" })
+          end
+
+          all_messages = Mail.messages
+          matching = all_messages.select do |msg|
+            recipients = msg["recipients"]
+            recipients_array = recipients.is_a?(Array) ? recipients : [recipients]
+            recipients_array.any? { |r| r.to_s.include?(recipient) }
+          end
+
+          matching = matching.select { |msg| msg["subject"].to_s.include?(subject_contains) } if subject_contains
+
+          latest = matching.max_by { |msg| msg["created_at"] }
+
+          if latest
+            msg = latest
+            JSON.generate({
+              id: msg["id"],
+              from: msg["sender"],
+              to: msg["recipients"],
+              subject: msg["subject"],
+              size: msg["size"],
+              created_at: msg["created_at"]
+            })
+          else
+            not_found
+          end
+        rescue => e
+          status 400
+          JSON.generate({ error: e.message })
+        end
+      end
+
+      get "/plugin/message/:id/tokens" do
+        id = params[:id].to_i
+        content_type :json
+
+        unless Mail.message(id)
+          return not_found
+        end
+
+        begin
+          kind = params[:kind] || "all"
+
+          type_map = {
+            "magic_link" => "link",
+            "otp" => "otp",
+            "reset_token" => "token",
+            "all" => "all"
+          }
+
+          type = type_map[kind]
+          return status(400) && JSON.generate({ error: "Invalid kind: #{kind}" }) unless type
+
+          if kind == "all"
+            JSON.generate({
+              magic_links: Mail.extract_tokens(id, type: 'link'),
+              otps: Mail.extract_tokens(id, type: 'otp'),
+              reset_tokens: Mail.extract_tokens(id, type: 'token')
+            })
+          else
+            JSON.generate({
+              extracted: Mail.extract_tokens(id, type: type)
+            })
+          end
+        rescue => e
+          status 400
+          JSON.generate({ error: e.message })
+        end
+      end
+
+      get "/plugin/message/:id/auth-info" do
+        id = params[:id].to_i
+        content_type :json
+
+        unless Mail.message(id)
+          return not_found
+        end
+
+        begin
+          parsed = Mail.parse_message_structured(id)
+          JSON.generate({
+            verification_url: parsed[:verification_url],
+            otp_code: parsed[:otp_code],
+            reset_token: parsed[:reset_token],
+            unsubscribe_link: parsed[:unsubscribe_link],
+            links_count: parsed[:all_links]&.count || 0
+          })
+        rescue => e
+          status 400
+          JSON.generate({ error: e.message })
+        end
+      end
+
+      get "/plugin/message/:id/preview" do
+        id = params[:id].to_i
+        content_type :html
+
+        html_part = Mail.message_part_html(id)
+        unless html_part
+          return status(404) && "No HTML content found"
+        end
+
+        begin
+          mobile = params[:mobile] == 'true'
+          body = html_part["body"].to_s
+
+          if mobile && !body.include?("viewport")
+            body = "<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"></head>\n" + body
+          end
+
+          if body.bytesize > 200_000
+            body = body[0, 200_000] + "\n<!-- Truncated for display -->"
+          end
+
+          body
+        rescue => e
+          status 400
+          "Error generating preview: #{e.message}"
+        end
+      end
+
+      delete "/plugin/messages" do
+        status 204
+        Mail.delete!
+      end
+
+      delete "/plugin/message/:id" do
         id = params[:id].to_i
         if Mail.message(id)
           Mail.delete_message!(id)

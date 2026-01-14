@@ -7,6 +7,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-01-12
+
+### Added
+
+- **Claude Integration**: Complete integration with Claude through two complementary methods
+  - **Claude Plugin**: HTTP-based plugin for Claude.com and Claude Desktop
+    - Zero configuration required - just start with `--plugin` flag
+    - Automatic plugin discovery via `.well-known/ai-plugin.json`
+    - Dynamic OpenAPI spec generation for plugin compatibility
+    - Natural language interface to all email tools
+  - **MCP Server**: Model Context Protocol server for programmatic access
+    - Full MCP 2024-11-05 protocol implementation
+    - JSON-RPC 2.0 over stdio for reliability
+    - Optional feature - enable with `--mcp` flag only when needed
+    - Thread-safe operation within EventMachine reactor
+
+- **Claude Integration Tools** (7 powerful tools exposed via Plugin and MCP):
+  - `search_messages`: Full-text search with filtering (query, limit, attachments, date range)
+  - `get_latest_message_for`: Find latest message for recipient with optional subject filtering
+  - `extract_token_or_link`: Extract OTPs, magic links, reset tokens from messages
+  - `get_parsed_auth_info`: Get structured authentication information
+  - `get_message_preview_html`: Get responsive HTML preview with mobile optimization
+  - `delete_message`: Delete specific message by ID
+  - `clear_messages`: Delete all caught messages
+
+- **Plugin HTTP Endpoints**:
+  - `GET /.well-known/ai-plugin.json`: Standard AI plugin manifest
+  - `GET /plugin/openapi.json`: Dynamic OpenAPI specification
+  - `POST /plugin/search`: Message search
+  - `GET /plugin/message/:id/latest`: Get latest for recipient
+  - `GET /plugin/message/:id/tokens`: Extract tokens
+  - `GET /plugin/message/:id/auth-info`: Get auth information
+  - `GET /plugin/message/:id/preview`: Get HTML preview
+  - `DELETE /plugin/messages`: Clear all
+  - `DELETE /plugin/message/:id`: Delete single
+
+### Changed
+
+- **Command-line Options**: Added Claude integration flags
+  - `--mcp`: Enable MCP server for Claude integration
+  - `--plugin`: Enable Claude Plugin endpoints
+  - Both can be used together or separately
+
+- **Integration Architecture**: New optional integration layer
+  - Single source of truth for tools (MCPTools module)
+  - Protocol-independent tool implementation
+  - Shared business logic for both MCP and Plugin
+  - Zero breaking changes to existing functionality
+
+### Documentation
+
+- New comprehensive Claude Integration guide ([CLAUDE_INTEGRATION.md](CLAUDE_INTEGRATION.md))
+- MCP Server setup documentation ([docs/MCP_SETUP.md](docs/MCP_SETUP.md))
+- Claude Plugin setup documentation ([docs/CLAUDE_PLUGIN_SETUP.md](docs/CLAUDE_PLUGIN_SETUP.md))
+- Integration architecture documentation ([docs/INTEGRATION_ARCHITECTURE.md](docs/INTEGRATION_ARCHITECTURE.md))
+- Updated FEATURES.md with Claude integration and accessibility features
+- Updated README with Claude integration section
+- Updated reference/USAGE.md with MCP and Plugin options
+
+### Technical Details
+
+- **MCP Implementation**:
+  - Complete JSON-RPC 2.0 protocol handler
+  - Stdio-based transport for Claude integration
+  - Error handling and validation
+  - Tool registry pattern for extensibility
+
+- **Plugin Implementation**:
+  - Sinatra HTTP routes for plugin endpoints
+  - Dynamic OpenAPI spec generation
+  - Helper methods for response formatting
+  - No authentication required (local-only by default)
+
+- **Integration Management**:
+  - Orchestrator module for lifecycle management
+  - Thread-safe startup and shutdown
+  - Logging to stderr for debugging
+  - Optional features with zero overhead if unused
+
 ## [1.5.0] - 2026-01-12
 
 ### Added

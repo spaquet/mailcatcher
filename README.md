@@ -14,12 +14,17 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
 
 - [Quick Start](#quick-start)
 - [Features](#features)
+- [Claude Integration](#claude-integration)
 - [Documentation](#documentation)
   - [Installation & Setup](reference/INSTALLATION.md)
   - [Usage & Configuration](reference/USAGE.md)
   - [Framework Integration](reference/INTEGRATIONS.md)
   - [REST API](reference/API.md)
   - [Advanced Features](reference/ADVANCED.md)
+  - [Claude Integration Guide](CLAUDE_INTEGRATION.md)
+  - [Claude Plugin Setup](reference/CLAUDE_PLUGIN_SETUP.md)
+  - [MCP Server Setup](reference/MCP_SETUP.md)
+  - [Integration Architecture](reference/INTEGRATION_ARCHITECTURE.md)
   - [Credits](reference/CREDITS.md)
 - [License](#license)
 
@@ -51,6 +56,55 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
 
 For a comprehensive list of all features, see [FEATURES.md](FEATURES.md).
 
+## Claude Integration
+
+MailCatcher NG integrates seamlessly with Claude through two complementary methods:
+
+### Claude Plugin (Easiest)
+
+Use MailCatcher with Claude.com or Claude Desktop without any installation:
+
+```bash
+mailcatcher --plugin --foreground
+```
+
+Then add the plugin in Claude settings: `http://localhost:1080/.well-known/ai-plugin.json`
+
+### MCP Server (Programmatic)
+
+Enable programmatic access via Model Context Protocol:
+
+```bash
+mailcatcher --mcp --foreground
+```
+
+Configure in Claude Desktop's `~/.claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "mailcatcher": {
+      "command": "mailcatcher",
+      "args": ["--mcp", "--foreground"]
+    }
+  }
+}
+```
+
+### Available Tools
+
+Both methods expose 7 powerful tools:
+
+- **search_messages** - Full-text search with filtering
+- **get_latest_message_for** - Find latest message for recipient
+- **extract_token_or_link** - Extract OTPs, magic links, reset tokens
+- **get_parsed_auth_info** - Structured authentication data
+- **get_message_preview_html** - Responsive HTML preview
+- **delete_message** - Delete specific message
+- **clear_messages** - Delete all messages
+
+See [CLAUDE_INTEGRATION.md](CLAUDE_INTEGRATION.md) for complete setup and usage guide.
+
 ## Documentation
 
 Detailed documentation is organized by topic:
@@ -74,6 +128,18 @@ Programmatic access to messages. Query, download, and manage messages via HTTP.
 ### [Advanced Features](reference/ADVANCED.md)
 
 SSL/TLS encryption, UTF-8 and international content, email authentication, and more.
+
+### [Claude Plugin Setup](reference/CLAUDE_PLUGIN_SETUP.md)
+
+Use MailCatcher NG as a Claude Plugin for natural language interactions with caught emails. Perfect for testing email workflows with Claude.
+
+### [MCP Server Setup](reference/MCP_SETUP.md)
+
+Configure MailCatcher NG as an MCP server for programmatic access via Claude Desktop and other MCP-compatible clients.
+
+### [Integration Architecture](reference/INTEGRATION_ARCHITECTURE.md)
+
+Deep dive into how the Claude Plugin and MCP integrations work, including protocol specifications, tool definitions, and extension points.
 
 ### [Credits](reference/CREDITS.md)
 

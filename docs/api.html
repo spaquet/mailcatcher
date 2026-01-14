@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NN95GJ8G');</script>
+<!-- End Google Tag Manager -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://spaquet.github.io/mailcatcher/api.html">
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <meta name="description" content="MailCatcher NG REST API documentation. Programmatic access to caught emails.">
+    <meta name="keywords" content="mailcatcher API, REST API, email testing, API documentation">
+    <meta name="og:title" content="APIs - MailCatcher NG">
+    <meta name="og:description" content="Complete REST API documentation for MailCatcher NG.">
+    <title>REST API - MailCatcher NG</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { margin: 0; }
+        .api-container { display: flex; min-height: 100vh; }
+        .api-sidebar { width: 280px; background: var(--color-bg-secondary); border-right: 1px solid var(--color-border); overflow-y: auto; position: fixed; height: 100vh; }
+        .api-content-wrapper { margin-left: 280px; flex: 1; }
+        .api-section-group { padding: 0; margin: 0; }
+        .api-section-title { padding: 0.75rem 1rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-secondary); letter-spacing: 0.5px; }
+        .api-menu-item { padding: 0.5rem 1rem; font-size: 0.85rem; border-left: 3px solid transparent; cursor: pointer; transition: all 0.2s; }
+        .api-menu-item:hover { background: var(--color-bg-primary); border-left-color: var(--color-accent); }
+        .api-menu-item.active { background: var(--color-bg-primary); border-left-color: var(--color-accent); font-weight: 600; }
+        .api-endpoint-block { scroll-margin-top: 60px; }
+        .api-method { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; font-weight: 700; border-radius: 3px; margin-right: 0.5rem; }
+        .api-method.get { background: #e3f2fd; color: #1976d2; }
+        .api-method.post { background: #f3e5f5; color: #7b1fa2; }
+        .api-method.delete { background: #ffebee; color: #c62828; }
+        .api-path { font-size: 0.95rem; font-weight: 600; font-family: monospace; margin: 0.5rem 0; }
+        .api-description { font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.75rem; }
+        h4 { margin: 0.75rem 0 0.4rem; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+        .api-endpoint { padding: 1.25rem; border-bottom: 1px solid var(--color-border); }
+        .api-endpoint:last-child { border-bottom: none; }
+        table { font-size: 0.8rem; margin-bottom: 0.75rem; }
+        table th { padding: 0.4rem; font-size: 0.75rem; font-weight: 600; }
+        table td { padding: 0.4rem; }
+        pre { margin: 0.5rem 0; padding: 0.75rem; font-size: 0.75rem; overflow-x: auto; background: var(--color-bg-primary) !important; border-radius: 3px; }
+        code { font-family: 'Monaco', 'Courier New', monospace; color: var(--color-text-primary) !important; }
+        .copy-btn { position: absolute; top: 0.3rem; right: 0.3rem; padding: 0.15rem 0.4rem; font-size: 0.7rem; background: #1976d2; color: white; border: none; border-radius: 2px; cursor: pointer; }
+        .example-label { font-size: 0.8rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--color-text-secondary); }
+        .api-response { font-size: 0.8rem; margin-bottom: 0.75rem; }
+        .api-response-title { font-weight: 600; font-size: 0.75rem; margin-bottom: 0.3rem; }
+        .section-container { margin-bottom: 2rem; }
+        .section-header { padding: 1rem 1.25rem; background: var(--color-bg-secondary); border-bottom: 1px solid var(--color-border); }
+        .section-header h2 { margin: 0; font-size: 1rem; font-weight: 600; }
+        .section-header p { margin: 0.3rem 0 0 0; font-size: 0.8rem; color: var(--color-text-secondary); }
+        .api-navbar { padding: 1rem; border-bottom: 1px solid var(--color-border); }
+        .api-navbar h3 { margin: 0; font-size: 0.9rem; font-weight: 600; }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5YSM2R9KRH"></script>
+    <script src="analytics.js"></script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NN95GJ8G"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z" fill="url(#logoGradient)" />
+                    <path d="M 20 30 L 50 55 L 80 30" stroke="white" stroke-width="2" fill="none" />
+                </svg>
+                <span class="logo-text">MailCatcher NG</span>
+            </a>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="install.html" class="nav-link">Install</a></li>
+                <li><a href="api.html" class="nav-link active">APIs</a></li>
+                <li><a href="claude.html" class="nav-link">Claude</a></li>
+                <li><a href="advanced.html" class="nav-link">Advanced</a></li>
+                <li><a href="remote-access.html" class="nav-link">Remote Access</a></li>
+                <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="api-container">
+        <!-- Sidebar -->
+        <div class="api-sidebar">
+            <div class="api-navbar">
+                <h3>API Reference</h3>
+                <p style="margin: 0.3rem 0 0 0; font-size: 0.75rem; color: var(--color-text-secondary);">v1.5.0</p>
+            </div>
+
+            <div class="api-section-group">
+                <div class="api-section-title">Message Retrieval</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-messages').scrollIntoView({behavior:'smooth'})">GET /messages</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-message-json').scrollIntoView({behavior:'smooth'})">GET /messages/:id.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-message-html').scrollIntoView({behavior:'smooth'})">GET /messages/:id.html</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-message-plain').scrollIntoView({behavior:'smooth'})">GET /messages/:id.plain</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-message-source').scrollIntoView({behavior:'smooth'})">GET /messages/:id.source</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-message-eml').scrollIntoView({behavior:'smooth'})">GET /messages/:id.eml</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-parts').scrollIntoView({behavior:'smooth'})">GET /messages/:id/parts/:cid</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-transcript').scrollIntoView({behavior:'smooth'})">GET /messages/:id/transcript.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-links').scrollIntoView({behavior:'smooth'})">GET /messages/:id/links.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-extract').scrollIntoView({behavior:'smooth'})">GET /messages/:id/extract</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-accessibility').scrollIntoView({behavior:'smooth'})">GET /messages/:id/accessibility.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('get-parsed').scrollIntoView({behavior:'smooth'})">GET /messages/:id/parsed.json</div>
+            </div>
+
+            <div class="api-section-group">
+                <div class="api-section-title">Search</div>
+                <div class="api-menu-item" onclick="document.getElementById('search-messages').scrollIntoView({behavior:'smooth'})">GET /messages/search</div>
+            </div>
+
+            <div class="api-section-group">
+                <div class="api-section-title">Management</div>
+                <div class="api-menu-item" onclick="document.getElementById('delete-message').scrollIntoView({behavior:'smooth'})">DELETE /messages/:id</div>
+                <div class="api-menu-item" onclick="document.getElementById('delete-all').scrollIntoView({behavior:'smooth'})">DELETE /messages</div>
+                <div class="api-menu-item" onclick="document.getElementById('forward').scrollIntoView({behavior:'smooth'})">POST /messages/:id/forward</div>
+                <div class="api-menu-item" onclick="document.getElementById('shutdown').scrollIntoView({behavior:'smooth'})">DELETE /</div>
+            </div>
+
+            <div class="api-section-group">
+                <div class="api-section-title">Server</div>
+                <div class="api-menu-item" onclick="document.getElementById('version').scrollIntoView({behavior:'smooth'})">GET /version.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('logs').scrollIntoView({behavior:'smooth'})">GET /logs.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('server-info').scrollIntoView({behavior:'smooth'})">GET /server-info</div>
+            </div>
+
+            <div class="api-section-group">
+                <div class="api-section-title">Claude Plugin</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-manifest').scrollIntoView({behavior:'smooth'})">GET /.well-known/ai-plugin.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-openapi').scrollIntoView({behavior:'smooth'})">GET /plugin/openapi.json</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-search').scrollIntoView({behavior:'smooth'})">GET /plugin/search</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-latest').scrollIntoView({behavior:'smooth'})">GET /plugin/message/:id/latest</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-tokens').scrollIntoView({behavior:'smooth'})">GET /plugin/message/:id/tokens</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-auth').scrollIntoView({behavior:'smooth'})">GET /plugin/message/:id/auth-info</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-preview').scrollIntoView({behavior:'smooth'})">GET /plugin/message/:id/preview</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-delete-msg').scrollIntoView({behavior:'smooth'})">DELETE /plugin/message/:id</div>
+                <div class="api-menu-item" onclick="document.getElementById('plugin-delete-all').scrollIntoView({behavior:'smooth'})">DELETE /plugin/messages</div>
+            </div>
+
+            <div class="api-section-group">
+                <div class="api-section-title">Real-time</div>
+                <div class="api-menu-item" onclick="document.getElementById('websocket').scrollIntoView({behavior:'smooth'})">WS /messages</div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="api-content-wrapper">
+            <!-- Overview -->
+            <div style="padding: 2rem 1.5rem; border-bottom: 1px solid var(--color-border);">
+                <h1 style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">MailCatcher NG REST API</h1>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--color-text-secondary);">Base URL: <code style="background: var(--color-bg-secondary); padding: 0.2rem 0.4rem; border-radius: 2px;">http://127.0.0.1:1080</code></p>
+            </div>
+
+            <!-- Message Retrieval Section -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Message Retrieval</h2>
+                    <p>Get and retrieve email messages</p>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-messages">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages</div>
+                    <div class="api-description">List all caught messages</div>
+                    <h4>Parameters</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid var(--color-border);">
+                            <th style="text-align: left;">Name</th>
+                            <th style="text-align: left;">Type</th>
+                            <th style="text-align: left;">Description</th>
+                        </tr>
+                        <tr><td><code>q</code></td><td>string</td><td>Search term (optional)</td></tr>
+                        <tr><td><code>sort</code></td><td>string</td><td>asc|desc (default: desc)</td></tr>
+                    </table>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-message-json">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id.json</div>
+                    <div class="api-description">Get message details with metadata</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-message-html">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id.html</div>
+                    <div class="api-description">Get HTML version of message</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1.html</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-message-plain">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id.plain</div>
+                    <div class="api-description">Get plain text version of message</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1.plain</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-message-source">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id.source</div>
+                    <div class="api-description">Get raw SMTP source with headers</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1.source</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-message-eml">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id.eml</div>
+                    <div class="api-description">Download message as EML file</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -o email.eml http://127.0.0.1:1080/messages/1.eml</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-parts">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id/parts/:cid</div>
+                    <div class="api-description">Get attachment or MIME part</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1/parts/1.1</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-transcript">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id/transcript.json</div>
+                    <div class="api-description">Get SMTP transaction transcript</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1/transcript.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-links">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id/links.json</div>
+                    <div class="api-description">Extract all hyperlinks from message</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1/links.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-extract">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id/extract</div>
+                    <div class="api-description">Extract tokens, OTPs, and magic links</div>
+                    <h4>Parameters</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid var(--color-border);">
+                            <th style="text-align: left;">Name</th>
+                            <th style="text-align: left;">Type</th>
+                            <th style="text-align: left;">Description</th>
+                        </tr>
+                        <tr><td><code>type</code></td><td>string</td><td>magic_link|otp|reset_token (optional)</td></tr>
+                    </table>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl 'http://127.0.0.1:1080/messages/1/extract?type=otp'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-accessibility">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id/accessibility.json</div>
+                    <div class="api-description">Get accessibility score and recommendations</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1/accessibility.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="get-parsed">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/:id/parsed.json</div>
+                    <div class="api-description">Get parsed message structure</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/messages/1/parsed.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Search</h2>
+                    <p>Advanced message search</p>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="search-messages">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/messages/search</div>
+                    <div class="api-description">Search with filters</div>
+                    <h4>Parameters</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid var(--color-border);">
+                            <th style="text-align: left;">Name</th>
+                            <th style="text-align: left;">Type</th>
+                            <th style="text-align: left;">Description</th>
+                        </tr>
+                        <tr><td><code>q</code></td><td>string</td><td>Search term (required)</td></tr>
+                        <tr><td><code>has_attachments</code></td><td>boolean</td><td>Filter by attachments (optional)</td></tr>
+                        <tr><td><code>from</code></td><td>date</td><td>From date ISO 8601 (optional)</td></tr>
+                        <tr><td><code>to</code></td><td>date</td><td>To date ISO 8601 (optional)</td></tr>
+                    </table>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl 'http://127.0.0.1:1080/messages/search?q=invoice&from=2025-01-01T00:00:00Z'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <!-- Management Section -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Management</h2>
+                    <p>Delete and manage messages</p>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="delete-message">
+                    <span class="api-method delete">DELETE</span>
+                    <div class="api-path">/messages/:id</div>
+                    <div class="api-description">Delete single message</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -X DELETE http://127.0.0.1:1080/messages/1</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="delete-all">
+                    <span class="api-method delete">DELETE</span>
+                    <div class="api-path">/messages</div>
+                    <div class="api-description">Delete all messages</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -X DELETE http://127.0.0.1:1080/messages</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="forward">
+                    <span class="api-method post">POST</span>
+                    <div class="api-path">/messages/:id/forward</div>
+                    <div class="api-description">Forward message to another address</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -X POST http://127.0.0.1:1080/messages/1/forward \
+  -H 'Content-Type: application/json' \
+  -d '{"recipient":"user@example.com"}'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="shutdown">
+                    <span class="api-method delete">DELETE</span>
+                    <div class="api-path">/</div>
+                    <div class="api-description">Shutdown server gracefully</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -X DELETE http://127.0.0.1:1080/</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <!-- Server Section -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Server</h2>
+                    <p>Server information and diagnostics</p>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="version">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/version.json</div>
+                    <div class="api-description">Get server version</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/version.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="logs">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/logs.json</div>
+                    <div class="api-description">Get SMTP transaction logs</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/logs.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="server-info">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/server-info</div>
+                    <div class="api-description">Get server configuration and SMTP logs</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/server-info</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <!-- Claude Plugin Section -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Claude Plugin</h2>
+                    <p>Specialized endpoints for Claude</p>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-manifest">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/.well-known/ai-plugin.json</div>
+                    <div class="api-description">Get Claude plugin manifest</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/.well-known/ai-plugin.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-openapi">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/plugin/openapi.json</div>
+                    <div class="api-description">Get OpenAPI specification</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/plugin/openapi.json</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-search">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/plugin/search</div>
+                    <div class="api-description">Search emails via plugin</div>
+                    <h4>Parameters</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid var(--color-border);">
+                            <th style="text-align: left;">Name</th>
+                            <th style="text-align: left;">Type</th>
+                            <th style="text-align: left;">Description</th>
+                        </tr>
+                        <tr><td><code>query</code></td><td>string</td><td>Search term (required)</td></tr>
+                        <tr><td><code>limit</code></td><td>number</td><td>Max results (default: 5)</td></tr>
+                    </table>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl 'http://127.0.0.1:1080/plugin/search?query=invoice&limit=10'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-latest">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/plugin/message/:id/latest</div>
+                    <div class="api-description">Get latest message for recipient</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl 'http://127.0.0.1:1080/plugin/message/1/latest?recipient=user@example.com'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-tokens">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/plugin/message/:id/tokens</div>
+                    <div class="api-description">Extract tokens from message</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl 'http://127.0.0.1:1080/plugin/message/1/tokens?kind=otp'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-auth">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/plugin/message/:id/auth-info</div>
+                    <div class="api-description">Get authentication information</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl http://127.0.0.1:1080/plugin/message/1/auth-info</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-preview">
+                    <span class="api-method get">GET</span>
+                    <div class="api-path">/plugin/message/:id/preview</div>
+                    <div class="api-description">Get HTML preview of message</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl 'http://127.0.0.1:1080/plugin/message/1/preview?mobile=true'</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-delete-msg">
+                    <span class="api-method delete">DELETE</span>
+                    <div class="api-path">/plugin/message/:id</div>
+                    <div class="api-description">Delete message via plugin</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -X DELETE http://127.0.0.1:1080/plugin/message/1</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="plugin-delete-all">
+                    <span class="api-method delete">DELETE</span>
+                    <div class="api-path">/plugin/messages</div>
+                    <div class="api-description">Delete all messages via plugin</div>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">curl -X DELETE http://127.0.0.1:1080/plugin/messages</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <!-- Real-time Section -->
+            <div class="section-container">
+                <div class="section-header">
+                    <h2>Real-time Updates</h2>
+                    <p>WebSocket for live notifications</p>
+                </div>
+
+                <div class="api-endpoint api-endpoint-block" id="websocket">
+                    <span class="api-method get">WS</span>
+                    <div class="api-path">ws://127.0.0.1:1080/messages</div>
+                    <div class="api-description">Real-time message updates</div>
+                    <h4>Events</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid var(--color-border);">
+                            <th style="text-align: left;">Event</th>
+                            <th style="text-align: left;">Description</th>
+                        </tr>
+                        <tr><td><code>add</code></td><td>New message arrived</td></tr>
+                        <tr><td><code>remove</code></td><td>Message deleted</td></tr>
+                        <tr><td><code>clear</code></td><td>All messages cleared</td></tr>
+                        <tr><td><code>quit</code></td><td>Server shutting down</td></tr>
+                    </table>
+                    <h4>Example</h4>
+                    <pre style="position: relative;"><code style="color: var(--color-text-primary);">const ws = new WebSocket('ws://127.0.0.1:1080/messages');
+ws.onmessage = e => console.log(JSON.parse(e.data));</code><button class="copy-btn" onclick="copyToClipboard(this)">Copy</button></pre>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer" style="margin-left: 0; margin-top: 3rem;">
+                <div class="container">
+                    <div class="footer-content">
+                        <div class="footer-section">
+                            <h4>MailCatcher NG</h4>
+                            <p>Email testing made beautiful.</p>
+                        </div>
+                        <div class="footer-section">
+                            <h4>Links</h4>
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="install.html">Install</a></li>
+                                <li><a href="https://github.com/spaquet/mailcatcher">GitHub</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+    function copyToClipboard(button) {
+        const pre = button.parentElement;
+        const code = pre.querySelector('code');
+        const text = (code.textContent || code.innerText).trim();
+        navigator.clipboard.writeText(text).then(() => {
+            const original = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => button.textContent = original, 2000);
+        });
+    }
+    </script>
+</body>
+</html>

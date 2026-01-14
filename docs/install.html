@@ -1,38 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-NN95GJ8G');</script>
+<!-- End Google Tag Manager -->
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">        <link rel="canonical" href="https://spaquet.github.io/mailcatcher/install.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://spaquet.github.io/mailcatcher/install.html">
     <link rel="preconnect" href="https://www.googletagmanager.com">
-    <meta name="description" content="MailCatcher NG installation guide. Easy setup instructions for macOS, Linux, Docker, and various frameworks.">
-    <meta name="keywords" content="mailcatcher-ng installation, setup guide, docker, rails, django, php">
+    <meta name="description" content="MailCatcher NG installation guide. Easy setup with Docker, gem, or source code.">
+    <meta name="keywords" content="mailcatcher-ng installation, setup guide, docker, rails, django, php, installation">
     <meta name="og:title" content="Installation - MailCatcher NG">
     <meta name="og:description" content="Get MailCatcher NG running in minutes with our comprehensive installation guide.">
-    <title>Installation Guide - MailCatcher NG</title>
+    <title>Installation - MailCatcher NG</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5YSM2R9KRH"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-5YSM2R9KRH');
-    </script>
+    <script src="analytics.js"></script>
 </head>
 <body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NN95GJ8G"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-logo">
-                <span class="logo-icon">📧</span>
-                MailCatcher NG
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z" fill="url(#logoGradient)" />
+                    <path d="M 20 30 L 50 55 L 80 30" stroke="white" stroke-width="2" fill="none" />
+                </svg>
+                <span class="logo-text">MailCatcher NG</span>
             </a>
-            <ul class="nav-menu">
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html#features" class="nav-link">Features</a></li>
                 <li><a href="install.html" class="nav-link active">Install</a></li>
+                <li><a href="api.html" class="nav-link">APIs</a></li>
+                <li><a href="claude.html" class="nav-link">Claude</a></li>
+                <li><a href="advanced.html" class="nav-link">Advanced</a></li>
+                <li><a href="remote-access.html" class="nav-link">Remote Access</a></li>
                 <li><a href="https://github.com/spaquet/mailcatcher" class="nav-link" target="_blank">GitHub</a></li>
-                <li><a href="https://github.com/sj26/mailcatcher" class="nav-link original" target="_blank">Original</a></li>
             </ul>
         </div>
     </nav>
@@ -41,7 +64,7 @@
     <section class="page-header">
         <div class="container">
             <h1>Installation & Setup</h1>
-            <p>Get MailCatcher up and running in minutes</p>
+            <p>Get MailCatcher NG running in seconds</p>
         </div>
     </section>
 
@@ -49,32 +72,48 @@
     <section class="install-content">
         <div class="container">
             <div class="install-sections">
-                <!-- Basic Installation -->
+                <!-- Docker Installation -->
                 <div class="install-section">
-                    <h2>Basic Installation</h2>
-                    <p>MailCatcher NG requires Ruby 3.2 or higher. Ensure you have Ruby installed:</p>
-                    <pre><code>ruby -v</code></pre>
-                    <p>Then install via RubyGems:</p>
-                    <pre><code>gem install mailcatcher-ng</code></pre>
-                    <p>Start the server:</p>
-                    <pre><code>mailcatcher
-# View mail at http://127.0.0.1:1080
-# Send mail to smtp://127.0.0.1:1025</code></pre>
+                    <h2>Docker (Recommended)</h2>
+                    <p>The fastest and easiest way to get started. No installation, no dependencies—just pure containerized mail catching.</p>
+                    <pre><code>docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher</code></pre>
+                    <p>Then:</p>
+                    <ul>
+                        <li>View mail at <code>http://127.0.0.1:1080</code></li>
+                        <li>Send mail to <code>smtp://127.0.0.1:1025</code></li>
+                    </ul>
+                    <p><a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher" target="_blank">View on Docker Hub →</a></p>
                 </div>
 
-                <!-- Development Mode -->
+                <!-- Ruby Gem Installation -->
                 <div class="install-section">
-                    <h2>Development Mode</h2>
-                    <p>Run in foreground with custom ports:</p>
-                    <pre><code>MAILCATCHER_ENV=development bundle exec mailcatcher \
-  --foreground \
-  --smtp-port 1025 \
-  --http-port 1080</code></pre>
+                    <h2>Ruby Gem Installation</h2>
+                    <p>MailCatcher NG requires Ruby 3.2 or higher. Check your version:</p>
+                    <pre><code>ruby -v</code></pre>
+                    <p>Install via RubyGems:</p>
+                    <pre><code>gem install mailcatcher-ng</code></pre>
+                    <p>Start the server:</p>
+                    <pre><code>mailcatcher</code></pre>
+                    <p>Then:</p>
+                    <ul>
+                        <li>View mail at <code>http://127.0.0.1:1080</code></li>
+                        <li>Send mail to <code>smtp://127.0.0.1:1025</code></li>
+                    </ul>
+                </div>
+
+                <!-- Build from Source -->
+                <div class="install-section">
+                    <h2>Build from Source</h2>
+                    <pre><code>git clone https://github.com/spaquet/mailcatcher.git
+cd mailcatcher
+bundle install
+bundle exec mailcatcher --foreground</code></pre>
                 </div>
 
                 <!-- Framework Integration -->
                 <div class="install-section">
                     <h2>Framework Integration</h2>
+                    <p>Configure your framework to send mail to MailCatcher NG:</p>
 
                     <h3>Rails</h3>
                     <p>Add to <code>config/environments/development.rb</code>:</p>
@@ -94,7 +133,7 @@ config.action_mailer.raise_delivery_errors = false</code></pre>
     EMAIL_PORT = 1025
     EMAIL_USE_TLS = False</code></pre>
 
-                    <h3>PHP / Laravel</h3>
+                    <h3>Laravel</h3>
                     <p>Update <code>.env</code>:</p>
                     <pre><code>MAIL_MAILER=smtp
 MAIL_HOST=127.0.0.1
@@ -103,44 +142,53 @@ MAIL_USERNAME=null
 MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null</code></pre>
 
-                    <h3>PHP Mail Function</h3>
+                    <h3>PHP (using sendmail)</h3>
                     <p>Update <code>php.ini</code> sendmail path:</p>
                     <pre><code>sendmail_path = /usr/bin/env catchmail -f from@example.com</code></pre>
-                </div>
 
-                <!-- Docker -->
-                <div class="install-section">
-                    <h2>Docker</h2>
-                    <p>Run MailCatcher with the official Alpine Linux image:</p>
-                    <pre><code>docker run -d -p 1080:1080 -p 1025:1025 stpaquet/alpinemailcatcher</code></pre>
-                    <p>Then access the web interface at <code>http://127.0.0.1:1080</code> and send mail to <code>smtp://127.0.0.1:1025</code></p>
-                    <p>View the image on <a href="https://hub.docker.com/r/stpaquet/alpinemailcatcher" target="_blank">Docker Hub</a></p>
+                    <h3>Node.js (Nodemailer)</h3>
+                    <pre><code>const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  host: '127.0.0.1',
+  port: 1025,
+  direct: true
+});</code></pre>
+
+                    <h3>Go</h3>
+                    <pre><code>package main
+import "net/smtp"
+
+func main() {
+    client, _ := smtp.Dial("127.0.0.1:1025")
+    defer client.Close()
+}</code></pre>
+
+                    <h3>Java</h3>
+                    <pre><code>Properties props = new Properties();
+props.put("mail.smtp.host", "127.0.0.1");
+props.put("mail.smtp.port", "1025");
+Session session = Session.getInstance(props);</code></pre>
                 </div>
 
                 <!-- Command Line Options -->
                 <div class="install-section">
                     <h2>Command Line Options</h2>
-                    <pre><code>mailcatcher ng --help
+                    <pre><code>mailcatcher --help
 
 Options:
   --ip IP                    Set IP address for both servers
   --smtp-ip IP              Set SMTP server IP
   --smtp-port PORT          Set SMTP port (default: 1025)
-  --smtp-ssl                Enable SSL/TLS support for SMTP
-  --smtp-ssl-cert PATH      Path to SSL certificate file
-  --smtp-ssl-key PATH       Path to SSL private key file
-  --smtp-ssl-verify-peer    Verify client SSL certificates
-  --smtps-port PORT         Direct TLS port (default: 1465)
   --http-ip IP              Set HTTP server IP
   --http-port PORT          Set HTTP port (default: 1080)
   --messages-limit COUNT    Keep only N most recent messages
-  --persistence             Store messages in a persistent SQLite database file
+  --persistence             Store messages in persistent SQLite database
   --http-path PATH          Add prefix to all HTTP paths
   --no-quit                 Disable quit functionality
   -f, --foreground          Run in foreground
   -b, --browse              Open web browser on start
   -v, --verbose             Be more verbose
-  -h, --help                Show this help
+  -h, --help                Show help
   --version                 Show version</code></pre>
                 </div>
 
@@ -149,10 +197,10 @@ Options:
                     <h2>Persistent Storage</h2>
                     <p>By default, MailCatcher NG stores messages in memory and they are lost when the process terminates. Enable persistent storage to keep messages across restarts:</p>
                     <pre><code>mailcatcher --persistence</code></pre>
-                    <p>Messages will be stored in a SQLite database file at <code>~/.mailcatcher/mailcatcher.db</code></p>
+                    <p>Messages will be stored in <code>~/.mailcatcher/mailcatcher.db</code></p>
 
                     <h3>Docker with Persistent Storage</h3>
-                    <p>When using Docker, you need to mount a volume to persist the database file. Note: The current Docker image does not yet include support for the <code>--persistence</code> flag. This feature will be added in a future release.</p>
+                    <p>Mount a volume to persist messages across container restarts:</p>
                     <pre><code>docker run -d \
   -p 1080:1080 \
   -p 1025:1025 \
@@ -168,10 +216,10 @@ Options:
 
                 <!-- SSL/TLS Configuration -->
                 <div class="install-section">
-                    <h2>SSL/TLS Configuration</h2>
-                    <p>MailCatcher supports encrypted SMTP connections using SSL/TLS. You must provide your own certificate and private key files.</p>
+                    <h2>SSL/TLS Encryption</h2>
+                    <p>MailCatcher NG supports encrypted SMTP connections. You must provide your own certificate and private key files.</p>
 
-                    <h3>Generate Self-Signed Certificate (Testing)</h3>
+                    <h3>Generate Self-Signed Certificate (Testing Only)</h3>
                     <pre><code>openssl req -x509 -newkey rsa:4096 \
   -keyout mailcatcher-key.pem \
   -out mailcatcher-cert.pem \
@@ -186,20 +234,18 @@ Options:
 
                     <p>This enables:</p>
                     <ul>
-                        <li><strong>STARTTLS on port 1025</strong>: Upgrade to TLS (required before sending mail)</li>
-                        <li><strong>Direct TLS on port 1465</strong>: Encrypted from connection start (SMTPS)</li>
+                        <li><strong>STARTTLS on port 1025</strong>: Upgrade to TLS after connecting</li>
+                        <li><strong>Direct TLS on port 1465</strong>: Encrypted from the start (SMTPS)</li>
                     </ul>
 
-                    <h3>Framework Configuration with TLS</h3>
-
-                    <h4>Rails with STARTTLS</h4>
+                    <h3>Rails with STARTTLS</h3>
                     <pre><code>config.action_mailer.smtp_settings = {
   address: '127.0.0.1',
   port: 1025,
   enable_starttls_auto: true
 }</code></pre>
 
-                    <h4>Rails with direct TLS (SMTPS)</h4>
+                    <h3>Rails with Direct TLS (SMTPS)</h3>
                     <pre><code>config.action_mailer.smtp_settings = {
   address: '127.0.0.1',
   port: 1465,
@@ -207,31 +253,23 @@ Options:
   ssl: true
 }</code></pre>
 
-                    <h4>Django with TLS</h4>
+                    <h3>Django with TLS</h3>
                     <pre><code>if DEBUG:
     EMAIL_HOST = '127.0.0.1'
     EMAIL_PORT = 1465  # Direct TLS
     EMAIL_USE_TLS = True
     EMAIL_USE_SSL = True</code></pre>
 
-                    <h4>PHP with TLS</h4>
+                    <h3>PHP with TLS</h3>
                     <pre><code>MAIL_PORT=1465
-MAIL_ENCRYPTION=ssl  # or 'tls' for STARTTLS on port 1025</code></pre>
-
-                    <h3>Production Certificates</h3>
-                    <p>For production-like testing, use certificates from your CA or Let's Encrypt:</p>
-                    <pre><code>mailcatcher \
-  --smtp-ssl \
-  --smtp-ssl-cert /etc/ssl/certs/your-cert.pem \
-  --smtp-ssl-key /etc/ssl/private/your-key.pem \
-  --smtp-ssl-verify-peer</code></pre>
+MAIL_ENCRYPTION=ssl</code></pre>
 
                     <h3>Security Notes</h3>
                     <ul>
-                        <li>Certificate and key files must be readable by the user running MailCatcher</li>
-                        <li>STARTTLS is REQUIRED when SSL is enabled (no plain SMTP allowed)</li>
-                        <li>Self-signed certificates will trigger warnings in most mail clients</li>
-                        <li>Client certificate verification is disabled by default</li>
+                        <li>Certificate and key files must be readable by the mailcatcher process</li>
+                        <li>When SSL is enabled, STARTTLS is required (plain SMTP is disabled)</li>
+                        <li>Self-signed certificates will trigger warnings in mail clients</li>
+                        <li>For production-like testing, use certificates from your CA or Let's Encrypt</li>
                     </ul>
                 </div>
 
@@ -255,55 +293,44 @@ xcode-select --install      # macOS</code></pre>
 
                     <h3>RVM Users</h3>
                     <p>MailCatcher may only be available in the Ruby version it was installed in:</p>
-                    <pre><code>rvm default@mailcatcher --create do gem install mailcatcher
-ln -s "$(rvm default@mailcatcher do rvm wrapper show mailcatcher)" "$rvm_bin_path/"</code></pre>
+                    <pre><code>rvm default@mailcatcher --create do gem install mailcatcher-ng
+rvm alias create mailcatcher default@mailcatcher</code></pre>
+
+                    <h3>Docker Issues</h3>
+                    <p>Ensure Docker is running and you have permission to use it:</p>
+                    <pre><code>docker run hello-world</code></pre>
+                    <p>If you get a permission error, add your user to the docker group:</p>
+                    <pre><code>sudo usermod -aG docker $USER</code></pre>
                 </div>
 
-
-                <!-- From Source -->
+                <!-- Claude Integration -->
                 <div class="install-section">
-                    <h2>Build from Source</h2>
-                    <pre><code>git clone https://github.com/spaquet/mailcatcher.git
-cd mailcatcher
-bundle install
-bundle exec rake package
-gem install mailcatcher-ng-VERSION.gem</code></pre>
+                    <h2>Claude Integration</h2>
+                    <p>MailCatcher NG integrates with Claude for AI-powered email testing.</p>
+
+                    <h3>Enable Claude Plugin</h3>
+                    <pre><code>mailcatcher --plugin --foreground</code></pre>
+                    <p>Then add the plugin in Claude settings at <code>http://localhost:1080/.well-known/ai-plugin.json</code></p>
+
+                    <h3>Enable MCP Server</h3>
+                    <pre><code>mailcatcher --mcp --foreground</code></pre>
+                    <p>Configure in Claude Desktop's <code>~/.claude_desktop_config.json</code>:</p>
+                    <pre><code>{
+  "mcpServers": {
+    "mailcatcher": {
+      "command": "mailcatcher",
+      "args": ["--mcp", "--foreground"]
+    }
+  }
+}</code></pre>
+
+                    <p><a href="claude.html">Learn more about Claude integration →</a></p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>MailCatcher NG</h4>
-                    <p>Email testing made beautiful for developers.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Links</h4>
-                    <ul>
-                        <li><a href="https://github.com/spaquet/mailcatcher">GitHub</a></li>
-                        <li><a href="https://github.com/sj26/mailcatcher">Original</a></li>
-                        <li><a href="https://rubygems.org/gems/mailcatcher-ng">RubyGems (NG)</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="https://github.com/spaquet/mailcatcher#command-line-options">CLI Options</a></li>
-                        <li><a href="https://github.com/spaquet/mailcatcher#api">API Reference</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2010-2026 Samuel Cochran. Enhanced fork by Stéphane Paquet. MIT License.</p>
-            </div>
-        </div>
-    </footer>
-
+    <script src="footer.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
