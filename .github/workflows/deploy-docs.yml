@@ -29,6 +29,17 @@ jobs:
     - name: Setup Pages
       uses: actions/configure-pages@v4
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Inject Google Tag Manager
+      run: node scripts/inject-gtm.js
+
     - name: Generate Sitemap
       uses: cicirello/generate-sitemap@v1
       with:
