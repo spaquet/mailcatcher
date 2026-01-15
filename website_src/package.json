@@ -1,19 +1,18 @@
 {
-  "name": "mailcatcher-ng-website",
-  "version": "1.0.0",
-  "description": "MailCatcher NG Documentation Website",
+  "name": "website_src",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.2.0"
-  },
-  "devDependencies": {
-    "@astrojs/sitemap": "^3.2.0",
-    "@tailwindcss/vite": "^4.1.0",
-    "tailwindcss": "^4.1.0"
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.16.9",
+    "astro-icon": "^1.1.5",
+    "devicon": "^2.17.0",
+    "tailwindcss": "^4.1.18"
   }
 }
