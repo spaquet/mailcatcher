@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'REST API Documentation - MailCatcher NG';
+const description = 'Complete REST API documentation for MailCatcher NG. Learn how to interact with messages, search, manage data, and integrate with your applications.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Navigation activePage="api" />
+
+  <section class="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-16 text-center">
+    <h1>REST API Documentation</h1>
+    <p>Programmatic access to your caught emails</p>
+  </section>
+
+  <!-- Content from api-content-wrapper -->
+  <div style="padding: 2rem 1.5rem; border-bottom: 1px solid var(--color-border);">
+    <h1 style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">MailCatcher NG REST API</h1>
+    <p style="margin: 0; font-size: 0.9rem; color: var(--color-text-secondary);">Base URL: <code style="background: var(--color-bg-secondary); padding: 0.2rem 0.4rem; border-radius: 2px;">http://127.0.0.1:1080</code></p>
+  </div>
+
+  <!-- Message Retrieval Section -->
+  <div class="section-container">
+    <div class="section-header">
+        <h2>Message Retrieval</h2>
+        <p>Get and retrieve email messages</p>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="section-container">
+    <div class="section-header">
+        <h2>Search</h2>
+        <p>Advanced message search</p>
+    </div>
+  </div>
+
+  <!-- Management Section -->
+  <div class="section-container">
+    <div class="section-header">
+        <h2>Management</h2>
+        <p>Delete and manage messages</p>
+    </div>
+  </div>
+
+  <!-- Server Section -->
+  <div class="section-container">
+    <div class="section-header">
+        <h2>Server</h2>
+        <p>Server information and diagnostics</p>
+    </div>
+  </div>
+
+  <!-- Claude Plugin Section -->
+  <div class="section-container">
+    <div class="section-header">
+        <h2>Claude Plugin</h2>
+        <p>Specialized endpoints for Claude</p>
+    </div>
+  </div>
+
+  <!-- Real-time Section -->
+  <div class="section-container">
+    <div class="section-header">
+        <h2>Real-time Updates</h2>
+        <p>WebSocket for live notifications</p>
+    </div>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    padding: 4rem 1.25rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.25rem;
+  }
+
+  .section-container {
+    padding: 3rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-header h2 {
+    margin-top: 0;
+    color: var(--color-primary);
+  }
+
+  .section-header p {
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+  }
+</style>

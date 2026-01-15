@@ -1,0 +1,430 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import Footer from '../components/Footer.astro';
+
+const title = 'Advanced Features - MailCatcher NG';
+const description = 'Advanced configuration for MailCatcher NG. SSL/TLS, persistent storage, international support, email authentication, BIMI, accessibility scoring, and more.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Navigation activePage="advanced" />
+
+  <section class="bg-gradient-to-r from-primary to-primary-dark text-white px-5 py-16 text-center">
+    <h1>Advanced Features</h1>
+    <p>Power user configuration and capabilities</p>
+  </section>
+
+  <section class="install-content">
+    <div class="max-w-6xl mx-auto px-5">
+        <div class="grid grid-cols-1 gap-12 max-w-2xl mx-auto">
+            <!-- SSL/TLS -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>SSL/TLS Encryption</h2>
+                <p>MailCatcher NG supports encrypted SMTP connections to test secure email workflows.</p>
+
+                <h3>STARTTLS (Port 1025)</h3>
+                <p>Opportunistic upgrade to TLS after connecting. Requires STARTTLS before MAIL FROM.</p>
+                <pre><code>mailcatcher --smtp-ssl \
+  --smtp-ssl-cert mailcatcher-cert.pem \
+  --smtp-ssl-key mailcatcher-key.pem</code></pre>
+
+                <p><strong>Client Configuration (Rails):</strong></p>
+                <pre><code>config.action_mailer.smtp_settings = &#123;
+  address: '127.0.0.1',
+  port: 1025,
+  enable_starttls_auto: true
+&#125;</code></pre>
+
+                <h3>Direct TLS/SMTPS (Port 1465)</h3>
+                <p>TLS wrapped from the start. Connection is encrypted from the beginning.</p>
+                <pre><code>mailcatcher --smtp-ssl \
+  --smtp-ssl-cert mailcatcher-cert.pem \
+  --smtp-ssl-key mailcatcher-key.pem \
+  --smtps-port 1465</code></pre>
+
+                <p><strong>Client Configuration (Rails):</strong></p>
+                <pre><code>config.action_mailer.smtp_settings = &#123;
+  address: '127.0.0.1',
+  port: 1465,
+  enable_starttls_auto: false,
+  ssl: true
+&#125;</code></pre>
+
+                <h3>Generating Certificates</h3>
+                <p>Create a self-signed certificate for testing:</p>
+                <pre><code>openssl req -x509 -newkey rsa:4096 \
+  -keyout mailcatcher-key.pem \
+  -out mailcatcher-cert.pem \
+  -days 365 -nodes \
+  -subj "/CN=localhost"</code></pre>
+
+                <h3>Client Certificate Verification</h3>
+                <p>Enable mutual TLS (client certificate verification):</p>
+                <pre><code>mailcatcher --smtp-ssl \
+  --smtp-ssl-cert mailcatcher-cert.pem \
+  --smtp-ssl-key mailcatcher-key.pem \
+  --smtp-ssl-verify-peer</code></pre>
+            </div>
+
+            <!-- Persistent Storage -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Persistent Message Storage</h2>
+                <p>By default, MailCatcher stores messages in memory. Enable persistence to keep messages across restarts.</p>
+
+                <h3>Enable Persistence</h3>
+                <pre><code>mailcatcher --persistence</code></pre>
+                <p>Messages are stored in SQLite at <code>~/.mailcatcher/mailcatcher.db</code></p>
+
+                <h3>Docker Persistence</h3>
+                <pre><code>docker run -d \
+  -p 1080:1080 \
+  -p 1025:1025 \
+  -v mailcatcher_data:/root/.mailcatcher \
+  stpaquet/alpinemailcatcher \
+  mailcatcher --persistence</code></pre>
+
+                <h3>Message Retention Limits</h3>
+                <p>Keep only the last N messages to manage database size:</p>
+                <pre><code>mailcatcher --messages-limit 1000</code></pre>
+                <p>Messages older than the limit are automatically deleted.</p>
+
+                <h3>Backup and Migration</h3>
+                <p>Back up your messages database:</p>
+                <pre><code>cp ~/.mailcatcher/mailcatcher.db ~/mailcatcher_backup.db</code></pre>
+
+                <p>Copy messages to a new machine:</p>
+                <pre><code>cp ~/mailcatcher_backup.db ~/.mailcatcher/mailcatcher.db</code></pre>
+            </div>
+
+            <!-- International Support -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>International Email Support</h2>
+                <p>MailCatcher NG fully supports international email standards and character encodings.</p>
+
+                <h3>SMTPUTF8</h3>
+                <p>Support for non-ASCII characters in email addresses:</p>
+                <pre><code>mailcatcher --smtputf8</code></pre>
+                <p>Allows sending to addresses like: <code>用户@example.com</code></p>
+
+                <h3>8BITMIME</h3>
+                <p>Support for 8-bit MIME transfer encoding:</p>
+                <pre><code>mailcatcher --8bitmime</code></pre>
+                <p>Allows sending binary content without base64 encoding.</p>
+
+                <h3>UTF-8 Content</h3>
+                <p>MailCatcher preserves charset information for each message part:</p>
+                <ul>
+                    <li>Detects and preserves original charset</li>
+                    <li>Displays content correctly regardless of encoding</li>
+                    <li>Supports: UTF-8, ISO-8859-1, GB2312, Shift_JIS, and more</li>
+                </ul>
+
+                <h3>Testing International Email</h3>
+                <pre><code># Send UTF-8 email with non-ASCII sender
+config.action_mailer.smtp_settings = &#123;
+  address: '127.0.0.1',
+  port: 1025,
+&#125;
+
+# In your mailer, use UTF-8 headers
+mail from: 'Caf Admin &lt;admin@caf.fr&gt;'</code></pre>
+            </div>
+
+            <!-- Email Authentication -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Email Authentication Features</h2>
+                <p>MailCatcher displays authentication headers from incoming messages.</p>
+
+                <h3>DMARC (Domain-based Message Authentication)</h3>
+                <p>MailCatcher parses and displays DMARC authentication results:</p>
+                <pre><code>Authentication-Results: dmarc=pass</code></pre>
+                <p>Displayed with status badge (pass/fail/neutral) in the message interface.</p>
+
+                <h3>DKIM (DomainKeys Identified Mail)</h3>
+                <p>Verify DKIM signatures:</p>
+                <pre><code>DKIM-Signature: v=1; a=rsa-sha256; s=selector; d=example.com;</code></pre>
+                <p>Displays signature verification status.</p>
+
+                <h3>SPF (Sender Policy Framework)</h3>
+                <p>Check SPF authentication:</p>
+                <pre><code>Received-SPF: pass</code></pre>
+                <p>Shows SPF validation results.</p>
+
+                <h3>S/MIME Certificates</h3>
+                <p>View S/MIME certificate information:</p>
+                <pre><code>X-Certificate: MIIDXTCCAkWgAwIBAgIJAJj...</code></pre>
+                <p>Displays certificate data with copy-to-clipboard functionality.</p>
+
+                <h3>OpenPGP Keys</h3>
+                <p>Display OpenPGP public key information:</p>
+                <pre><code>X-PGP-Key: mQENBGZrXr...</code></pre>
+                <p>View PGP key details and signatures.</p>
+            </div>
+
+            <!-- BIMI Support -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>BIMI (Brand Indicators for Message Identification)</h2>
+                <p>MailCatcher displays BIMI brand logos from email headers.</p>
+
+                <h3>BIMI Header</h3>
+                <pre><code>BIMI-Location: https://example.com/.well-known/bimi.svg</code></pre>
+
+                <h3>Display in Interface</h3>
+                <ul>
+                    <li>Shows brand logo in message list</li>
+                    <li>Displays generic icon if BIMI not present</li>
+                    <li>Updates dynamically as messages load</li>
+                </ul>
+
+                <h3>Testing BIMI</h3>
+                <pre><code># In your mailer
+headers['BIMI-Location'] = 'https://your-domain.com/.well-known/bimi.svg'</code></pre>
+            </div>
+
+            <!-- Email Accessibility -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Email Accessibility Scoring</h2>
+                <p>MailCatcher analyzes email accessibility and provides WCAG compliance scores.</p>
+
+                <h3>Automatic Analysis</h3>
+                <pre><code>GET /messages/:id/accessibility.json</code></pre>
+
+                <h3>Scoring Breakdown</h3>
+                <ul>
+                    <li><strong>Image Alt Text</strong> - Checks for descriptive alt attributes</li>
+                    <li><strong>Semantic HTML</strong> - Validates proper heading hierarchy and semantic elements</li>
+                    <li><strong>Link Quality</strong> - Ensures meaningful link text (not "click here")</li>
+                    <li><strong>Contrast</strong> - Identifies potential contrast issues</li>
+                    <li><strong>Form Labels</strong> - Verifies proper label associations</li>
+                </ul>
+
+                <h3>Accessibility Score (0-100)</h3>
+                <pre><code>&#123;
+  "score": 85,
+  "breakdown": &#123;
+    "images": 90,
+    "semantic_html": 85,
+    "links": 75
+  &#125;,
+  "findings": [
+    &#123;
+      "level": "warning",
+      "issue": "Missing alt text on 2 images",
+      "recommendation": "Add descriptive alt text to all images"
+    &#125;
+  ]
+&#125;</code></pre>
+
+                <h3>Testing Accessibility</h3>
+                <pre><code># Best practices
+- Use semantic HTML: &lt;h1&gt;, &lt;h2&gt;, &lt;p&gt;, &lt;button&gt;
+- Add alt text to all images
+- Use descriptive link text
+- Maintain sufficient color contrast
+- Use proper list markup</code></pre>
+            </div>
+
+            <!-- SMTP Transcripts -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>SMTP Transcripts</h2>
+                <p>View complete SMTP server logs and transcripts.</p>
+
+                <h3>Enable Verbose Logging</h3>
+                <pre><code>mailcatcher --verbose</code></pre>
+
+                <h3>Transcript Features</h3>
+                <ul>
+                    <li>Complete SMTP conversation history</li>
+                    <li>Searchable transcript logs</li>
+                    <li>SMTP command tracking</li>
+                    <li>Error logging and diagnostics</li>
+                </ul>
+
+                <h3>View Transcripts</h3>
+                <p>Access server logs through the web interface or via:</p>
+                <pre><code>GET /transcripts  # List available transcripts
+GET /transcripts/:id  # View specific transcript</code></pre>
+            </div>
+
+            <!-- Text Preview -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Email Preview Text</h2>
+                <p>MailCatcher intelligently extracts preview text using a 3-tier fallback system.</p>
+
+                <h3>Extraction Strategy</h3>
+                <ol>
+                    <li><strong>Preview-Text Header</strong> - Uses de facto standard if present</li>
+                    <li><strong>HTML Preheader</strong> - Extracts hidden text from HTML</li>
+                    <li><strong>Content Fallback</strong> - Uses first 100 characters</li>
+                </ol>
+
+                <h3>Setting Preview Text</h3>
+                <pre><code># Option 1: Using header
+headers['X-Preview'] = 'This is the preview text'
+
+# Option 2: Using HTML preheader
+&lt;body&gt;
+  &lt;div style="display:none;font-size:1px;color:fefefe;line-height:1px;font-family:Arial,sans-serif;max-height:0px;max-width:0px;overflow:hidden;"&gt;
+    This is the preview text
+  &lt;/div&gt;
+  &lt;!-- Actual email content --&gt;
+&lt;/body&gt;</code></pre>
+            </div>
+
+            <!-- Custom HTTP Path -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Proxy and Path Prefixes</h2>
+                <p>Run MailCatcher behind a proxy with a custom HTTP path.</p>
+
+                <h3>Using HTTP Path Prefix</h3>
+                <pre><code>mailcatcher --http-path /mailcatcher</code></pre>
+
+                <p>Access at: <code>http://127.0.0.1:1080/mailcatcher/</code></p>
+
+                <h3>Nginx Proxy Configuration</h3>
+                <pre><code>location /mailcatcher/ &#123;
+  proxy_pass http://127.0.0.1:1080/;
+  proxy_set_header Host $host;
+  proxy_set_header X-Real-IP $remote_addr;
+&#125;</code></pre>
+
+                <h3>Apache Proxy Configuration</h3>
+                <pre><code>ProxyPreserveHost On
+ProxyPass /mailcatcher http://127.0.0.1:1080/
+ProxyPassReverse /mailcatcher http://127.0.0.1:1080/</code></pre>
+            </div>
+
+            <!-- Performance Optimization -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Performance Optimization</h2>
+
+                <h3>Message Limit Strategy</h3>
+                <p>For long-running tests, limit stored messages:</p>
+                <pre><code>mailcatcher --messages-limit 500</code></pre>
+
+                <h3>In-Memory vs Persistent Storage</h3>
+                <ul>
+                    <li><strong>In-Memory (Default)</strong> - Fast, ephemeral</li>
+                    <li><strong>Persistent</strong> - Slower, survives restarts</li>
+                </ul>
+                <p>Use persistent storage only when necessary.</p>
+
+                <h3>Database Optimization</h3>
+                <p>Clean old messages periodically:</p>
+                <pre><code>curl -X DELETE http://127.0.0.1:1080/messages</code></pre>
+
+                <h3>Network Optimization</h3>
+                <pre><code>mailcatcher --ip 127.0.0.1  # Bind only to localhost
+mailcatcher --smtp-ip 127.0.0.1 --http-ip 127.0.0.1</code></pre>
+            </div>
+
+            <!-- Debugging -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Debugging and Troubleshooting</h2>
+
+                <h3>Enable Verbose Mode</h3>
+                <pre><code>mailcatcher --verbose --foreground</code></pre>
+
+                <h3>Check Server Status</h3>
+                <p>MailCatcher provides a status page:</p>
+                <pre><code>GET /  # Status page with server info</code></pre>
+
+                <h3>Test SMTP Connection</h3>
+                <pre><code>telnet 127.0.0.1 1025</code></pre>
+
+                <h3>Test HTTP Interface</h3>
+                <pre><code>curl http://127.0.0.1:1080/messages</code></pre>
+
+                <h3>WebSocket Test</h3>
+                <p>MailCatcher includes a WebSocket test page:</p>
+                <pre><code>http://127.0.0.1:1080/websocket</code></pre>
+            </div>
+
+            <!-- Docker Advanced -->
+            <div class="border-l-4 border-primary pl-8">
+                <h2>Docker Advanced Usage</h2>
+
+                <h3>Docker Compose with Custom Configuration</h3>
+                <pre><code>version: '3.8'
+services:
+  mailcatcher:
+    image: stpaquet/alpinemailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    volumes:
+      - mailcatcher_data:/root/.mailcatcher
+    command: mailcatcher --persistence --messages-limit 1000
+    environment:
+      - MAILCATCHER_ENV=development
+
+volumes:
+  mailcatcher_data:</code></pre>
+
+                <h3>Running with Network Isolation</h3>
+                <pre><code>docker network create mailcatcher
+docker run -d \
+  --network mailcatcher \
+  --name mailcatcher \
+  -p 1080:1080 \
+  -p 1025:1025 \
+  stpaquet/alpinemailcatcher</code></pre>
+
+                <h3>Kubernetes Deployment</h3>
+                <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mailcatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailcatcher
+  template:
+    metadata:
+      labels:
+        app: mailcatcher
+    spec:
+      containers:
+      - name: mailcatcher
+        image: stpaquet/alpinemailcatcher
+        ports:
+        - containerPort: 1080
+        - containerPort: 1025
+        volumeMounts:
+        - name: data
+          mountPath: /root/.mailcatcher
+      volumes:
+      - name: data
+        emptyDir: &#123;&#125;</code></pre>
+            </div>
+        </div>
+    </div>
+</section>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-header {
+    background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    padding: 4rem 1.25rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    color: white;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.25rem;
+  }
+
+  .install-content {
+    padding: 4rem 1.25rem;
+  }
+</style>

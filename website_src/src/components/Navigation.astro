@@ -1,0 +1,247 @@
+---
+interface Props {
+  activePage?: string;
+}
+
+const { activePage } = Astro.props;
+
+const navLinks = [
+  { href: '/#features', label: 'Features' },
+  { href: '/mailcatcher/install/', label: 'Install' },
+  { href: '/mailcatcher/api/', label: 'APIs' },
+  { href: '/mailcatcher/claude/', label: 'Claude' },
+  { href: '/mailcatcher/advanced/', label: 'Advanced' },
+  { href: '/mailcatcher/remote-access/', label: 'Remote Access' },
+  { href: 'https://github.com/spaquet/mailcatcher', label: 'GitHub', external: true },
+];
+---
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/mailcatcher/" class="nav-logo">
+      <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <path d="M 20 30 L 50 55 L 80 30 L 80 75 Q 80 80 75 80 L 25 80 Q 20 80 20 75 Z" fill="url(#logoGradient)" />
+        <path d="M 20 30 L 50 55 L 80 30" stroke="white" stroke-width="2" fill="none" />
+      </svg>
+      <span class="logo-text">MailCatcher NG</span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+      <span class="hamburger"></span>
+    </button>
+    <ul class="nav-menu" id="navMenu">
+      {navLinks.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            class={`nav-link ${activePage === link.label.toLowerCase() ? 'active' : ''}`}
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener noreferrer' : undefined}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menuToggle');
+    const navMenu = document.getElementById('navMenu');
+
+    if (menuToggle && navMenu) {
+      menuToggle.addEventListener('click', () => {
+        const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+        menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+        menuToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      });
+
+      // Close menu when a link is clicked
+      navMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          menuToggle.setAttribute('aria-expanded', 'false');
+          menuToggle.classList.remove('active');
+          navMenu.classList.remove('active');
+        });
+      });
+    }
+  });
+</script>
+
+<style>
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: white;
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #111827;
+    text-decoration: none;
+    transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nav-logo:hover {
+    color: #0d9488;
+  }
+
+  .logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: #0d9488;
+  }
+
+  .logo-text {
+    background: linear-gradient(to right, #0d9488, #0f766e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+  }
+
+  .nav-menu {
+    display: none;
+    list-style: none;
+    gap: 2rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 768px) {
+    .nav-menu {
+      display: flex;
+    }
+  }
+
+  .nav-link {
+    color: #4b5563;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .nav-link:hover {
+    color: #0d9488;
+  }
+
+  .nav-link.active {
+    color: #0d9488;
+  }
+
+  .nav-link::after {
+    position: absolute;
+    bottom: 4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #0d9488;
+    transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    content: '';
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: -8px;
+  }
+
+  @media (min-width: 768px) {
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  .hamburger {
+    width: 1.5rem;
+    height: 2px;
+    background-color: #111827;
+    border-radius: 0.25rem;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateZ(0);
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    width: 1.5rem;
+    height: 2px;
+    background-color: #111827;
+    border-radius: 0.25rem;
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    content: '';
+  }
+
+  .hamburger::before {
+    transform: translateY(-8px);
+  }
+
+  .hamburger::after {
+    transform: translateY(8px);
+  }
+
+  .menu-toggle.active .hamburger {
+    background-color: transparent;
+    transform: rotate(45deg);
+  }
+
+  .menu-toggle.active .hamburger::before {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  .menu-toggle.active .hamburger::after {
+    transform: translateY(0) rotate(-90deg);
+  }
+
+  @media (max-width: 768px) {
+    .nav-menu.active {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      background-color: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 1.25rem;
+      gap: 1rem;
+    }
+  }
+</style>
