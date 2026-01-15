@@ -11,7 +11,7 @@
   - Used by developers and AI systems (Claude, MCP servers) for email testing workflows
 
 - **Marketing Website** (`/website_src`): Documentation and feature showcase
-  - Built with Astro JS 5.9 and Tailwind CSS 4.1
+  - Built with Astro JS 5.16.9 and Tailwind CSS 4.1
   - Deployed to GitHub Pages via GitHub Actions
   - Purpose: Present the gem's features and capabilities to potential users
   - Separate tech stack from the Ruby gem itself
