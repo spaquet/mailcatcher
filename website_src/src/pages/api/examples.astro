@@ -1,8 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CodeBlock from '../../components/CodeBlock.astro';
+import ExampleCode from '../../components/ExampleCode.astro';
 import { Icon } from 'astro-icon/components';
 
+// Python examples
 const pythonListCode = `import requests
 
 # Get all messages
@@ -16,6 +17,26 @@ for msg in messages:
     print(f"[{msg['id']}] {msg['subject']}")
     print(f"    From: {msg['from']}")
     print(f"    To: {msg['to']}")`;
+
+const pythonDetailsCode = `import requests
+import json
+
+# Get specific message metadata
+response = requests.get('http://127.0.0.1:1080/messages/1.json')
+message = response.json()
+
+print(json.dumps(message, indent=2))
+
+# Get HTML content
+html_response = requests.get('http://127.0.0.1:1080/messages/1.html')
+html_content = html_response.text
+
+# Get plain text
+plain_response = requests.get('http://127.0.0.1:1080/messages/1.plain')
+plain_content = plain_response.text
+
+print("HTML Content:")
+print(html_content[:500] + "...")`;
 
 const pythonSearchCode = `import requests
 from datetime import datetime, timedelta
@@ -188,149 +209,8 @@ try:
 except KeyboardInterrupt:
     print("Stopped monitoring")`;
 
-const pythonDetailsCode = `import requests
-import json
-
-# Get specific message metadata
-response = requests.get('http://127.0.0.1:1080/messages/1.json')
-message = response.json()
-
-print(json.dumps(message, indent=2))
-
-# Get HTML content
-html_response = requests.get('http://127.0.0.1:1080/messages/1.html')
-html_content = html_response.text
-
-# Get plain text
-plain_response = requests.get('http://127.0.0.1:1080/messages/1.plain')
-plain_content = plain_response.text
-
-print("HTML Content:")
-print(html_content[:500] + "...")`;
----
-
-<Layout title="API Code Examples - MailCatcher NG" description="Complete code examples for integrating MailCatcher NG with Python, JavaScript, and Ruby." currentPage="api">
-  {/* Header */}
-  <section class="bg-forest-50 border-b border-forest-200 py-12 px-6 sm:px-8">
-    <div class="max-w-6xl mx-auto">
-      <a href="/api/" class="text-forest-600 hover:text-forest-700 font-medium text-sm mb-4 inline-flex items-center gap-1">
-        <Icon name="mdi:arrow-left" class="w-4 h-4" />
-        Back to API Reference
-      </a>
-      <h1 class="font-display text-4xl font-bold text-anthracite mb-4">Code Examples</h1>
-      <p class="text-gray-600 max-w-2xl">Complete working examples for integrating MailCatcher NG with your application in Python, JavaScript, and Ruby.</p>
-    </div>
-  </section>
-
-  {/* Content */}
-  <section class="py-12 px-6 sm:px-8">
-    <div class="max-w-6xl mx-auto space-y-16">
-
-      {/* Python Section */}
-      <div id="python" class="scroll-mt-24">
-        <div class="flex items-center gap-3 mb-8">
-          <Icon name="mdi:language-python" class="w-8 h-8 text-blue-600" />
-          <h2 class="font-display text-3xl font-bold text-anthracite">Python</h2>
-        </div>
-
-        <div class="space-y-8">
-          {/* Setup */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Setup</h3>
-            <p class="text-gray-700 mb-4">Install the required HTTP client library:</p>
-            <CodeBlock
-              code={`pip install requests`}
-              language="bash"
-              title="Install dependencies"
-            />
-          </div>
-
-          {/* List Messages */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">List All Messages</h3>
-            <CodeBlock
-              code={pythonListCode}
-              language="python"
-            />
-          </div>
-
-          {/* Get Message Details */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Get Message Details</h3>
-            <CodeBlock
-              code={pythonDetailsCode}
-              language="python"
-            />
-          </div>
-
-          {/* Search Messages */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Search Messages</h3>
-            <CodeBlock
-              code={pythonSearchCode}
-              language="python"
-            />
-          </div>
-
-          {/* Extract Tokens */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Extract Verification Codes & Tokens</h3>
-            <CodeBlock
-              code={pythonExtractCode}
-              language="python"
-            />
-          </div>
-
-          {/* Automated Testing */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Automated Testing Example</h3>
-            <CodeBlock
-              code={pythonTestingCode}
-              language="python"
-            />
-          </div>
-
-          {/* WebSocket Monitoring */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Real-Time Monitoring with WebSocket</h3>
-            <p class="text-gray-700 mb-4">Monitor incoming messages in real-time:</p>
-            <CodeBlock
-              code={`pip install websocket-client`}
-              language="bash"
-              title="Install WebSocket client"
-            />
-            <CodeBlock
-              code={pythonWebSocketCode}
-              language="python"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* JavaScript Section */}
-      <div id="javascript" class="scroll-mt-24 border-t-2 border-gray-200 pt-16">
-        <div class="flex items-center gap-3 mb-8">
-          <Icon name="mdi:language-javascript" class="w-8 h-8 text-yellow-600" />
-          <h2 class="font-display text-3xl font-bold text-anthracite">JavaScript</h2>
-        </div>
-
-        <div class="space-y-8">
-          {/* Setup */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Setup</h3>
-            <p class="text-gray-700 mb-4">No installation needed - use native Fetch API (modern browsers) or install axios:</p>
-            <CodeBlock
-              code={`npm install axios`}
-              language="bash"
-              title="Install axios (optional)"
-            />
-          </div>
-
-          {/* List Messages */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">List All Messages</h3>
-            <CodeBlock
-              code={`// Using Fetch API
+// JavaScript examples
+const jsListCode = `// Using Fetch API
 async function getMessages() {
   try {
     const response = await fetch('http://127.0.0.1:1080/messages');
@@ -348,16 +228,9 @@ async function getMessages() {
   }
 }
 
-getMessages();`}
-              language="javascript"
-            />
-          </div>
+getMessages();`;
 
-          {/* Get Message Details */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Get Message Details</h3>
-            <CodeBlock
-              code={`// Get message metadata
+const jsDetailsCode = `// Get message metadata
 const messageId = 1;
 
 const metadata = await fetch(
@@ -382,16 +255,9 @@ const plainText = await fetch(
   \`http://127.0.0.1:1080/messages/\${messageId}.plain\`
 ).then(r => r.text());
 
-console.log(plainText);`}
-              language="javascript"
-            />
-          </div>
+console.log(plainText);`;
 
-          {/* Search Messages */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Search Messages</h3>
-            <CodeBlock
-              code={`// Search for messages
+const jsSearchCode = `// Search for messages
 async function searchMessages(query, options = {}) {
   const params = new URLSearchParams({
     q: query,
@@ -417,16 +283,9 @@ const recent = await searchMessages('reset', {
   from: today
 });
 
-console.log(\`Recent reset messages: \${recent.length}\`);`}
-              language="javascript"
-            />
-          </div>
+console.log(\`Recent reset messages: \${recent.length}\`);`;
 
-          {/* Extract Tokens */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Extract Verification Codes & Links</h3>
-            <CodeBlock
-              code={`// Extract OTP code
+const jsExtractCode = `// Extract OTP code
 async function getOTPCode(messageId) {
   const response = await fetch(
     \`http://127.0.0.1:1080/messages/\${messageId}/extract?type=otp\`
@@ -457,16 +316,9 @@ const parsed = await getParsedData(1);
 console.log('OTP:', parsed.otp_code);
 console.log('Verify URL:', parsed.verification_url);
 console.log('Reset Token:', parsed.reset_token);
-console.log('All Links:', parsed.all_links);`}
-              language="javascript"
-            />
-          </div>
+console.log('All Links:', parsed.all_links);`;
 
-          {/* Testing Helper */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Testing Helper Class</h3>
-            <CodeBlock
-              code={`class MailCatcherHelper {
+const jsHelperCode = `class MailCatcherHelper {
   constructor(baseUrl = 'http://127.0.0.1:1080') {
     this.baseUrl = baseUrl;
   }
@@ -522,16 +374,9 @@ const verifyLink = await mail.extractVerificationLink(signupEmail.id);
 console.log('Verify link:', verifyLink);
 
 // Clean up
-await mail.clearMessages();`}
-              language="javascript"
-            />
-          </div>
+await mail.clearMessages();`;
 
-          {/* Real-Time Monitoring */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Real-Time Monitoring with WebSocket</h3>
-            <CodeBlock
-              code={`class MailMonitor {
+const jsWebSocketCode = `class MailMonitor {
   constructor(baseUrl = 'http://127.0.0.1:1080') {
     this.ws = new WebSocket(baseUrl.replace('http', 'ws') + '/messages');
     this.setupListeners();
@@ -570,42 +415,10 @@ monitor.onNewMessage((msg) => {
 });
 
 // Stop monitoring
-// monitor.close();`}
-              language="javascript"
-            />
-          </div>
-        </div>
-      </div>
+// monitor.close();`;
 
-      {/* Ruby Section */}
-      <div id="ruby" class="scroll-mt-24 border-t-2 border-gray-200 pt-16">
-        <div class="flex items-center gap-3 mb-8">
-          <Icon name="mdi:language-ruby" class="w-8 h-8 text-red-600" />
-          <h2 class="font-display text-3xl font-bold text-anthracite">Ruby</h2>
-        </div>
-
-        <div class="space-y-8">
-          {/* Setup */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Setup</h3>
-            <p class="text-gray-700 mb-4">Install the HTTP client gem:</p>
-            <CodeBlock
-              code={`gem 'httparty'`}
-              language="ruby"
-              title="Gemfile"
-            />
-            <CodeBlock
-              code={`bundle install`}
-              language="bash"
-              title="Or install directly"
-            />
-          </div>
-
-          {/* List Messages */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">List All Messages</h3>
-            <CodeBlock
-              code={`require 'httparty'
+// Ruby examples
+const rubyListCode = `require 'httparty'
 
 class MailCatcher
   include HTTParty
@@ -621,16 +434,9 @@ messages.each do |msg|
   puts "[#{msg['id']}] #{msg['subject']}"
   puts "    From: #{msg['from'].join(', ')}"
   puts "    To: #{msg['to'].join(', ')}"
-end`}
-              language="ruby"
-            />
-          </div>
+end`;
 
-          {/* Get Message Details */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Get Message Details</h3>
-            <CodeBlock
-              code={`require 'httparty'
+const rubyDetailsCode = `require 'httparty'
 require 'json'
 
 class MailCatcher
@@ -652,16 +458,9 @@ html = MailCatcher.get('/messages/1.html')
 plain = MailCatcher.get('/messages/1.plain')
 
 # Save to file
-File.write('email.html', html.body)`}
-              language="ruby"
-            />
-          </div>
+File.write('email.html', html.body)`;
 
-          {/* Search Messages */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Search Messages</h3>
-            <CodeBlock
-              code={`require 'httparty'
+const rubySearchCode = `require 'httparty'
 
 class MailCatcher
   include HTTParty
@@ -683,16 +482,9 @@ results = MailCatcher.get('/messages/search', query: {
   from: yesterday
 })
 
-results.each { |msg| puts msg['subject'] }`}
-              language="ruby"
-            />
-          </div>
+results.each { |msg| puts msg['subject'] }`;
 
-          {/* Extract Tokens */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Extract Verification Codes & Links</h3>
-            <CodeBlock
-              code={`require 'httparty'
+const rubyExtractCode = `require 'httparty'
 
 class MailCatcher
   include HTTParty
@@ -722,16 +514,9 @@ puts "Unsubscribe: #{parsed['unsubscribe_link']}"
 # Iterate all links
 parsed['all_links'].each do |link|
   puts "#{link['text']}: #{link['href']}"
-end`}
-              language="ruby"
-            />
-          </div>
+end`;
 
-          {/* Testing Helper */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">Testing Helper Class</h3>
-            <CodeBlock
-              code={`require 'httparty'
+const rubyClientCode = `require 'httparty'
 
 class MailCatcherClient
   include HTTParty
@@ -797,16 +582,9 @@ otp = client.get_otp_code(email['id'])
 puts "OTP: #{otp}"
 
 # Clean up
-client.clear_messages`}
-              language="ruby"
-            />
-          </div>
+client.clear_messages`;
 
-          {/* Rspec Integration */}
-          <div>
-            <h3 class="font-display font-semibold text-anthracite mb-4">RSpec Integration</h3>
-            <CodeBlock
-              code={`# spec/support/mail_catcher.rb
+const rubyRSpecCode = `# spec/support/mail_catcher.rb
 require 'httparty'
 
 class MailCatcherHelper
@@ -852,13 +630,217 @@ RSpec.describe 'User Signup', type: :feature do
     expect(email).to be_present
     expect(email['subject']).to include('Verify')
   end
-end`}
-              language="ruby"
-            />
+end`;
+---
+
+<Layout title="API Code Examples - MailCatcher NG" description="Complete code examples for integrating MailCatcher NG with Python, JavaScript, and Ruby." currentPage="api">
+  {/* Header */}
+  <section class="bg-forest-50 border-b border-forest-200 py-12 px-6 sm:px-8">
+    <div class="max-w-6xl mx-auto">
+      <a href="/api/" class="text-forest-600 hover:text-forest-700 font-medium text-sm mb-4 inline-flex items-center gap-1">
+        <Icon name="mdi:arrow-left" class="w-4 h-4" />
+        Back to API Reference
+      </a>
+      <h1 class="font-display text-4xl font-bold text-anthracite mb-4">Code Examples</h1>
+      <p class="text-gray-600 max-w-2xl">Complete working examples for integrating MailCatcher NG with your application in Python, JavaScript, and Ruby.</p>
+    </div>
+  </section>
+
+  {/* Content */}
+  <section class="py-12 px-6 sm:px-8">
+    <div class="max-w-6xl mx-auto flex gap-8">
+      {/* Left Sidebar Navigation */}
+      <nav class="hidden lg:block w-48 flex-shrink-0">
+        <div class="sticky top-24 space-y-8">
+          {/* Python Section */}
+          <div>
+            <h3 class="text-xs font-semibold text-anthracite uppercase tracking-wide mb-3">Python</h3>
+            <ul class="space-y-2 text-sm">
+              <li><a href="#python-setup" class="text-gray-600 hover:text-forest-600 transition-colors">Setup</a></li>
+              <li><a href="#python-list" class="text-gray-600 hover:text-forest-600 transition-colors">List Messages</a></li>
+              <li><a href="#python-details" class="text-gray-600 hover:text-forest-600 transition-colors">Message Details</a></li>
+              <li><a href="#python-search" class="text-gray-600 hover:text-forest-600 transition-colors">Search</a></li>
+              <li><a href="#python-extract" class="text-gray-600 hover:text-forest-600 transition-colors">Extract Tokens</a></li>
+              <li><a href="#python-testing" class="text-gray-600 hover:text-forest-600 transition-colors">Testing</a></li>
+              <li><a href="#python-websocket" class="text-gray-600 hover:text-forest-600 transition-colors">WebSocket</a></li>
+            </ul>
+          </div>
+
+          {/* JavaScript Section */}
+          <div>
+            <h3 class="text-xs font-semibold text-anthracite uppercase tracking-wide mb-3">JavaScript</h3>
+            <ul class="space-y-2 text-sm">
+              <li><a href="#js-setup" class="text-gray-600 hover:text-forest-600 transition-colors">Setup</a></li>
+              <li><a href="#js-list" class="text-gray-600 hover:text-forest-600 transition-colors">List Messages</a></li>
+              <li><a href="#js-details" class="text-gray-600 hover:text-forest-600 transition-colors">Message Details</a></li>
+              <li><a href="#js-search" class="text-gray-600 hover:text-forest-600 transition-colors">Search</a></li>
+              <li><a href="#js-extract" class="text-gray-600 hover:text-forest-600 transition-colors">Extract Tokens</a></li>
+              <li><a href="#js-testing" class="text-gray-600 hover:text-forest-600 transition-colors">Testing</a></li>
+              <li><a href="#js-websocket" class="text-gray-600 hover:text-forest-600 transition-colors">WebSocket</a></li>
+            </ul>
+          </div>
+
+          {/* Ruby Section */}
+          <div>
+            <h3 class="text-xs font-semibold text-anthracite uppercase tracking-wide mb-3">Ruby</h3>
+            <ul class="space-y-2 text-sm">
+              <li><a href="#ruby-setup" class="text-gray-600 hover:text-forest-600 transition-colors">Setup</a></li>
+              <li><a href="#ruby-list" class="text-gray-600 hover:text-forest-600 transition-colors">List Messages</a></li>
+              <li><a href="#ruby-details" class="text-gray-600 hover:text-forest-600 transition-colors">Message Details</a></li>
+              <li><a href="#ruby-search" class="text-gray-600 hover:text-forest-600 transition-colors">Search</a></li>
+              <li><a href="#ruby-extract" class="text-gray-600 hover:text-forest-600 transition-colors">Extract Tokens</a></li>
+              <li><a href="#ruby-testing" class="text-gray-600 hover:text-forest-600 transition-colors">Testing</a></li>
+              <li><a href="#ruby-rspec" class="text-gray-600 hover:text-forest-600 transition-colors">RSpec</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div class="flex-1 space-y-16">
+
+      {/* Python Section */}
+      <div id="python" class="scroll-mt-24">
+        <div class="flex items-center gap-3 mb-8">
+          <Icon name="mdi:language-python" class="w-8 h-8 text-blue-600" />
+          <h2 class="font-display text-3xl font-bold text-anthracite">Python</h2>
+        </div>
+
+        <div class="space-y-8">
+          <div id="python-setup">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Setup</h3>
+            <p class="text-gray-700 mb-4">Install the required HTTP client library:</p>
+            <ExampleCode code="pip install requests" language="bash" title="Install dependencies" />
+          </div>
+
+          <div id="python-list">
+            <h3 class="font-display font-semibold text-anthracite mb-4">List All Messages</h3>
+            <ExampleCode code={pythonListCode} language="python" />
+          </div>
+
+          <div id="python-details">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Get Message Details</h3>
+            <ExampleCode code={pythonDetailsCode} language="python" />
+          </div>
+
+          <div id="python-search">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Search Messages</h3>
+            <ExampleCode code={pythonSearchCode} language="python" />
+          </div>
+
+          <div id="python-extract">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Extract Verification Codes & Tokens</h3>
+            <ExampleCode code={pythonExtractCode} language="python" />
+          </div>
+
+          <div id="python-testing">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Automated Testing Example</h3>
+            <ExampleCode code={pythonTestingCode} language="python" />
+          </div>
+
+          <div id="python-websocket">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Real-Time Monitoring with WebSocket</h3>
+            <p class="text-gray-700 mb-4">Monitor incoming messages in real-time:</p>
+            <ExampleCode code="pip install websocket-client" language="bash" title="Install WebSocket client" />
+            <ExampleCode code={pythonWebSocketCode} language="python" />
           </div>
         </div>
       </div>
 
+      {/* JavaScript Section */}
+      <div id="javascript" class="scroll-mt-24 border-t-2 border-gray-200 pt-16">
+        <div class="flex items-center gap-3 mb-8">
+          <Icon name="mdi:language-javascript" class="w-8 h-8 text-yellow-600" />
+          <h2 class="font-display text-3xl font-bold text-anthracite">JavaScript</h2>
+        </div>
+
+        <div class="space-y-8">
+          <div id="js-setup">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Setup</h3>
+            <p class="text-gray-700 mb-4">No installation needed - use native Fetch API (modern browsers) or install axios:</p>
+            <ExampleCode code="npm install axios" language="bash" title="Install axios (optional)" />
+          </div>
+
+          <div id="js-list">
+            <h3 class="font-display font-semibold text-anthracite mb-4">List All Messages</h3>
+            <ExampleCode code={jsListCode} language="javascript" />
+          </div>
+
+          <div id="js-details">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Get Message Details</h3>
+            <ExampleCode code={jsDetailsCode} language="javascript" />
+          </div>
+
+          <div id="js-search">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Search Messages</h3>
+            <ExampleCode code={jsSearchCode} language="javascript" />
+          </div>
+
+          <div id="js-extract">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Extract Verification Codes & Links</h3>
+            <ExampleCode code={jsExtractCode} language="javascript" />
+          </div>
+
+          <div id="js-testing">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Testing Helper Class</h3>
+            <ExampleCode code={jsHelperCode} language="javascript" />
+          </div>
+
+          <div id="js-websocket">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Real-Time Monitoring with WebSocket</h3>
+            <ExampleCode code={jsWebSocketCode} language="javascript" />
+          </div>
+        </div>
+      </div>
+
+      {/* Ruby Section */}
+      <div id="ruby" class="scroll-mt-24 border-t-2 border-gray-200 pt-16">
+        <div class="flex items-center gap-3 mb-8">
+          <Icon name="mdi:language-ruby" class="w-8 h-8 text-red-600" />
+          <h2 class="font-display text-3xl font-bold text-anthracite">Ruby</h2>
+        </div>
+
+        <div class="space-y-8">
+          <div id="ruby-setup">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Setup</h3>
+            <p class="text-gray-700 mb-4">Install the HTTP client gem:</p>
+            <ExampleCode code="gem 'httparty'" language="ruby" title="Gemfile" />
+            <ExampleCode code="bundle install" language="bash" title="Or install directly" />
+          </div>
+
+          <div id="ruby-list">
+            <h3 class="font-display font-semibold text-anthracite mb-4">List All Messages</h3>
+            <ExampleCode code={rubyListCode} language="ruby" />
+          </div>
+
+          <div id="ruby-details">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Get Message Details</h3>
+            <ExampleCode code={rubyDetailsCode} language="ruby" />
+          </div>
+
+          <div id="ruby-search">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Search Messages</h3>
+            <ExampleCode code={rubySearchCode} language="ruby" />
+          </div>
+
+          <div id="ruby-extract">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Extract Verification Codes & Links</h3>
+            <ExampleCode code={rubyExtractCode} language="ruby" />
+          </div>
+
+          <div id="ruby-testing">
+            <h3 class="font-display font-semibold text-anthracite mb-4">Testing Helper Class</h3>
+            <ExampleCode code={rubyClientCode} language="ruby" />
+          </div>
+
+          <div id="ruby-rspec">
+            <h3 class="font-display font-semibold text-anthracite mb-4">RSpec Integration</h3>
+            <ExampleCode code={rubyRSpecCode} language="ruby" />
+          </div>
+        </div>
+      </div>
+
+      </div>
     </div>
   </section>
 </Layout>

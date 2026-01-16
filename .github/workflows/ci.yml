@@ -6,8 +6,14 @@ permissions:
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'website_src/**'
+      - '.github/workflows/deploy-docs.yml'
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'website_src/**'
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch: ~
 
 jobs:
