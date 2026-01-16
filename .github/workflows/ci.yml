@@ -17,6 +17,37 @@ on:
   workflow_dispatch: ~
 
 jobs:
+  check-files:
+    name: Check which files changed
+    runs-on: ubuntu-latest
+    outputs:
+      is-website-only: ${{ steps.check.outputs.website-only }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Determine if only website files changed
+        id: check
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_COMMIT="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE_COMMIT="${{ github.event.before }}"
+          fi
+
+          CHANGED_FILES=$(git diff --name-only $BASE_COMMIT HEAD 2>/dev/null || echo "")
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "website-only=false" >> $GITHUB_OUTPUT
+          else
+            HAS_NON_WEBSITE=$(echo "$CHANGED_FILES" | grep -v '^website_src/' | grep -v '^\.github/workflows/deploy-docs\.yml$' || echo "")
+            if [ -z "$HAS_NON_WEBSITE" ]; then
+              echo "website-only=true" >> $GITHUB_OUTPUT
+            else
+              echo "website-only=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
   test:
     strategy:
       matrix:
@@ -25,6 +56,8 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
+    needs: check-files
+    if: needs.check-files.outputs.is-website-only == 'false'
 
     steps:
     - uses: actions/checkout@v4
@@ -59,12 +92,15 @@ jobs:
   ci-summary:
     name: CI                  # ← This makes the status check appear as plain "CI"
     runs-on: ubuntu-latest
-    needs: test
+    needs: [check-files, test]
     if: always()              # Crucial: run this job even if matrix failed/cancelled
     steps:
-      - name: Determine overall matrix result
+      - name: Determine overall result
         run: |
-          if [[ "${{ needs.test.result }}" == "success" ]]; then
+          if [ "${{ needs.check-files.outputs.is-website-only }}" == "true" ]; then
+            echo "Only website files changed - skipping gem CI ✓"
+            exit 0
+          elif [[ "${{ needs.test.result }}" == "success" ]]; then
             echo "All matrix combinations passed ✓"
             exit 0
           else
