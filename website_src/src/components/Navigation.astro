@@ -1,0 +1,65 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  currentPage?: string;
+}
+
+const { currentPage = 'home' } = Astro.props;
+
+const navItems = [
+  { label: 'Features', href: '/#features', icon: 'mdi:star' },
+  { label: 'Usage', href: '/usage/', icon: 'mdi:book' },
+  { label: 'API', href: '/api/', icon: 'mdi:api' },
+  { label: 'AI Integration', href: '/ai-integration/', icon: 'mdi:brain' },
+];
+---
+
+<nav class="sticky top-0 z-50 bg-cream/95 backdrop-blur-md border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      {/* Logo */}
+      <a href="/" class="flex items-center gap-2 group">
+        <div class="w-8 h-8 rounded-lg bg-forest-600 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+          <Icon name="mdi:mail" class="w-5 h-5 text-white" />
+        </div>
+        <span class="font-display font-bold text-lg text-anthracite hidden sm:inline">
+          MailCatcher<span class="text-forest-600">NG</span>
+        </span>
+      </a>
+
+      {/* Desktop Navigation */}
+      <div class="hidden md:flex items-center gap-8">
+        {navItems.map(item => (
+          <a
+            href={item.href}
+            class={`flex items-center gap-1 text-sm font-medium transition-colors duration-200 ${
+              currentPage === item.label.toLowerCase()
+                ? 'text-forest-600'
+                : 'text-anthracite hover:text-forest-600'
+            }`}
+          >
+            <Icon name={item.icon} class="w-4 h-4" />
+            {item.label}
+          </a>
+        ))}
+      </div>
+
+      {/* CTA Button */}
+      <div class="flex items-center gap-4">
+        <a
+          href="https://github.com/spaquet/mailcatcher"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-ghost hidden sm:inline-flex"
+          aria-label="GitHub"
+        >
+          <Icon name="mdi:github" class="w-5 h-5" />
+        </a>
+        <a href="/advanced/#quick-start" class="btn-primary text-sm">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

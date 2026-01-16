@@ -4,7 +4,8 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'docs/**'
+      - 'website_src/**'
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch: ~
 
 jobs:
@@ -34,22 +35,18 @@ jobs:
       with:
         node-version: '22'
 
-    - name: Install dependencies
+    - name: Install dependencies in website_src
+      working-directory: website_src
       run: npm ci
 
-    - name: Inject Google Tag Manager
-      run: node scripts/inject-gtm.js
-
-    - name: Generate Sitemap
-      uses: cicirello/generate-sitemap@v1
-      with:
-        base-url-path: https://spaquet.github.io/mailcatcher/
-        path-to-root: docs
+    - name: Build with Astro
+      working-directory: website_src
+      run: npm run build
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: 'docs'
+        path: 'website_src/dist'
 
     - name: Deploy to GitHub Pages
       id: deployment
