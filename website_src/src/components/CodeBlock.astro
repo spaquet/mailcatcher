@@ -1,0 +1,75 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  code: string;
+  language?: string;
+  title?: string;
+}
+
+const { code, language = 'bash', title } = Astro.props;
+---
+
+<div class="relative rounded-lg overflow-hidden bg-anthracite border border-gray-700 group">
+  {/* Header */}
+  <div class="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-700">
+    {title && <span class="text-xs font-mono text-gray-400">{title}</span>}
+    {!title && <span class="text-xs font-mono text-gray-500">{language}</span>}
+    <button
+      class="copy-button flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-gray-400 hover:text-forest-400 hover:bg-gray-800 transition-all duration-200"
+      data-code={code}
+      aria-label="Copy code"
+    >
+      <Icon name="mdi:content-copy" class="w-4 h-4" />
+      <span class="copy-text">Copy</span>
+    </button>
+  </div>
+
+  {/* Code */}
+  <div class="overflow-x-auto">
+    <pre class="px-4 py-4 text-gray-100 text-sm font-mono leading-relaxed"><code>{code}</code></pre>
+  </div>
+</div>
+
+<style>
+  .copy-button {
+    outline: none;
+  }
+
+  .copy-button:focus {
+    outline: 2px solid #1f5e3d;
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButtons = document.querySelectorAll('.copy-button');
+
+    copyButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const code = button.getAttribute('data-code');
+        const copyText = button.querySelector('.copy-text');
+
+        if (!code) return;
+
+        try {
+          await navigator.clipboard.writeText(code);
+
+          // Visual feedback
+          const originalText = copyText!.textContent;
+          copyText!.textContent = 'Copied!';
+          button.classList.add('text-forest-500');
+
+          setTimeout(() => {
+            copyText!.textContent = originalText;
+            button.classList.remove('text-forest-500');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+          copyText!.textContent = 'Failed';
+        }
+      });
+    });
+  });
+</script>

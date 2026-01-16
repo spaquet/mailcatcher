@@ -1,0 +1,116 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface ApiEndpoint {
+  id: string;
+  label: string;
+  method: 'GET' | 'POST' | 'DELETE';
+  path: string;
+}
+
+const endpoints: ApiEndpoint[] = [
+  // Basic Operations
+  { id: 'list-messages', label: 'List Messages', method: 'GET', path: '/messages' },
+  { id: 'get-metadata', label: 'Get Message Metadata', method: 'GET', path: '/messages/:id.json' },
+  { id: 'get-html', label: 'Get HTML Content', method: 'GET', path: '/messages/:id.html' },
+  { id: 'get-plain', label: 'Get Plain Text', method: 'GET', path: '/messages/:id.plain' },
+  { id: 'get-source', label: 'Get Message Source', method: 'GET', path: '/messages/:id.source' },
+  { id: 'download-eml', label: 'Download as EML', method: 'GET', path: '/messages/:id.eml' },
+
+  // Advanced Operations
+  { id: 'get-transcript-json', label: 'Get SMTP Transcript (JSON)', method: 'GET', path: '/messages/:id/transcript.json' },
+  { id: 'get-transcript-html', label: 'Get SMTP Transcript (HTML)', method: 'GET', path: '/messages/:id.transcript' },
+  { id: 'get-parts', label: 'Download Attachment', method: 'GET', path: '/messages/:id/parts/:cid' },
+  { id: 'search-messages', label: 'Search Messages', method: 'GET', path: '/messages/search' },
+  { id: 'extract-tokens', label: 'Extract Tokens/OTP', method: 'GET', path: '/messages/:id/extract' },
+  { id: 'get-links', label: 'Extract Links', method: 'GET', path: '/messages/:id/links.json' },
+  { id: 'parse-data', label: 'Parse Structured Data', method: 'GET', path: '/messages/:id/parsed.json' },
+  { id: 'accessibility', label: 'Accessibility Score', method: 'GET', path: '/messages/:id/accessibility.json' },
+
+  // Management
+  { id: 'forward-message', label: 'Forward Message', method: 'POST', path: '/messages/:id/forward' },
+  { id: 'delete-message', label: 'Delete Message', method: 'DELETE', path: '/messages/:id' },
+  { id: 'delete-all', label: 'Delete All Messages', method: 'DELETE', path: '/messages' },
+
+  // System
+  { id: 'server-info', label: 'Server Info', method: 'GET', path: '/server-info' },
+  { id: 'websocket', label: 'WebSocket (Real-time)', method: 'GET', path: '/messages (WebSocket)' },
+  { id: 'quit', label: 'Shutdown Server', method: 'DELETE', path: '/' },
+];
+
+const methodColors = {
+  GET: 'text-blue-600',
+  POST: 'text-green-600',
+  DELETE: 'text-red-600',
+};
+---
+
+<div class="hidden lg:block lg:w-64 border-r border-gray-200 bg-gray-50 h-screen overflow-y-auto sticky top-24">
+  <div class="p-6 space-y-2">
+    <h3 class="font-display font-semibold text-anthracite mb-4">API Endpoints</h3>
+
+    {/* Basic Operations */}
+    <div class="space-y-1 mb-6">
+      <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 py-2">Basic Operations</h4>
+      {endpoints.slice(0, 6).map(endpoint => (
+        <a
+          href={`#${endpoint.id}`}
+          class="block px-3 py-2 rounded-lg text-sm hover:bg-white transition-colors duration-200"
+        >
+          <span class={`font-mono font-bold ${methodColors[endpoint.method]}`}>{endpoint.method}</span>
+          <span class="text-gray-700 ml-2">{endpoint.label}</span>
+        </a>
+      ))}
+    </div>
+
+    {/* Advanced Operations */}
+    <div class="space-y-1 mb-6">
+      <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 py-2">Advanced</h4>
+      {endpoints.slice(6, 14).map(endpoint => (
+        <a
+          href={`#${endpoint.id}`}
+          class="block px-3 py-2 rounded-lg text-sm hover:bg-white transition-colors duration-200"
+        >
+          <span class={`font-mono font-bold ${methodColors[endpoint.method]}`}>{endpoint.method}</span>
+          <span class="text-gray-700 ml-2">{endpoint.label}</span>
+        </a>
+      ))}
+    </div>
+
+    {/* Management */}
+    <div class="space-y-1 mb-6">
+      <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 py-2">Management</h4>
+      {endpoints.slice(14, 17).map(endpoint => (
+        <a
+          href={`#${endpoint.id}`}
+          class="block px-3 py-2 rounded-lg text-sm hover:bg-white transition-colors duration-200"
+        >
+          <span class={`font-mono font-bold ${methodColors[endpoint.method]}`}>{endpoint.method}</span>
+          <span class="text-gray-700 ml-2">{endpoint.label}</span>
+        </a>
+      ))}
+    </div>
+
+    {/* System */}
+    <div class="space-y-1">
+      <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 py-2">System</h4>
+      {endpoints.slice(17).map(endpoint => (
+        <a
+          href={`#${endpoint.id}`}
+          class="block px-3 py-2 rounded-lg text-sm hover:bg-white transition-colors duration-200"
+        >
+          <span class={`font-mono font-bold ${methodColors[endpoint.method]}`}>{endpoint.method}</span>
+          <span class="text-gray-700 ml-2">{endpoint.label}</span>
+        </a>
+      ))}
+    </div>
+
+    {/* Code Examples Link */}
+    <div class="border-t border-gray-200 pt-6 mt-6">
+      <a href="/api/examples/" class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold text-forest-600 hover:bg-white transition-colors duration-200">
+        <Icon name="mdi:code" class="w-4 h-4" />
+        Code Examples
+      </a>
+    </div>
+  </div>
+</div>

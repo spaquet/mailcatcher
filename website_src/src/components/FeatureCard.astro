@@ -1,0 +1,29 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  icon: string;
+  title: string;
+  description: string;
+  href?: string;
+}
+
+const { icon, title, description, href } = Astro.props;
+---
+
+<div class="feature-card">
+  <div class="w-12 h-12 rounded-lg bg-forest-50 flex items-center justify-center mb-4 group-hover:bg-forest-100 transition-colors duration-300">
+    <Icon name={icon} class="w-6 h-6 text-forest-600" />
+  </div>
+  <h3 class="font-display font-semibold text-lg text-anthracite mb-2">{title}</h3>
+  <p class="text-gray-600 text-sm leading-relaxed mb-4">{description}</p>
+  {href && (
+    <a
+      href={href}
+      class="text-forest-600 font-medium text-sm hover:text-forest-700 inline-flex items-center gap-1 group/link"
+    >
+      Learn more
+      <Icon name="mdi:arrow-right" class="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-200" />
+    </a>
+  )}
+</div>

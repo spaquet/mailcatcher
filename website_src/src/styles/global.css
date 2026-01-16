@@ -1,1 +1,72 @@
 @import "tailwindcss";
+
+@theme {
+  --color-cream: #f9f7f4;
+  --color-anthracite: #2d3436;
+  --color-forest-50: #f0f7f3;
+  --color-forest-100: #dceee6;
+  --color-forest-200: #b8dcd2;
+  --color-forest-300: #7fc4ac;
+  --color-forest-400: #4aac88;
+  --color-forest-500: #2d9b72;
+  --color-forest-600: #1f5e3d;
+  --color-forest-700: #1a4a31;
+  --color-forest-800: #153829;
+  --color-forest-900: #0f2820;
+
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    @apply bg-cream text-anthracite;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  body {
+    @apply font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@layer components {
+  .hero-gradient {
+    @apply bg-gradient-to-br from-cream via-forest-50 to-cream;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg bg-forest-600 text-white font-semibold text-base transition-all duration-300 hover:bg-forest-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-forest-500 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-lg border-2 border-forest-600 text-forest-600 font-semibold text-base transition-all duration-300 hover:bg-forest-50 focus:outline-none focus:ring-2 focus:ring-forest-500 focus:ring-offset-2;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-4 py-2 text-anthracite hover:text-forest-600 transition-colors duration-200;
+  }
+
+  .code-block {
+    @apply bg-anthracite text-gray-100 px-4 py-3 rounded-lg font-mono text-sm overflow-x-auto;
+  }
+
+  .feature-card {
+    @apply p-6 rounded-xl bg-white border border-gray-200 hover:border-forest-300 hover:shadow-lg transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
