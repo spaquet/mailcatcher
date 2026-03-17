@@ -49,8 +49,8 @@ bundle exec rake spec                    # Run tests
 bundle exec mailcatcher --foreground     # Run locally
 
 # Build
-bundle exec rake gem                     # Build gem
-bundle exec rake release                 # Release to RubyGems
+bundle exec rake gem                     # Build gem locally
+# Note: Gem publishing is handled by GitHub Actions, not manual release
 ```
 
 ### Tech Stack
@@ -213,6 +213,8 @@ npm update
 
 ### Release a New Version
 
+Releases are automated via GitHub Actions. Follow this process:
+
 ```bash
 # 1. Update version
 vim lib/mail_catcher/version.rb
@@ -220,17 +222,26 @@ vim lib/mail_catcher/version.rb
 # 2. Update CHANGELOG
 vim CHANGELOG.md
 
-# 3. Test everything
+# 3. Test everything locally
 bundle exec rake spec
 cd website_src && npm run build && cd ..
 
-# 4. Commit
+# 4. Commit and push
 git add -A
-git commit -m "Release v1.X.X"
+git commit -m "Release v1.X.X: [description]"
+git push origin [your-branch]
 
-# 5. Release gem
-bundle exec rake release
+# 5. Merge to main
+# Create a PR and merge to main branch
+# OR: git checkout main && git merge [your-branch] && git push origin main
+
+# 6. GitHub Actions will:
+#    - Run tests (.github/workflows/ci.yml)
+#    - If tests pass, publish gem to RubyGems
+#    - Build and deploy website
 ```
+
+**Note:** The actual gem publishing happens automatically via `.github/workflows/release.yml` when changes are pushed to main. Do not run `bundle exec rake release` manually.
 
 ### Troubleshooting
 
