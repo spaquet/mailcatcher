@@ -11,8 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Docker**: Updated Ruby to 4.0.1 with Alpine Linux 3.23 for better compatibility and security
-- **Docker**: Added libstdc++ dependency for EventMachine C extension support in Alpine
+- Gem updates: Updated 21 dependencies to latest versions for security and compatibility
+- Removed Dockerfile and docker rake task (Docker builds managed separately)
 
 ### Dependencies
 
