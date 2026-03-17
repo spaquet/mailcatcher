@@ -1,216 +1,86 @@
-# MailCatcher NG - Development Guide for Claude Code
+# Project Overview
 
-This repository contains two interconnected projects:
+This repository contains two projects:
 
-1. **MailCatcher NG** - A Ruby gem that catches emails for development
-2. **MailCatcher Website** - An Astro v6 website promoting the project
+1. **MailCatcher NG** - Ruby gem (`mailcatcher-ng`) that catches emails during development
+2. **Website** - Astro v6 website in `website_src/` promoting the project
 
-## Project Structure
+## Directory Structure
 
 ```
 mailcatcher/
 ├── bin/                          # Gem executables
-├── lib/                          # Ruby gem source code
-├── spec/                         # Ruby gem tests
-├── Gemfile, Rakefile, *.gemspec  # Gem configuration
+├── lib/                          # Gem source code
+├── spec/                         # Gem tests (RSpec)
+├── Gemfile, Rakefile, *.gemspec  # Ruby configuration
 ├── website_src/                  # Astro v6 website
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── astro.config.mjs
-├── reference/                    # Documentation
-│   ├── INSTALLATION.md
-│   ├── INTEGRATIONS.md
-│   └── API.md
-└── CLAUDE.md                     # This file
+│   ├── src/                      # Pages and components
+│   ├── astro.config.mjs
+│   └── package.json
+└── reference/                    # User documentation
 ```
 
-## The Ruby Gem: MailCatcher NG
+## The Ruby Gem
 
-### Overview
+**Tech Stack:** Ruby 3.2-4.0, ERB, SQLite, RSpec
 
-MailCatcher NG is a Ruby gem that intercepts emails sent during development, providing a web UI to view and manage them. It includes integrated support for Claude via MCP Server and Claude Plugin.
-
-**Key Features:**
-- SMTP server to catch email
-- Web UI to browse messages
-- Extract tokens, OTPs, and verification links
-- Full-text search
-- Claude Plugin for AI-assisted email testing
-- MCP Server for programmatic access
-- SQLite persistence (optional)
-
-### Setup
+**Setup:**
 
 ```bash
-# Development
 bundle install
-bundle exec rake spec                    # Run tests
-bundle exec mailcatcher --foreground     # Run locally
-
-# Build
-bundle exec rake gem                     # Build gem locally
-# Note: Gem publishing is handled by GitHub Actions, not manual release
+bundle exec rake spec    # Run tests
+bundle exec mailcatcher  # Run locally
 ```
 
-### Tech Stack
+**Key files:**
 
-- **Language:** Ruby (requires 3.2+, tested up to 4.0.1)
-- **Web UI:** ERB templates with CSS/JS
-- **Database:** SQLite (optional)
-- **Tests:** RSpec
-- **Build:** Bundler, Rake
+- `lib/mail_catcher/version.rb` - Version number
+- `lib/mail_catcher/` - Source code
+- `spec/` - Tests
+- `Rakefile` - Build/test tasks
+- `CHANGELOG.md` - Changes
 
-### Important Files
+**When modifying the gem:**
 
-- `lib/mail_catcher/version.rb` - Version management
-- `mailcatcher-ng.gemspec` - Gem metadata
-- `lib/mail_catcher/` - Core gem code
-- `spec/` - Test suite
-- `Rakefile` - Build tasks (testing, gem building)
-
-### Development Workflow
-
-1. Make changes in `lib/mail_catcher/`
+1. Make changes in `lib/`
 2. Update version in `lib/mail_catcher/version.rb` for releases
-3. Update `CHANGELOG.md` with changes
-4. Run tests: `bundle exec rake spec`
-5. Build gem: `bundle exec rake gem`
-6. Release: `bundle exec rake release`
+3. Update `CHANGELOG.md`
+4. Run `bundle exec rake spec` before committing
+5. Commit → Push → GitHub Actions publishes to RubyGems
 
-### Claude Integration
+## The Website
 
-MailCatcher NG (v1.5.2+) includes:
+**Tech Stack:** Astro v6, Tailwind CSS, Vite, Node.js 24+
 
-**Claude Plugin** - HTTP-based integration
-```bash
-mailcatcher --plugin --foreground
-```
-Then add plugin URL: `http://localhost:1080/.well-known/ai-plugin.json`
-
-**MCP Server** - Direct programmatic access
-```bash
-mailcatcher --mcp --foreground
-```
-Configure in `~/.claude_desktop_config.json`
-
-## The Website: Astro v6
-
-### Overview
-
-The website is built with Astro v6, styled with Tailwind CSS, and uses Vite for bundling. It promotes MailCatcher NG and provides documentation.
-
-### Setup
+**Setup:**
 
 ```bash
 cd website_src
-
-# Requires Node.js 24+ (configured via .nvmrc)
-nvm use
-
-# Install dependencies
+nvm use                  # Use Node.js 24
 npm install
-
-# Development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm run dev              # Hot reload development
+npm run build            # Production build
 ```
 
-### Tech Stack
+**Key files:**
 
-- **Framework:** Astro v6
-- **Styling:** Tailwind CSS
-- **Bundler:** Vite
-- **Runtime:** Node.js 24+
-
-### Important Files
-
-- `website_src/src/pages/` - Page components (Astro format)
+- `website_src/src/pages/` - Page routes
 - `website_src/src/components/` - Reusable components
-- `website_src/astro.config.mjs` - Astro configuration
-- `website_src/tailwind.config.js` - Tailwind configuration
-- `website_src/package.json` - Dependencies and scripts
+- `website_src/astro.config.mjs` - Configuration
+- `website_src/tailwind.config.js` - Tailwind config
+- `.nvmrc` - Node.js 24 requirement
 
-### Development Workflow
+**When modifying the website:**
 
-1. Navigate to `website_src/`: `cd website_src`
-2. Ensure Node.js 24 is active: `nvm use`
-3. Make changes in `src/pages/` or `src/components/`
-4. Run `npm run dev` for hot reload
-5. Build with `npm run build` before committing
+1. cd into `website_src`
+2. Ensure `nvm use` shows Node 24+
+3. Make changes in `src/`
+4. Run `npm run build` before committing
+5. Push → GitHub Actions deploys automatically
 
-### Build & Deploy
+## Release Process
 
-- The website is built and deployed via CI/CD pipeline
-- Configuration is in `.github/workflows/`
-- Output is static HTML deployed to GitHub Pages
-
-## CI/CD & Deployment
-
-### GitHub Actions Workflows
-
-- **`.github/workflows/ci.yml`** - Runs tests on every push
-  - Tests Ruby gem across Ruby 3.2-4.0
-  - Tests website build
-  - Uses Node.js 24
-
-- **`.github/workflows/release.yml`** - Releases gem and builds website
-  - Publishes gem to RubyGems
-  - Builds and deploys website
-  - Uses Node.js 24
-
-### Version Management
-
-- Gem version: `lib/mail_catcher/version.rb`
-- Website: Uses version from gem
-- Release process: Update version → Run `bundle exec rake release`
-
-## Development Setup Checklist
-
-### For Gem Development
-
-- [ ] Ruby 3.2+ installed (or use nvm)
-- [ ] Dependencies: `bundle install`
-- [ ] Run tests: `bundle exec rake spec`
-
-### For Website Development
-
-- [ ] Node.js 24+ (configured in `.nvmrc`)
-- [ ] Dependencies: `cd website_src && npm install`
-- [ ] Can run: `npm run dev`
-
-## Documentation
-
-- **[INSTALLATION.md](reference/INSTALLATION.md)** - How to install MailCatcher
-- **[INTEGRATIONS.md](reference/INTEGRATIONS.md)** - Integration guides
-- **[API.md](reference/API.md)** - API reference
-- **[CHANGELOG.md](CHANGELOG.md)** - Version history
-
-## Common Tasks
-
-### Update Dependencies
-
-**Gem:**
-```bash
-bundle update
-# Update version in lib/mail_catcher/version.rb
-# Update CHANGELOG.md
-```
-
-**Website:**
-```bash
-cd website_src
-npm update
-```
-
-### Release a New Version
-
-Releases are automated via GitHub Actions. Follow this process:
+Releases are **automated via GitHub Actions** when you push to `main`:
 
 ```bash
 # 1. Update version
@@ -219,70 +89,56 @@ vim lib/mail_catcher/version.rb
 # 2. Update CHANGELOG
 vim CHANGELOG.md
 
-# 3. Test everything locally
-bundle exec rake spec
-cd website_src && npm run build && cd ..
-
-# 4. Commit and push
+# 3. Commit
 git add -A
-git commit -m "Release v1.X.X: [description]"
-git push origin [your-branch]
+git commit -m "Release v1.X.X: description"
 
-# 5. Merge to main
-# Create a PR and merge to main branch
-# OR: git checkout main && git merge [your-branch] && git push origin main
+# 4. Push to main
+git push origin main
+# OR merge PR to main
 
-# 6. GitHub Actions will:
-#    - Run tests (.github/workflows/ci.yml)
-#    - If tests pass, publish gem to RubyGems
-#    - Build and deploy website
+# 5. GitHub Actions automatically:
+#    - Runs tests
+#    - Publishes gem to RubyGems
+#    - Deploys website
 ```
 
-**Note:** The actual gem publishing happens automatically via `.github/workflows/release.yml` when changes are pushed to main. Do not run `bundle exec rake release` manually.
+**Do NOT manually run `bundle exec rake release`** - it's handled by the workflow.
 
-### Troubleshooting
+## Testing
 
-**Gem tests failing:**
+**Gem tests:**
+
 ```bash
-bundle exec rake spec --verbose
+bundle exec rake spec           # Run all
+bundle exec rake spec --verbose # Verbose output
 ```
 
-**Website won't build:**
+**Website build:**
+
 ```bash
-cd website_src
-rm -rf node_modules package-lock.json
-npm install
-npm run build
+cd website_src && npm run build
 ```
 
-**Node version issues:**
-```bash
-nvm use          # Applies .nvmrc setting
-node -v          # Verify version 24+
-```
+## Common Issues
 
-## Git Workflow
+| Issue | Solution |
+| --- | --- |
+| Node version wrong in website | Run `nvm use` in `website_src/` |
+| Gem tests fail | Run `bundle exec rake spec --verbose` |
+| Website won't build | `cd website_src && rm -rf node_modules && npm install && npm run build` |
+| Bundler frozen error | Run `bundle install` to update `Gemfile.lock` |
 
-- **Main branch:** `main` - production-ready code
-- **Development:** Create branches for features/fixes
-- **Release process:** Tag releases with `vX.X.X`
+## Git Branches
 
-## Key Contact Points
+- `main` - Production, deployed by GitHub Actions
+- Feature/fix branches - Create and PR to main
+- `upgrade/website` - Current website upgrade branch
 
-- **Ruby gem bugs/features:** Modify `lib/mail_catcher/`
-- **Website updates:** Edit `website_src/src/`
-- **Documentation:** Update `reference/` or `website_src/src/pages/`
-- **Releases:** Update version → Run `bundle exec rake release`
+## Important Notes
 
-## Notes for Claude Code
-
-When working with this project:
-
-1. **Two separate tech stacks** - Context-switch between Ruby and Astro/JS
-2. **Version sync** - Keep gem and website version in sync
-3. **Testing** - Always run `bundle exec rake spec` before committing gem changes
-4. **CI checks** - Ensure CI passes (GitHub Actions)
-5. **Node version** - Website requires Node 24+ via `.nvmrc`
-6. **Documentation** - Update CHANGELOG.md for user-facing changes
-
-This repository is actively developed. Check git history for recent patterns and conventions.
+1. **Two tech stacks** - Ruby and JavaScript/Node, context-switch as needed
+2. **.nvmrc required** - Website needs Node 24+ configured in `.nvmrc` at root
+3. **Gems are auto-published** - GitHub Actions handles release to RubyGems
+4. **Version sync** - Keep gem version and CHANGELOG updated together
+5. **Claude integration** - Gem includes MCP Server and Claude Plugin support
