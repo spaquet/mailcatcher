@@ -94,8 +94,6 @@ mailcatcher --mcp --foreground
 ```
 Configure in `~/.claude_desktop_config.json`
 
-See [CLAUDE_INTEGRATION.md](CLAUDE_INTEGRATION.md) for detailed setup.
-
 ## The Website: Astro v6
 
 ### Overview
@@ -192,7 +190,6 @@ npm run preview
 - **[INTEGRATIONS.md](reference/INTEGRATIONS.md)** - Integration guides
 - **[API.md](reference/API.md)** - API reference
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history
-- **[CLAUDE_INTEGRATION.md](CLAUDE_INTEGRATION.md)** - Claude Plugin & MCP setup
 
 ## Common Tasks
 
