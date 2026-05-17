@@ -843,7 +843,8 @@ main {
   border: 1px solid #f5c6cb;
   display: inline-flex;
   align-items: center;
-  align-self: flex-start;
+  justify-content: center;
+  align-self: center;
   width: auto;
   white-space: nowrap;
   min-height: 30px;
