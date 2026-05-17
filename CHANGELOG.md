@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumped MailCatcher NG to version 1.5.6
 - Added explicit handling for unknown or unsupported message content types
 - Surfaced a concise content-type error state in the message viewer
 - Hardened the release workflow permissions
