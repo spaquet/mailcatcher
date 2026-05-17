@@ -832,6 +832,17 @@ main {
   border-color: #d0d0d0;
 }
 
+.content-type-notice {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #c62828;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #f5c6cb;
+}
+
 .download-icon {
   width: 14px;
   height: 14px;

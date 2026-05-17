@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.6] - 2026-05-17
+
+### Changed
+
+- Updated release metadata for version 1.5.6
+- Fixed code scanning findings in the message viewer and release workflow
+
 ## [1.5.4] - 2026-05-06
 
 ### Changed
@@ -527,4 +534,3 @@ Testing infrastructure:
 - Add UI tests for transcript display
 - Improve test coverage for edge cases
 - Add performance benchmarks
-
