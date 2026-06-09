@@ -61,7 +61,7 @@ GEM
     matrix (0.4.3)
     mini_mime (1.1.5)
     mustermann (3.1.1)
-    net-imap (0.6.4)
+    net-imap (0.6.4.1)
       date
       net-protocol
     net-pop (0.1.2)
