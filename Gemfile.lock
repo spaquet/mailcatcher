@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mailcatcher-ng (1.6.11)
+    mailcatcher-ng (1.6.12)
       eventmachine (~> 1.2.7)
       faye-websocket (~> 0.12.0)
       mail (~> 2.9)
@@ -69,7 +69,7 @@ GEM
       net-protocol
     net-protocol (0.4.0)
       timeout
-    net-smtp (0.5.1)
+    net-smtp (0.5.2)
       net-protocol
     nokogiri (1.19.4-aarch64-linux-gnu)
       racc (~> 1.4)
@@ -88,7 +88,7 @@ GEM
     nokogiri (1.19.4-x86_64-linux-musl)
       racc (~> 1.4)
     ostruct (0.6.3)
-    parallel (2.2.0)
+    parallel (2.3.0)
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
@@ -111,13 +111,12 @@ GEM
       logger
       prism (>= 1.6.0)
       tsort
-    rdoc (8.0.0)
+    rdoc (8.1.0)
       erb
       prism (>= 1.6.0)
       rbs (>= 4.0.0)
       tsort
-    regexp_parser (2.13.0)
-    rexml (3.4.4)
+    regexp_parser (2.13.1)
     rspec (3.13.2)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -147,10 +146,9 @@ GEM
       prism (~> 1.7)
     ruby-progressbar (1.13.0)
     rubyzip (3.7.0)
-    selenium-webdriver (4.49.0)
+    selenium-webdriver (4.50.0)
       base64 (~> 0.2)
       logger (~> 1.4)
-      rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 4.0)
       websocket (~> 1.0)
     sinatra (4.2.1)
@@ -212,7 +210,7 @@ DEPENDENCIES
   capybara-screenshot (~> 1.0, >= 1.0.26)
   mailcatcher-ng!
   rake (~> 13.3, >= 13.3.1)
-  rdoc (~> 8.0.0, >= 8.0.0)
+  rdoc (~> 8.1.0, >= 8.0.0)
   rspec (~> 3.13, >= 3.13.2)
   rubocop (~> 1.91.0)
   selenium-webdriver (~> 4.39)
