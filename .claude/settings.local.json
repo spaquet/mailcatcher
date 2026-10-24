@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(ruby send_example_emails.rb:*)",
+      "Bash(bundle exec rspec:*)",
+      "Bash(ruby -e:*)",
+      "Bash(ruby:*)",
+      "Bash(bundle exec ruby:*)"
+    ]
+  }
+}
