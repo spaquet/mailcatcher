@@ -53,6 +53,7 @@ MailCatcher NG runs a super simple SMTP server which catches any message sent to
 - Multiple encoding support (7bit, 8bit, base64, quoted-printable)
 - SSL/TLS encryption (STARTTLS & direct TLS/SMTPS)
 - Charset preservation for international content
+- Hardened client-side message requests: IDs are validated before building URLs
 
 For a comprehensive list of all features, see [FEATURES.md](FEATURES.md).
 

@@ -307,6 +307,7 @@ Comprehensive accessibility analysis for emails to ensure compliance with WCAG s
 - **jQuery**: JavaScript framework for DOM manipulation
 - **Sprockets**: Asset pipeline for development mode
 - **Tippy.js**: Tooltip library for signature/encryption info display
+- **Validated Message URLs**: Web UI builds every message request URL from a validated integer ID (`buildMessageUrl`), so user-controlled data cannot alter the request target
 
 ## Browser Compatibility and Features
 
