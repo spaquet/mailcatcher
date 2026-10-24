@@ -28,7 +28,7 @@ mailcatcher/
 
 ```bash
 bundle install
-bundle exec rake spec    # Run tests
+bundle exec rake test    # Run tests
 bundle exec mailcatcher  # Run locally
 ```
 
@@ -45,8 +45,8 @@ bundle exec mailcatcher  # Run locally
 1. Make changes in `lib/`
 2. Update version in `lib/mail_catcher/version.rb` for releases
 3. Update `CHANGELOG.md`
-4. Run `bundle exec rake spec` before committing
-5. Commit → Push → GitHub Actions publishes to RubyGems
+4. Run `bundle exec rake test` before committing
+5. Commit → PR → merge to `main` → publish a GitHub Release (see Release Process)
 
 ## The Website
 
@@ -67,8 +67,8 @@ npm run build            # Production build
 - `website_src/src/pages/` - Page routes
 - `website_src/src/components/` - Reusable components
 - `website_src/astro.config.mjs` - Configuration
-- `website_src/tailwind.config.js` - Tailwind config
-- `.nvmrc` - Node.js 24 requirement
+- `website_src/.nvmrc` and root `.nvmrc` - Node.js 24 requirement
+- Tailwind is v4 via the `@tailwindcss/vite` plugin (no `tailwind.config.js`)
 
 **When modifying the website:**
 
@@ -76,11 +76,11 @@ npm run build            # Production build
 2. Ensure `nvm use` shows Node 24+
 3. Make changes in `src/`
 4. Run `npm run build` before committing
-5. Push → GitHub Actions deploys automatically
+5. Merge to `main` → `.github/workflows/deploy-docs.yml` deploys to GitHub Pages (runs only when `website_src/**` or the workflow changes)
 
 ## Release Process
 
-Releases are **automated via GitHub Actions** when you push to `main`:
+Releases are **automated via GitHub Actions** and are triggered by **publishing a GitHub Release**. Merging to `main` alone does not publish the gem.
 
 ```bash
 # 1. Update version
@@ -89,19 +89,25 @@ vim lib/mail_catcher/version.rb
 # 2. Update CHANGELOG
 vim CHANGELOG.md
 
-# 3. Commit
+# 3. Commit on a branch, push, and open a PR to main
+git checkout -b release/v1.X.X
 git add -A
 git commit -m "Release v1.X.X: description"
+git push -u origin release/v1.X.X
+gh pr create --base main
 
-# 4. Push to main
-git push origin main
-# OR merge PR to main
+# 4. Merge the PR once CI passes
 
-# 5. GitHub Actions automatically:
-#    - Runs tests
+# 5. Publish the release (this triggers the gem publish)
+gh release create vX.Y.Z --target main --title vX.Y.Z --notes "..."
+
+# 6. .github/workflows/release.yml automatically:
+#    - Builds the gem and verifies assets
 #    - Publishes gem to RubyGems
-#    - Deploys website
+#    - Creates the GitHub Release assets
 ```
+
+The website is separate: `.github/workflows/deploy-docs.yml` deploys it on merges to `main` that touch `website_src/`.
 
 **Do NOT manually run `bundle exec rake release`** - it's handled by the workflow.
 
@@ -110,9 +116,10 @@ git push origin main
 **Gem tests:**
 
 ```bash
-bundle exec rake spec           # Run all
-bundle exec rake spec --verbose # Verbose output
+bundle exec rake test           # Run all (RSpec, via the Rakefile `test` task)
 ```
+
+Note: `bundle exec rake spec` is not a test task. It exits 0 without running anything.
 
 **Website build:**
 
@@ -125,20 +132,19 @@ cd website_src && npm run build
 | Issue | Solution |
 | --- | --- |
 | Node version wrong in website | Run `nvm use` in `website_src/` |
-| Gem tests fail | Run `bundle exec rake spec --verbose` |
+| Gem tests fail | Run `bundle exec rake test` |
 | Website won't build | `cd website_src && rm -rf node_modules && npm install && npm run build` |
 | Bundler frozen error | Run `bundle install` to update `Gemfile.lock` |
 
 ## Git Branches
 
-- `main` - Production, deployed by GitHub Actions
-- Feature/fix branches - Create and PR to main
-- `upgrade/website` - Current website upgrade branch
+- `main` - Production. Merges trigger CI and website deploy (when `website_src/` changes). Gem publish happens on GitHub Release.
+- Feature/fix/release branches - Create and PR to main
 
 ## Important Notes
 
 1. **Two tech stacks** - Ruby and JavaScript/Node, context-switch as needed
 2. **.nvmrc required** - Website needs Node 24+ configured in `.nvmrc` at root
-3. **Gems are auto-published** - GitHub Actions handles release to RubyGems
+3. **Gems are auto-published on GitHub Release** - publishing a release triggers `release.yml` to publish to RubyGems
 4. **Version sync** - Keep gem version and CHANGELOG updated together
 5. **Claude integration** - Gem includes MCP Server and Claude Plugin support
