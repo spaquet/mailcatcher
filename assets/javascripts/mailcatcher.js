@@ -651,7 +651,7 @@ class MailCatcher {
     $tr.prependTo($("#messages tbody"));
 
     // Fetch full message data to get attachment and BIMI info
-    $.getJSON(`messages/${message.id}.json`, (fullMessage) => {
+    $.getJSON(this.buildMessageUrl(message.id), (fullMessage) => {
       // Update From and To cells with email headers if available
       // Use from_header/to_header from email headers, fall back to sender/recipients from envelope
       if (fullMessage.from_header) {

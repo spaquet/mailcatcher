@@ -43,14 +43,13 @@ RSpec.describe "From and To Headers", type: :feature do
     # Click the message to view details
     message_row_element.click
 
-    # Check the metadata section also shows the correct From and To
-    from_metadata = page.find("#message .metadata dd.from").text
-    expect(from_metadata).to include("Deals")
-    expect(from_metadata).to include("deals@retailer.com")
+    # Check the metadata section also shows the correct From and To.
+    # The metadata is filled in after the message loads, so wait for the text.
+    expect(page).to have_selector("#message .metadata dd.from", text: "Deals")
+    expect(page).to have_selector("#message .metadata dd.from", text: "deals@retailer.com")
 
-    to_metadata = page.find("#message .metadata dd.to").text
-    expect(to_metadata).to include("Subscriber")
-    expect(to_metadata).to include("subscriber@email.com")
+    expect(page).to have_selector("#message .metadata dd.to", text: "Subscriber")
+    expect(page).to have_selector("#message .metadata dd.to", text: "subscriber@email.com")
   end
 
   it "displays correct From and To from plainmail which has different headers" do
