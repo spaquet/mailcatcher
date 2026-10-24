@@ -116,9 +116,10 @@ RSpec.configure do |config|
 
     # Wait for it to boot
     begin
-      Socket.tcp(LOCALHOST, SMTP_PORT, connect_timeout: 1) { |s| s.close }
+      # Wait for the SMTP greeting, not just the socket, so the server is actually serving
+      Socket.tcp(LOCALHOST, SMTP_PORT, connect_timeout: 1) { |s| s.gets }
       Socket.tcp(LOCALHOST, HTTP_PORT, connect_timeout: 1) { |s| s.close }
-    rescue Errno::ECONNREFUSED, Errno::ETIMEDOUT
+    rescue Errno::ECONNREFUSED, Errno::ECONNRESET, Errno::ETIMEDOUT, EOFError
       retry
     end
 
