@@ -1,0 +1,35 @@
+# MailCatcher NG
+
+> MailCatcher NG is a Ruby gem (`mailcatcher-ng`) for development. It runs a simple SMTP server that catches every email sent to it and shows the messages in a web interface, so nothing is delivered to real recipients.
+
+Default ports: SMTP on smtp://127.0.0.1:1025, web UI and REST API on http://127.0.0.1:1080.
+
+Install and run:
+
+- `gem install mailcatcher-ng`
+- `mailcatcher`
+- Point the application's SMTP settings at 127.0.0.1:1025, then open http://127.0.0.1:1080/
+
+## Documentation
+
+- [Home](https://spaquet.github.io/mailcatcher/): Overview and quick start
+- [Usage](https://spaquet.github.io/mailcatcher/usage/): Command-line options, configuration, and the web interface
+- [Advanced](https://spaquet.github.io/mailcatcher/advanced/): Advanced features and configuration
+- [API](https://spaquet.github.io/mailcatcher/api/): REST API reference
+- [API examples](https://spaquet.github.io/mailcatcher/api/examples/): Example API calls
+- [AI integration](https://spaquet.github.io/mailcatcher/ai-integration/): Claude plugin and MCP server support
+
+## Source and reference
+
+- [GitHub repository](https://github.com/spaquet/mailcatcher): Source code, issues, and releases
+- [RubyGems package](https://rubygems.org/gems/mailcatcher-ng): Published gem
+- [CHANGELOG](https://github.com/spaquet/mailcatcher/blob/main/CHANGELOG.md): Release history
+- [Usage guide (markdown)](https://github.com/spaquet/mailcatcher/blob/main/reference/USAGE.md)
+- [REST API guide (markdown)](https://github.com/spaquet/mailcatcher/blob/main/reference/API.md)
+- [MCP server setup (markdown)](https://github.com/spaquet/mailcatcher/blob/main/reference/MCP_SETUP.md)
+
+## Optional
+
+- [Installation guide (markdown)](https://github.com/spaquet/mailcatcher/blob/main/reference/INSTALLATION.md)
+- [Framework integrations (markdown)](https://github.com/spaquet/mailcatcher/blob/main/reference/INTEGRATIONS.md)
+- [Credits](https://github.com/spaquet/mailcatcher/blob/main/reference/CREDITS.md)
